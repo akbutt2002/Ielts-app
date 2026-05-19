@@ -1,15 +1,17 @@
-import { PageBody, PageHeader } from '@kit/ui/page';
-
-import { DashboardDemo } from '~/home/_components/dashboard-demo';
+import {
+  buildIeltsListingData,
+  ieltsListening,
+  ieltsTests,
+} from '@kit/ielts';
+import { IeltsTestListing } from '@kit/ui/ielts/listing';
 
 export default function HomePage() {
-  return (
-    <>
-      <PageHeader description={'Your SaaS at a glance'} />
+  const listing = buildIeltsListingData(ieltsTests, ieltsListening, {
+    minBookNumber: 14,
+    maxBookNumber: 19,
+  });
 
-      <PageBody>
-        <DashboardDemo />
-      </PageBody>
-    </>
+  return (
+    <IeltsTestListing listing={listing} />
   );
 }

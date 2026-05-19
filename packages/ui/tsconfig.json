@@ -8,7 +8,8 @@
       "~/lib/*": ["./src/lib/*"],
       "~/hooks": ["./src/hooks"],
       "~/ui": ["./src/shadcn/*"],
-      "~/ui/*": ["./src/shadcn/*"]
+      "~/ui/*": ["./src/shadcn/*"],
+      "@kit/ielts": ["../features/ielts/src/index.ts"]
     }
   },
   "include": ["*.ts", "src"],

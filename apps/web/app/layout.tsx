@@ -8,6 +8,7 @@ import { heading, sans } from '~/lib/fonts';
 import { createI18nServerInstance } from '~/lib/i18n/i18n.server';
 import { generateRootMetadata } from '~/lib/root-metdata';
 
+import appConfig from '~/config/app.config';
 import '../styles/globals.css';
 
 export default async function RootLayout({
@@ -16,11 +17,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const { language } = await createI18nServerInstance();
-  const theme = await getTheme();
+  const theme = (await getTheme()) ?? appConfig.theme;
   const className = getClassName(theme);
 
   return (
-    <html lang={language} className={className}>
+    <html lang={language} className={className} style={{ colorScheme: theme }}>
       <body>
         <RootProviders theme={theme} lang={language}>
           {children}
@@ -34,7 +35,7 @@ export default async function RootLayout({
 
 function getClassName(theme?: string) {
   const dark = theme === 'dark';
-  const light = !dark;
+  const light = theme === 'light';
 
   const font = [sans.variable, heading.variable].reduce<string[]>(
     (acc, curr) => {
