@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from '@kit/ui/form';
 import { Heading } from '@kit/ui/heading';
-import { Input } from '@kit/ui/input';
+import { PasswordInput } from '@kit/ui/password-input';
 import { Trans } from '@kit/ui/trans';
 
 import { PasswordResetSchema } from '../schemas/password-reset.schema';
@@ -72,7 +72,7 @@ export function UpdatePasswordForm(params: { redirectTo: string }) {
                   </FormLabel>
 
                   <FormControl>
-                    <Input required type="password" {...field} />
+                    <PasswordInput required {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -89,7 +89,7 @@ export function UpdatePasswordForm(params: { redirectTo: string }) {
                   </FormLabel>
 
                   <FormControl>
-                    <Input required type="password" {...field} />
+                    <PasswordInput required {...field} />
                   </FormControl>
 
                   <FormMessage />

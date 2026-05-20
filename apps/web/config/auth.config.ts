@@ -2,7 +2,7 @@ import type { Provider } from '@supabase/supabase-js';
 
 import { z } from 'zod';
 
-const providers: z.ZodType<Provider> = getProviders();
+const providerSchema: z.ZodType<Provider> = getProviders();
 
 const AuthConfigSchema = z.object({
   captchaTokenSiteKey: z
@@ -22,7 +22,7 @@ const AuthConfigSchema = z.object({
     magicLink: z.boolean({
       description: 'Enable magic link authentication.',
     }),
-    oAuth: providers.array(),
+    oAuth: providerSchema.array(),
   }),
 });
 
@@ -35,12 +35,11 @@ const authConfig = AuthConfigSchema.parse({
   displayTermsCheckbox:
     process.env.NEXT_PUBLIC_DISPLAY_TERMS_AND_CONDITIONS_CHECKBOX === 'true',
 
-  // NB: Enable the providers below in the Supabase Console
-  // in your production project
+  // NB: List the OAuth providers that are enabled in your Supabase Console.
   providers: {
     password: process.env.NEXT_PUBLIC_AUTH_PASSWORD === 'true',
     magicLink: process.env.NEXT_PUBLIC_AUTH_MAGIC_LINK === 'true',
-    oAuth: ['google'],
+    oAuth: getOAuthProviders(),
   },
 } satisfies z.infer<typeof AuthConfigSchema>);
 
@@ -70,4 +69,19 @@ function getProviders() {
     'zoom',
     'fly',
   ]);
+}
+
+function getOAuthProviders(): Provider[] {
+  const configuredProviders =
+    process.env.NEXT_PUBLIC_AUTH_OAUTH_PROVIDERS?.split(',') ?? [];
+
+  const providers = configuredProviders
+    .map((provider) => provider.trim())
+    .filter(Boolean)
+    .filter(
+      (provider): provider is Provider =>
+        providerSchema.safeParse(provider).success,
+    );
+
+  return providers;
 }

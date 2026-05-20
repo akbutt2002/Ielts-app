@@ -56,7 +56,10 @@ export function EmailPasswordSignUpContainer({
           onSignUp(data.user?.id);
         }
       } catch (error) {
-        console.error(error);
+        // Signup failures are already surfaced through the mutation error
+        // and the AuthErrorAlert below. We keep them out of the console so
+        // Next.js doesn't promote them into a dev error overlay.
+        void error;
       } finally {
         resetCaptchaToken();
       }

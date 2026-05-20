@@ -10,5 +10,11 @@ import { getSupabaseClientKeys } from '../get-supabase-client-keys';
 export function getSupabaseBrowserClient<GenericSchema = Database>() {
   const keys = getSupabaseClientKeys();
 
-  return createBrowserClient<GenericSchema>(keys.url, keys.anonKey);
+  return createBrowserClient<GenericSchema>(keys.url, keys.anonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: false,
+      detectSessionInUrl: true,
+    },
+  });
 }

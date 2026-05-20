@@ -19,6 +19,7 @@ import {
 } from '@kit/ui/form';
 import { If } from '@kit/ui/if';
 import { Input } from '@kit/ui/input';
+import { PasswordInput } from '@kit/ui/password-input';
 import { Trans } from '@kit/ui/trans';
 
 import { PasswordSignInSchema } from '../schemas/password-sign-in.schema';
@@ -80,10 +81,9 @@ export function PasswordSignInForm({
               </FormLabel>
 
               <FormControl>
-                <Input
+                <PasswordInput
                   required
                   data-test={'password-input'}
-                  type="password"
                   placeholder={''}
                   {...field}
                 />

@@ -22,8 +22,8 @@ import {
   FormMessage,
 } from '@kit/ui/form';
 import { If } from '@kit/ui/if';
-import { Input } from '@kit/ui/input';
 import { Label } from '@kit/ui/label';
+import { PasswordInput } from '@kit/ui/password-input';
 import { Trans } from '@kit/ui/trans';
 
 import { PasswordUpdateSchema } from '../../schema/update-password.schema';
@@ -113,10 +113,9 @@ export const UpdatePasswordForm = ({
                   </FormLabel>
 
                   <FormControl>
-                    <Input
+                    <PasswordInput
                       data-test={'account-password-form-password-input'}
                       required
-                      type={'password'}
                       {...field}
                     />
                   </FormControl>
@@ -139,10 +138,9 @@ export const UpdatePasswordForm = ({
                   </FormLabel>
 
                   <FormControl>
-                    <Input
+                    <PasswordInput
                       data-test={'account-password-form-repeat-password-input'}
                       required
-                      type={'password'}
                       {...field}
                     />
                   </FormControl>
