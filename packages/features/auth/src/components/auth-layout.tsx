@@ -7,8 +7,8 @@ export function AuthLayoutShell({
   return (
     <div
       className={
-        'flex h-screen flex-col items-center justify-center' +
-        ' bg-background lg:bg-muted/30 gap-y-10 lg:gap-y-8' +
+        'flex min-h-screen flex-col items-center justify-center overflow-y-auto' +
+        ' bg-background px-4 py-8 lg:bg-muted/30 gap-y-10 lg:gap-y-8' +
         ' animate-in fade-in slide-in-from-top-16 zoom-in-95 duration-1000'
       }
     >

@@ -22,22 +22,35 @@ export function AuthErrorAlert({
 
   const DefaultError = <Trans i18nKey="auth:errors.default" />;
   const errorCode = error instanceof Error ? error.message : error;
+  const rateLimited = isSignupRateLimit(errorCode);
 
   return (
     <Alert variant={'destructive'}>
       <ExclamationTriangleIcon className={'w-4'} />
 
       <AlertTitle>
-        <Trans i18nKey={`auth:errorAlertHeading`} />
+        {rateLimited ? (
+          <Trans i18nKey={'auth:errors.rateLimitHeading'} />
+        ) : (
+          <Trans i18nKey={`auth:errorAlertHeading`} />
+        )}
       </AlertTitle>
 
       <AlertDescription data-test={'auth-error-message'}>
-        <Trans
-          i18nKey={`auth:errors.${errorCode}`}
-          defaults={'<DefaultError />'}
-          components={{ DefaultError }}
-        />
+        {rateLimited ? (
+          <Trans i18nKey={'auth:errors.rateLimitBody'} />
+        ) : (
+          <Trans
+            i18nKey={`auth:errors.${errorCode}`}
+            defaults={'<DefaultError />'}
+            components={{ DefaultError }}
+          />
+        )}
       </AlertDescription>
     </Alert>
   );
+}
+
+function isSignupRateLimit(errorCode: string) {
+  return errorCode.toLowerCase().includes('rate limit');
 }

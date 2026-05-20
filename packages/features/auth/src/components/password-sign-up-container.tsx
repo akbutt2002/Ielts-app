@@ -32,16 +32,20 @@ export function EmailPasswordSignUpContainer({
   const { captchaToken, resetCaptchaToken } = useCaptchaToken();
 
   const signUpMutation = useSignUpWithEmailAndPassword();
+  const submitting = useRef(false);
   const redirecting = useRef(false);
   const [showVerifyEmailAlert, setShowVerifyEmailAlert] = useState(false);
 
-  const loading = signUpMutation.isPending || redirecting.current;
+  const loading =
+    submitting.current || signUpMutation.isPending || redirecting.current;
 
   const onSignupRequested = useCallback(
     async (credentials: { email: string; password: string }) => {
-      if (loading) {
+      if (submitting.current || loading) {
         return;
       }
+
+      submitting.current = true;
 
       try {
         const data = await signUpMutation.mutateAsync({
@@ -61,6 +65,7 @@ export function EmailPasswordSignUpContainer({
         // Next.js doesn't promote them into a dev error overlay.
         void error;
       } finally {
+        submitting.current = false;
         resetCaptchaToken();
       }
     },
