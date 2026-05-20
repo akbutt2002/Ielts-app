@@ -10,8 +10,10 @@ export function useSignOut() {
   const client = useSupabase();
 
   return useMutation({
-    mutationFn: () => {
-      return client.auth.signOut();
+    mutationFn: async () => {
+      // Use a local sign-out for the app UI so stale server sessions do not
+      // block the user from leaving their account on Vercel/production.
+      return client.auth.signOut({ scope: 'local' });
     },
   });
 }
