@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@kit/ui/dialog';
+import { ModeToggle } from '@kit/ui/mode-toggle';
 import { PageBody, PageHeader } from '@kit/ui/page';
 import { SidebarTrigger, useSidebar } from '@kit/ui/shadcn-sidebar';
 import { cn } from '@kit/ui/utils';
@@ -1976,15 +1977,22 @@ function parseStructuredSummaryBlock(
   };
 }
 
-type StartScreenSectionSummary = {
-  label: string;
-  rangeLabel: string;
-  questionLabel: string;
-};
-
 type StartScreenNavigation = {
   prevTest: IeltsTestRecord | null;
   nextTest: IeltsTestRecord | null;
+};
+
+type StartScreenStatProps = {
+  icon: React.ElementType;
+  value: string;
+  label: string;
+  iconClassName: string;
+};
+
+type StartScreenRuleProps = {
+  icon: React.ElementType;
+  toneClassName: string;
+  text: string;
 };
 
 const startScreenModuleOrder = ['general', 'academic', 'listening'] as const;
@@ -2055,75 +2063,12 @@ function buildStartScreenNavigation(
   );
 
   return {
-    prevTest: currentIndex > 0 ? bookTests[currentIndex - 1] : null,
+    prevTest: currentIndex > 0 ? (bookTests[currentIndex - 1] ?? null) : null,
     nextTest:
       currentIndex >= 0 && currentIndex < bookTests.length - 1
-        ? bookTests[currentIndex + 1]
+        ? (bookTests[currentIndex + 1] ?? null)
         : null,
   };
-}
-
-function buildStartScreenSectionSummaries(
-  test: IeltsTestRecord,
-): StartScreenSectionSummary[] {
-  const sectionSource = (
-    Array.isArray((test as any).sections) && (test as any).sections.length
-      ? (test as any).sections
-      : Array.isArray((test as any).headings?.sections) &&
-          (test as any).headings.sections.length
-        ? (test as any).headings.sections
-        : []
-  ) as Array<{ section?: string } | string>;
-
-  const fallbackRanges = [
-    [1, 14],
-    [15, 27],
-    [28, 40],
-  ] as const;
-
-  const parsedSummaries = sectionSource.slice(0, 3).map((section, index) => {
-    const rawText =
-      typeof section === 'string' ? section : (section?.section ?? '');
-    const sectionNumberMatch =
-      rawText.match(/SECTION\s*(\d+)/i) ?? rawText.match(/Section\s*(\d+)/i);
-    const rangeMatch =
-      rawText.match(/Questions?\s+(\d+)\s*[-\u2013\u2014]\s*(\d+)/i) ??
-      rawText.match(/Q\s*(\d+)\s*[-\u2013\u2014]\s*(\d+)/i);
-    const [fallbackStart, fallbackEnd] =
-      fallbackRanges[index] ?? fallbackRanges[0];
-
-    const start = rangeMatch ? Number(rangeMatch[1]) : fallbackStart;
-    const end = rangeMatch ? Number(rangeMatch[2]) : fallbackEnd;
-    const questionCount = Math.max(1, Math.abs(end - start) + 1);
-
-    return {
-      label: `Section ${sectionNumberMatch?.[1] ?? index + 1}`,
-      rangeLabel: `Q ${start} \u2013 ${end}`,
-      questionLabel: `${questionCount} question${questionCount === 1 ? '' : 's'}`,
-    };
-  });
-
-  if (parsedSummaries.length > 0) {
-    return parsedSummaries;
-  }
-
-  return [
-    {
-      label: 'Section 1',
-      rangeLabel: 'Q 1 \u2013 14',
-      questionLabel: '14 questions',
-    },
-    {
-      label: 'Section 2',
-      rangeLabel: 'Q 15 \u2013 27',
-      questionLabel: '13 questions',
-    },
-    {
-      label: 'Section 3',
-      rangeLabel: 'Q 28 \u2013 40',
-      questionLabel: '13 questions',
-    },
-  ];
 }
 
 function buildStartScreenDetails(test: IeltsTestRecord) {
@@ -2131,9 +2076,60 @@ function buildStartScreenDetails(test: IeltsTestRecord) {
     displayTitle: stripCambridgePrefix(test.title),
     moduleKey: resolveTestModuleKey(test),
     navigation: buildStartScreenNavigation(test),
-    sectionSummaries: buildStartScreenSectionSummaries(test),
     bookNumber: extractCambridgeBookNumber(test.title),
   };
+}
+
+function StartScreenStatCard({
+  icon: Icon,
+  value,
+  label,
+  iconClassName,
+}: StartScreenStatProps) {
+  return (
+    <div className="border-border/60 rounded-[22px] border bg-white/90 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#c8c5f7] hover:shadow-[0_18px_40px_-24px_rgba(109,95,212,0.35)] dark:border-[#2a2a2a] dark:bg-[#17172a]/85 dark:hover:border-[#4d4970] dark:hover:shadow-[0_18px_40px_-24px_rgba(0,0,0,0.5)]">
+      <div
+        className={cn(
+          'inline-flex h-8 w-8 items-center justify-center rounded-[13px] border shadow-sm',
+          iconClassName,
+        )}
+      >
+        <Icon className="h-4 w-4" />
+      </div>
+
+      <div className="mt-3">
+        <div className="text-[22px] leading-none font-black tracking-tight text-[#0f0f1a] dark:text-[#f5f3ff]">
+          {value}
+        </div>
+        <div className="mt-1 text-[8px] font-black tracking-[0.22em] text-[#7b789a] uppercase dark:text-[#a8a1c9]">
+          {label}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StartScreenRuleRow({
+  icon: Icon,
+  toneClassName,
+  text,
+}: StartScreenRuleProps) {
+  return (
+    <div className="flex items-start gap-3 rounded-[18px] border border-[#eeeaf9] bg-[#fbfaff] px-4 py-3 dark:border-[#2a2a2a] dark:bg-[#141428]/85">
+      <span
+        className={cn(
+          'flex h-8 w-8 shrink-0 items-center justify-center rounded-[13px] border shadow-sm',
+          toneClassName,
+        )}
+      >
+        <Icon className="h-3 w-3" />
+      </span>
+
+      <p className="text-[12px] leading-6 text-[#0f0f1a]/88 dark:text-[#e7e3ff]/88">
+        {text}
+      </p>
+    </div>
+  );
 }
 
 export default function TestPage({ test }: { test: IeltsTestRecord }) {
@@ -2174,7 +2170,6 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     }
   }, [startScreen.moduleKey]);
   const startScreenNavigation = startScreen.navigation;
-  const startScreenSectionSummaries = startScreen.sectionSummaries;
   const previousTestHref = startScreenNavigation.prevTest
     ? `/home/ielts/tests/${slugify(startScreenNavigation.prevTest.title)}`
     : null;
@@ -2422,10 +2417,19 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
   }
 
   function getNextTargetBand(score: number) {
+    const lastTarget = scoreTargetBands[scoreTargetBands.length - 1];
+
+    if (!lastTarget) {
+      return {
+        band: 0,
+        needed: 0,
+      };
+    }
+
     const target =
       scoreTargetBands.find(
         ({ minimumCorrectAnswers }) => score < minimumCorrectAnswers,
-      ) ?? scoreTargetBands[scoreTargetBands.length - 1];
+      ) ?? lastTarget;
 
     return {
       band: target.band,
@@ -3103,27 +3107,27 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
   };
 
   const renderStartScreen = () => (
-    <div className="bg-background relative min-h-screen overflow-x-hidden overflow-y-auto">
+    <div className="relative min-h-screen overflow-x-hidden overflow-y-auto bg-[#f4f3fc] text-[#0f0f1a] dark:bg-[#0b0b16] dark:text-[#f5f3ff]">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-0 dark:opacity-100"
+        className="pointer-events-none absolute inset-0 dark:hidden"
         style={{
           backgroundImage:
-            'radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 32%), radial-gradient(circle at top right, rgba(255,255,255,0.06), transparent 28%), radial-gradient(circle at bottom, rgba(255,255,255,0.05), transparent 34%)',
+            'radial-gradient(circle at top left, rgba(155,143,232,0.22), transparent 34%), radial-gradient(circle at top right, rgba(109,95,212,0.10), transparent 32%), radial-gradient(circle at bottom, rgba(255,255,255,0.92), transparent 42%)',
         }}
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-0 dark:opacity-100"
+        className="pointer-events-none absolute inset-0 hidden dark:block"
         style={{
           backgroundImage:
-            'linear-gradient(180deg, rgba(255,255,255,0.02), transparent 24%)',
+            'radial-gradient(circle at top left, rgba(155,143,232,0.12), transparent 34%), radial-gradient(circle at top right, rgba(109,95,212,0.08), transparent 32%), radial-gradient(circle at bottom, rgba(255,255,255,0.03), transparent 42%), linear-gradient(180deg, rgba(10,10,20,0.88), rgba(10,10,20,0.58) 28%, transparent 50%)',
         }}
       />
 
       <PageBody className="relative z-10 pb-24">
         <SidebarTrigger
-          className="border-border/70 bg-background text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground fixed top-4 z-50 hidden h-5 w-5 cursor-pointer rounded-xl border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] lg:inline-flex"
+          className="border-border/70 fixed top-5 z-[60] hidden h-5 w-5 cursor-pointer rounded-2xl border bg-white/90 text-[#7b789a] shadow-[0_12px_25px_-16px_rgba(109,95,212,0.45)] transition-all duration-200 hover:scale-[1.02] hover:border-[#c8c5f7] hover:bg-white hover:text-[#0f0f1a] active:scale-[0.98] lg:inline-flex dark:border-[#2a2a2a] dark:bg-[#17172a]/90 dark:text-[#c8c5f7] dark:shadow-[0_12px_25px_-16px_rgba(0,0,0,0.55)] dark:hover:border-[#4d4970] dark:hover:bg-[#1b1b2f] dark:hover:text-[#f5f3ff]"
           style={{
             left: sidebarOpen
               ? 'calc(var(--sidebar-width) + 0.75rem)'
@@ -3131,282 +3135,210 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
           }}
         />
 
-        <div className="mx-auto flex w-full max-w-[500px] flex-col gap-4 px-4 py-6 sm:px-0 sm:py-8 lg:py-10">
-          <div className="flex items-center justify-between gap-3">
-            <nav aria-label="Breadcrumb" className="min-w-0 flex-1">
-              <ol className="flex min-w-0 items-center gap-2 text-[12px] font-medium">
-                <li>
-                  <Link
-                    href="/home"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+        <div className="mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          <div className="rounded-[30px] border border-[#dddaf0] bg-white/90 shadow-[0_24px_80px_-60px_rgba(109,95,212,0.4)] dark:border-[#2a2a2a] dark:bg-[#111120]/88 dark:shadow-[0_24px_80px_-60px_rgba(0,0,0,0.7)]">
+            <div className="flex flex-col gap-5 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <nav aria-label="Breadcrumb" className="min-w-0 flex-1">
+                  <ol className="flex min-w-0 flex-wrap items-center gap-2 text-[11px] font-medium sm:text-[12px]">
+                    <li>
+                      <Link
+                        href="/tests"
+                        className="text-[#7b789a] transition-colors hover:text-[#6d5fd4] dark:text-[#a8a1c9] dark:hover:text-[#cfc8ff]"
+                      >
+                        Tests
+                      </Link>
+                    </li>
+                    <li className="text-[#7b789a]/30 dark:text-[#a8a1c9]/30">
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </li>
+                    <li className="truncate text-[#7b789a] dark:text-[#a8a1c9]">
+                      Cambridge {startScreen.bookNumber ?? ''}
+                    </li>
+                    <li className="text-[#7b789a]/30 dark:text-[#a8a1c9]/30">
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </li>
+                    <li className="truncate font-semibold text-[#6d5fd4] dark:text-[#b6abff]">
+                      {startScreen.displayTitle}
+                    </li>
+                  </ol>
+                </nav>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={!previousTestHref}
+                    onClick={() =>
+                      previousTestHref && router.push(previousTestHref)
+                    }
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-2xl border transition-all duration-200',
+                      previousTestHref
+                        ? 'cursor-pointer border-[#dddaf0] bg-white text-[#7b789a] shadow-[0_12px_24px_-18px_rgba(109,95,212,0.35)] hover:scale-[1.02] hover:border-[#c8c5f7] hover:bg-white hover:text-[#0f0f1a] dark:border-[#2a2a2a] dark:bg-[#17172a] dark:text-[#c8c5f7] dark:shadow-[0_12px_24px_-18px_rgba(0,0,0,0.5)] dark:hover:border-[#4d4970] dark:hover:bg-[#1b1b2f] dark:hover:text-[#f5f3ff]'
+                        : 'cursor-not-allowed border-[#dddaf0] bg-white/60 text-[#c3bddf] opacity-50 dark:border-[#2a2a2a] dark:bg-[#17172a]/60 dark:text-[#6f6a90]',
+                    )}
+                    aria-label="Previous test"
                   >
-                    Tests
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={!nextTestHref}
+                    onClick={() => nextTestHref && router.push(nextTestHref)}
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-2xl border transition-all duration-200',
+                      nextTestHref
+                        ? 'cursor-pointer border-[#dddaf0] bg-white text-[#7b789a] shadow-[0_12px_24px_-18px_rgba(109,95,212,0.35)] hover:scale-[1.02] hover:border-[#c8c5f7] hover:bg-white hover:text-[#0f0f1a] dark:border-[#2a2a2a] dark:bg-[#17172a] dark:text-[#c8c5f7] dark:shadow-[0_12px_24px_-18px_rgba(0,0,0,0.5)] dark:hover:border-[#4d4970] dark:hover:bg-[#1b1b2f] dark:hover:text-[#f5f3ff]'
+                        : 'cursor-not-allowed border-[#dddaf0] bg-white/60 text-[#c3bddf] opacity-50 dark:border-[#2a2a2a] dark:bg-[#17172a]/60 dark:text-[#6f6a90]',
+                    )}
+                    aria-label="Next test"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-5">
+                <div className="space-y-4">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[#d8d2ff] bg-white px-4 py-2 text-[10px] font-black tracking-[0.18em] text-[#6d5fd4] uppercase shadow-[0_16px_45px_-30px_rgba(109,95,212,0.45)] dark:border-[#2a2a2a] dark:bg-[#17172a] dark:text-[#cfc8ff] dark:shadow-[0_16px_45px_-30px_rgba(0,0,0,0.55)]">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#6d5fd4] shadow-[0_0_0_6px_rgba(109,95,212,0.12)] dark:bg-[#b6abff] dark:shadow-[0_0_0_6px_rgba(182,171,255,0.12)]" />
+                    <span>{startScreenHero.label}</span>
+                  </div>
+
+                  <div className="space-y-3.5">
+                    <h2 className="max-w-[15ch] text-[clamp(1rem,4vw,2rem)] leading-[0.95] font-black tracking-[-0.05em] text-[#0f0f1a] dark:text-[#f5f3ff]">
+                      {startScreen.displayTitle}
+                    </h2>
+                    <p className="max-w-[44ch] text-[13px] leading-[1.7] text-[#7b789a] dark:text-[#c1badd]">
+                      Full-length IELTS simulation with instant scoring and
+                      detailed answer review.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid gap-2.5 sm:grid-cols-3">
+                  <StartScreenStatCard
+                    icon={Clock}
+                    value="60"
+                    label="Minutes"
+                    iconClassName="border-[#e8e3ff] bg-[#ede9fe] text-[#6d5fd4] dark:border-[#2a2a2a] dark:bg-[#17172a] dark:text-[#b6abff]"
+                  />
+                  <StartScreenStatCard
+                    icon={HelpCircle}
+                    value="40"
+                    label="Questions"
+                    iconClassName="border-[#e8e3ff] bg-[#ede9fe] text-[#6d5fd4] dark:border-[#2a2a2a] dark:bg-[#17172a] dark:text-[#b6abff]"
+                  />
+                  <StartScreenStatCard
+                    icon={Trophy}
+                    value="9.0"
+                    label="Max band"
+                    iconClassName="border-[#e8e3ff] bg-[#ede9fe] text-[#6d5fd4] dark:border-[#2a2a2a] dark:bg-[#17172a] dark:text-[#b6abff]"
+                  />
+                </div>
+
+                <div className="rounded-[28px] border border-[#dddaf0] bg-white/95 p-4 shadow-[0_24px_70px_-46px_rgba(109,95,212,0.34)] dark:border-[#2a2a2a] dark:bg-[#111120]/90 dark:shadow-[0_24px_70px_-46px_rgba(0,0,0,0.7)]">
+                  <div className="flex items-start gap-3">
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-[#e8e3ff] bg-[#ede9fe] text-[#6d5fd4] shadow-sm dark:border-[#2a2a2a] dark:bg-[#17172a] dark:text-[#b6abff]">
+                      <Layers3 className="h-3 w-3" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-[11px] font-black tracking-[0.2em] text-[#6d5fd4] uppercase dark:text-[#b6abff]">
+                        Band score guide
+                      </div>
+                      <h3 className="text-[20px] leading-[1.15] font-black tracking-[-0.03em] text-[#0f0f1a] dark:text-[#f5f3ff]">
+                        How many correct answers do you need?
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
+                    {[
+                      { band: 'Band 7', score: '34+' },
+                      { band: 'Band 8', score: '37+' },
+                      { band: 'Band 9', score: '39+' },
+                    ].map((item) => (
+                      <div
+                        key={item.band}
+                        className="rounded-[20px] border border-[#dddaf0] bg-[#fbfaff] px-4 py-[18px] text-center dark:border-[#2a2a2a] dark:bg-[#17172a]/90"
+                      >
+                        <div className="text-[24px] leading-none font-black tracking-tight text-[#6d5fd4] dark:text-[#cfc8ff]">
+                          {item.score}
+                        </div>
+                        <div className="mt-2.5 text-[10px] font-black tracking-[0.2em] text-[#7b789a] uppercase dark:text-[#a8a1c9]">
+                          {item.band}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-[28px] border border-[#dddaf0] bg-white/95 p-4 shadow-[0_24px_70px_-46px_rgba(109,95,212,0.3)] sm:p-5 dark:border-[#2a2a2a] dark:bg-[#111120]/90 dark:shadow-[0_24px_70px_-46px_rgba(0,0,0,0.7)]">
+                  <h3 className="text-[20px] font-black tracking-[-0.03em] text-[#0f0f1a] dark:text-[#f5f3ff]">
+                    Before you begin
+                  </h3>
+                  <div className="mt-3.5 space-y-2.5">
+                    <StartScreenRuleRow
+                      icon={Clock}
+                      toneClassName="border-[#F0C776] bg-[#FAEEDA] text-[#854F0B] dark:border-[#4d3b16] dark:bg-[#251c12] dark:text-[#f7c46a]"
+                      text="Timer starts immediately and cannot be paused — make sure you are ready before clicking Start."
+                    />
+                    <StartScreenRuleRow
+                      icon={Layers3}
+                      toneClassName="border-[#B5D4F4] bg-[#E6F1FB] text-[#185FA5] dark:border-[#27344b] dark:bg-[#142036] dark:text-[#7cb4f5]"
+                      text="Passages on the left, questions on the right — both panels scroll independently."
+                    />
+                    <StartScreenRuleRow
+                      icon={Check}
+                      toneClassName="border-[#A8D19A] bg-[#EAF3DE] text-[#3B6D11] dark:border-[#24351d] dark:bg-[#182410] dark:text-[#8bd27c]"
+                      text="Band score shown instantly after submission. Test auto-submits when time runs out."
+                    />
+                  </div>
+                </div>
+
+                <div className="rounded-[28px] border border-[#dddaf0] bg-white/95 p-4 shadow-[0_24px_70px_-46px_rgba(109,95,212,0.35)] sm:p-5 dark:border-[#2a2a2a] dark:bg-[#111120]/90 dark:shadow-[0_24px_70px_-46px_rgba(0,0,0,0.7)]">
+                  <button
+                    type="button"
+                    onClick={() => setIsStarted(true)}
+                    className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-[22px] bg-[linear-gradient(135deg,#5b48f5_0%,#6d5fd4_45%,#9b8fe8_100%)] px-5 py-3.5 text-[15px] font-black tracking-[0.08em] text-white shadow-[0_26px_60px_-28px_rgba(109,95,212,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_30px_70px_-30px_rgba(109,95,212,0.7)] active:translate-y-0 dark:shadow-[0_26px_60px_-28px_rgba(0,0,0,0.6)]"
+                  >
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    <span>Start Test</span>
+                  </button>
+
+                  <Link
+                    href="/tests"
+                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-[22px] border border-[#dddaf0] bg-transparent px-5 py-3.5 text-[14px] font-black tracking-[0.08em] text-[#0f0f1a] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#c8c5f7] hover:bg-white active:translate-y-0 dark:border-[#2a2a2a] dark:bg-transparent dark:text-[#f5f3ff] dark:hover:border-[#4d4970] dark:hover:bg-[#17172a]"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    Back to Tests
                   </Link>
-                </li>
-                <li className="text-muted-foreground/35">
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </li>
-                <li className="text-muted-foreground truncate">
-                  Cambridge {startScreen.bookNumber ?? ''}
-                </li>
-                <li className="text-muted-foreground/35">
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </li>
-                <li className="text-foreground truncate">
-                  {startScreen.displayTitle}
-                </li>
-              </ol>
-            </nav>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled={!previousTestHref}
-                onClick={() =>
-                  previousTestHref && router.push(previousTestHref)
-                }
-                className={cn(
-                  'text-muted-foreground flex h-9 w-9 items-center justify-center rounded-lg border transition-all duration-200',
-                  previousTestHref
-                    ? 'border-border/70 bg-background hover:border-border hover:bg-muted/60 hover:text-foreground cursor-pointer hover:scale-[1.02]'
-                    : 'border-border/40 bg-muted/30 cursor-not-allowed opacity-40',
-                )}
-                aria-label="Previous test"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
-              <button
-                type="button"
-                disabled={!nextTestHref}
-                onClick={() => nextTestHref && router.push(nextTestHref)}
-                className={cn(
-                  'text-muted-foreground flex h-9 w-9 items-center justify-center rounded-lg border transition-all duration-200',
-                  nextTestHref
-                    ? 'border-border/70 bg-background hover:border-border hover:bg-muted/60 hover:text-foreground cursor-pointer hover:scale-[1.02]'
-                    : 'border-border/40 bg-muted/30 cursor-not-allowed opacity-40',
-                )}
-                aria-label="Next test"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[11px] text-[#7b789a] dark:text-[#a8a1c9]">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Check className="h-3 w-3 text-[#6d5fd4] dark:text-[#b6abff]" />
+                      Instant result
+                    </span>
+                    <span className="text-[#c8c5f7] dark:text-[#4d4970]">
+                      •
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Trophy className="h-3 w-3 text-[#6d5fd4] dark:text-[#b6abff]" />
+                      Band score included
+                    </span>
+                    <span className="text-[#c8c5f7] dark:text-[#4d4970]">
+                      •
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookOpen className="h-3 w-3 text-[#6d5fd4] dark:text-[#b6abff]" />
+                      Full simulation
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <section className="border-border/70 bg-background overflow-hidden rounded-[20px] border shadow-none backdrop-blur-none dark:border-white/10 dark:bg-white/[0.035] dark:shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)] dark:backdrop-blur-xl">
-            <div className="px-5 py-5 sm:px-6">
-              <div className="flex items-center gap-3">
-                <div
-                  className={cn(
-                    'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-sm',
-                    startScreenHero.className,
-                  )}
-                >
-                  {React.createElement(startScreenHero.icon, {
-                    className: 'h-[18px] w-[18px]',
-                  })}
-                </div>
-
-                <span
-                  className={cn(
-                    'inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.2em] uppercase shadow-sm',
-                    startScreenHero.className,
-                  )}
-                >
-                  {startScreenHero.label}
-                </span>
-              </div>
-
-              <h2 className="text-foreground mt-4 max-w-[18ch] text-[29px] leading-[1.08] font-semibold tracking-tight sm:text-[33px]">
-                {startScreen.displayTitle}
-              </h2>
-
-              <p className="text-muted-foreground/90 mt-3 max-w-[34ch] text-[13px] leading-6 sm:text-[14px]">
-                Full-length simulation with complete answer key and band score
-              </p>
-            </div>
-
-            <div
-              className="px-5 py-3.5 sm:px-6"
-              style={{ borderTop: '1px solid var(--border)' }}
-            >
-              <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] font-medium sm:text-[11px]">
-                {[
-                  { icon: Clock, label: '60 minutes' },
-                  { icon: HelpCircle, label: `${totalQuestions} questions` },
-                  { icon: Layers3, label: '3 sections' },
-                  { icon: FileText, label: '3 passages' },
-                ].map(({ icon: Icon, label }, index) => (
-                  <React.Fragment key={label}>
-                    <div className="flex items-center gap-1">
-                      <Icon className="h-3.5 w-3.5" />
-                      <span>{label}</span>
-                    </div>
-                    {index < 3 ? (
-                      <span className="text-muted-foreground/40">•</span>
-                    ) : null}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-
-            <div className="border-border/70 bg-background overflow-hidden border shadow-none dark:bg-white/[0.035] dark:backdrop-blur-xl">
-              <div
-                className="divide-border/60 grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0"
-                style={{ borderTop: '1px solid var(--border)' }}
-              >
-                <div className="group bg-background hover:bg-muted/40 relative flex min-h-[132px] flex-col items-center justify-between px-5 py-[18px] transition-colors dark:bg-white/[0.03] dark:hover:bg-white/[0.05]">
-                  <div className="border-border/60 bg-background text-muted-foreground inline-flex h-8 w-8 items-center justify-center rounded-xl border shadow-sm transition-transform duration-200 group-hover:scale-[1.03] dark:border-white/10 dark:bg-white/[0.04]">
-                    <Clock className="h-3.5 w-3.5" />
-                  </div>
-
-                  <div className="space-y-1.5 text-center">
-                    <div className="text-foreground text-[34px] leading-none font-semibold tracking-tight">
-                      60
-                    </div>
-                    <div className="text-muted-foreground text-[10px] font-black tracking-[0.24em] uppercase">
-                      Minutes
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group bg-background hover:bg-muted/40 relative flex min-h-[132px] flex-col items-center justify-between px-5 py-[18px] transition-colors dark:bg-white/[0.03] dark:hover:bg-white/[0.05]">
-                  <div className="border-border/60 bg-background text-muted-foreground inline-flex h-8 w-8 items-center justify-center rounded-xl border shadow-sm transition-transform duration-200 group-hover:scale-[1.03] dark:border-white/10 dark:bg-white/[0.04]">
-                    <HelpCircle className="h-3.5 w-3.5" />
-                  </div>
-
-                  <div className="space-y-1.5 text-center">
-                    <div className="text-foreground text-[34px] leading-none font-semibold tracking-tight">
-                      {totalQuestions}
-                    </div>
-                    <div className="text-muted-foreground text-[10px] font-black tracking-[0.24em] uppercase">
-                      Questions
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group bg-background hover:bg-muted/40 relative flex min-h-[132px] flex-col items-center justify-between px-5 py-[18px] transition-colors dark:bg-white/[0.03] dark:hover:bg-white/[0.05]">
-                  <div className="border-border/60 bg-background text-muted-foreground inline-flex h-8 w-8 items-center justify-center rounded-xl border shadow-sm transition-transform duration-200 group-hover:scale-[1.03] dark:border-white/10 dark:bg-white/[0.04]">
-                    <Trophy className="h-3.5 w-3.5" />
-                  </div>
-
-                  <div className="space-y-1.5 text-center">
-                    <div className="text-foreground text-[34px] leading-none font-semibold tracking-tight">
-                      9.0
-                    </div>
-                    <div className="text-muted-foreground text-[10px] font-black tracking-[0.24em] uppercase">
-                      Max band
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="px-5 py-4 sm:px-6"
-              style={{ borderTop: '1px solid var(--border)' }}
-            >
-              <div className="text-muted-foreground mb-3 text-[10px] font-black tracking-[0.24em] uppercase">
-                SECTIONS
-              </div>
-
-              <div className="grid gap-2.5 sm:grid-cols-3">
-                {startScreenSectionSummaries.map((section, index) => (
-                  <div
-                    key={`${section.label}-${index}`}
-                    className="group border-border/70 bg-background hover:border-foreground/20 hover:bg-muted/40 rounded-2xl border p-3.5 transition-all duration-200 hover:-translate-y-0.5 dark:bg-white/[0.02] dark:hover:bg-white/[0.05]"
-                  >
-                    <div className="text-muted-foreground text-[10px] font-black tracking-[0.22em] uppercase">
-                      {section.label}
-                    </div>
-                    <div className="text-foreground mt-2.5 text-[15px] font-semibold tracking-tight">
-                      {section.rangeLabel}
-                    </div>
-                    <div className="text-muted-foreground mt-1.5 text-[11px]">
-                      {section.questionLabel}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div
-              className="px-5 py-4 sm:px-6"
-              style={{ borderTop: '1px solid var(--border)' }}
-            >
-              <div className="space-y-2.5">
-                {[
-                  {
-                    icon: Clock,
-                    badgeClassName:
-                      'border-[#F0C776] bg-[#FAEEDA] text-[#854F0B] dark:border-[#F0C776]/40 dark:bg-[#FAEEDA]/10 dark:text-[#FAEEDA]',
-                    text: 'Timer starts immediately and cannot be paused — make sure you are ready.',
-                  },
-                  {
-                    icon: Layers3,
-                    badgeClassName:
-                      'border-[#B5D4F4] bg-[#E6F1FB] text-[#185FA5] dark:border-[#B5D4F4]/40 dark:bg-[#E6F1FB]/10 dark:text-[#E6F1FB]',
-                    text: 'Passages on the left, questions on the right — both panels scroll independently.',
-                  },
-                  {
-                    icon: Check,
-                    badgeClassName:
-                      'border-[#A8D19A] bg-[#EAF3DE] text-[#3B6D11] dark:border-[#A8D19A]/40 dark:bg-[#EAF3DE]/10 dark:text-[#EAF3DE]',
-                    text: 'Band score shown instantly after submission. Test auto-submits when time runs out.',
-                  },
-                ].map((rule) => {
-                  const RuleIcon = rule.icon;
-
-                  return (
-                    <div
-                      key={rule.text}
-                      className="border-border/60 bg-background hover:border-foreground/20 hover:bg-muted/40 flex items-start gap-3 rounded-2xl border px-3.5 py-3.5 transition-colors dark:bg-white/[0.02] dark:hover:bg-white/[0.05]"
-                    >
-                      <span
-                        className={cn(
-                          'flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border shadow-sm',
-                          rule.badgeClassName,
-                        )}
-                      >
-                        <RuleIcon className="h-3 w-3" />
-                      </span>
-                      <p className="text-foreground/90 text-[13px] leading-[1.35]">
-                        {rule.text}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div
-              className="px-5 py-[18px] sm:px-6"
-              style={{ borderTop: '1px solid var(--border)' }}
-            >
-              <div className="space-y-2.5">
-                <button
-                  type="button"
-                  onClick={() => setIsStarted(true)}
-                  className="group flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl border border-[#111111] bg-[#111111] px-4 py-3 text-[13px] font-black tracking-[0.18em] text-white uppercase shadow-[0_12px_30px_-18px_rgba(17,17,17,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01] hover:bg-[#1a1a1a] active:scale-[0.99] dark:border-white/15 dark:bg-white dark:text-black dark:shadow-none dark:hover:bg-white/95"
-                >
-                  <Play className="h-3.5 w-3.5 fill-current text-white transition-transform duration-300 group-hover:translate-x-1 dark:text-black" />
-                  Start test
-                </button>
-
-                <Link
-                  href="/home"
-                  className="border-border/70 text-foreground hover:border-foreground/20 hover:bg-background/70 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border bg-transparent px-4 py-3 text-[13px] font-black tracking-[0.18em] uppercase transition-all duration-300 hover:-translate-y-0.5 dark:hover:bg-white/[0.05]"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                  Back to tests
-                </Link>
-
-                <p className="text-muted-foreground text-center text-[10px] leading-none">
-                  Instant result • Band score included • Full exam simulation
-                </p>
-              </div>
-            </div>
-          </section>
         </div>
       </PageBody>
     </div>

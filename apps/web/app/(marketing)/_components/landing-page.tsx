@@ -462,7 +462,7 @@ function BandScoreSection() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setVisible(true);
           observer.disconnect();
         }

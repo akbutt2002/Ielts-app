@@ -7,18 +7,6 @@ const defaultName = siteConfig.name;
 const defaultTitle = siteConfig.title;
 const defaultDescription = siteConfig.description;
 
-function getConfiguredText(envValue: string | undefined, fallback: string) {
-  if (!envValue) {
-    return fallback;
-  }
-
-  if (/the easiest way to build|manage your saas/i.test(envValue)) {
-    return fallback;
-  }
-
-  return envValue;
-}
-
 const AppConfigSchema = z
   .object({
     name: z
@@ -81,12 +69,9 @@ const AppConfigSchema = z
   );
 
 const appConfig = AppConfigSchema.parse({
-  name: getConfiguredText(process.env.NEXT_PUBLIC_PRODUCT_NAME, defaultName),
-  title: getConfiguredText(process.env.NEXT_PUBLIC_SITE_TITLE, defaultTitle),
-  description: getConfiguredText(
-    process.env.NEXT_PUBLIC_SITE_DESCRIPTION,
-    defaultDescription,
-  ),
+  name: defaultName,
+  title: defaultTitle,
+  description: defaultDescription,
   url: process.env.NEXT_PUBLIC_SITE_URL ?? siteConfig.url,
   locale: process.env.NEXT_PUBLIC_DEFAULT_LOCALE ?? siteConfig.locale,
   theme: process.env.NEXT_PUBLIC_DEFAULT_THEME_MODE,
