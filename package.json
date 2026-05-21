@@ -1,5 +1,5 @@
 {
-  "name": "next-supabase-saas-kit-turbo-lite",
+  "name": "getieltsy",
   "version": "0.2.3",
   "private": true,
   "sideEffects": false,
@@ -7,8 +7,8 @@
     "node": ">=v18.18.0"
   },
   "author": {
-    "url": "https://makerkit.dev",
-    "name": "MakerKit"
+    "url": "https://getieltsy.vercel.app",
+    "name": "GetIeltsy"
   },
   "scripts": {
     "preinstall": "pnpm run --filter scripts requirements",

@@ -11,7 +11,7 @@
 @import './theme.css';
 @import './theme.utilities.css';
 @import './markdoc.css';
-@import './makerkit.css';
+@import './shared.css';
 
 /* plugins - update the below if you add a new plugin */
 @plugin "tailwindcss-animate";

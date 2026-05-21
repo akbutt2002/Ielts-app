@@ -25,15 +25,24 @@ export const generateRootMetadata = async (): Promise<Metadata> => {
       siteName: appConfig.name,
       title: appConfig.title,
       description: appConfig.description,
+      images: [
+        {
+          url: '/opengraph-image',
+          width: 1200,
+          height: 630,
+          alt: appConfig.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: appConfig.title,
       description: appConfig.description,
+      images: ['/twitter-image'],
     },
     icons: {
-      icon: '/images/favicon/favicon.ico',
-      apple: '/images/favicon/apple-touch-icon.png',
+      icon: '/images/favicon/getieltsy-mark.svg',
+      apple: '/images/favicon/getieltsy-mark.svg',
     },
   };
 };

@@ -31,9 +31,8 @@ export function SiteFooter() {
             <MarketingLogo />
 
             <p className="text-muted-foreground max-w-md text-sm leading-6">
-              Next-gen IELTS practice with full-length simulations, instant
-              band feedback, and a clean exam interface that keeps you
-              focused.
+              GetIeltsy helps you prepare smarter for IELTS with realistic
+              practice tests, instant scoring, and clear performance insights.
             </p>
           </div>
 
@@ -69,7 +68,7 @@ export function SiteFooter() {
         </div>
 
         <div className="border-border/70 text-muted-foreground mt-8 border-t pt-6 text-center text-[11px]">
-          &copy; 2026 IELTS. All rights reserved.
+          &copy; 2026 GetIeltsy. All rights reserved.
         </div>
       </div>
     </footer>

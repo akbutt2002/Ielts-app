@@ -5,7 +5,7 @@ This package is responsible for managing the UI components and styles across the
 This package define two sets of components:
 
 - `shadn-ui`: A set of UI components that can be used across the app using shadn UI
-- `makerkit`: Components specific to MakerKit
+- `shared shell`: Components specific to the app shell and shared product UI
 
 ## Installing a Shadcn UI component
 

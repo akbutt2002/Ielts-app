@@ -23,13 +23,16 @@ export function AppLogo({
       href={href ?? '/'}
       className={cn('flex items-center gap-2 group', className)}
     >
-      <div className="bg-black dark:bg-white flex h-8 w-8 items-center justify-center shrink-0 rounded-sm shadow-sm">
-        <span className="text-xl font-black text-white dark:text-black italic leading-none">I</span>
-      </div>
+      <img
+        src="/images/favicon/getieltsy-mark.svg"
+        alt=""
+        aria-hidden="true"
+        className="h-8 w-8 shrink-0 rounded-xl shadow-sm"
+      />
       
       {!isCollapsed && (
-        <span className="text-xl font-black tracking-tighter uppercase text-black dark:text-white transition-all duration-200">
-          IELTS
+        <span className="text-xl font-black tracking-tighter uppercase text-black transition-all duration-200 dark:text-white">
+          GetIeltsy
         </span>
       )}
     </Link>

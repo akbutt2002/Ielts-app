@@ -7,8 +7,8 @@
 - Updated TailwindCSS to v4
 - Updated dark theme colors to a less contrasting color palette
 - Updated the UI components to use the new spacing system in TailwindCSS v4
-- Minor bug fixes ported from the full kit
+- Minor bug fixes ported from the GetIeltsy app
 
 ## 0.1.0
 
-- Initial release of the Next.js Supabase SaaS Kit Lite template
+- Initial release of the GetIeltsy app
