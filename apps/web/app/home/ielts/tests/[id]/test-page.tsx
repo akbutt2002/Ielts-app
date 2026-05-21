@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from '@kit/ui/dialog';
 import { PageBody, PageHeader } from '@kit/ui/page';
-import { SidebarTrigger } from '@kit/ui/shadcn-sidebar';
+import { SidebarTrigger, useSidebar } from '@kit/ui/shadcn-sidebar';
 import { cn } from '@kit/ui/utils';
 
 type AnswerEntry = {
@@ -375,12 +375,8 @@ function isQuestionContentHeadingLine(
 ) {
   const normalizedLine = normalizeInstructionFragment(line);
   const isTitlePromptLine =
-    /^Which title is the most suitable for the text\?$/i.test(
-      normalizedLine,
-    ) ||
-    /^Which heading is the most suitable for the text\?$/i.test(
-      normalizedLine,
-    );
+    /^Which title is the most suitable for the text\?$/i.test(normalizedLine) ||
+    /^Which heading is the most suitable for the text\?$/i.test(normalizedLine);
 
   if (
     !normalizedLine ||
@@ -404,7 +400,9 @@ function isQuestionContentHeadingLine(
     return false;
   }
 
-  if (previousInstructionLines.some((entry) => /^List of People$/i.test(entry))) {
+  if (
+    previousInstructionLines.some((entry) => /^List of People$/i.test(entry))
+  ) {
     return false;
   }
 
@@ -2141,6 +2139,7 @@ function buildStartScreenDetails(test: IeltsTestRecord) {
 export default function TestPage({ test }: { test: IeltsTestRecord }) {
   const isListening = test?.test_type === 'listening';
   const router = useRouter();
+  const { open: sidebarOpen } = useSidebar();
 
   const [isStarted, setIsStarted] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -2424,8 +2423,8 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
 
   function getNextTargetBand(score: number) {
     const target =
-      scoreTargetBands.find(({ minimumCorrectAnswers }) =>
-        score < minimumCorrectAnswers,
+      scoreTargetBands.find(
+        ({ minimumCorrectAnswers }) => score < minimumCorrectAnswers,
       ) ?? scoreTargetBands[scoreTargetBands.length - 1];
 
     return {
@@ -2510,7 +2509,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
 
       return (
         <>
-          <strong className="font-bold text-foreground">{letter}</strong>{' '}
+          <strong className="text-foreground font-bold">{letter}</strong>{' '}
           <span>{remainder}</span>
         </>
       );
@@ -2533,7 +2532,9 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                     : 'text-foreground/80 text-[14px] leading-relaxed'
               }
             >
-              {isPeopleListLine ? renderPeopleListLine(line) : renderInstructionLine(line)}
+              {isPeopleListLine
+                ? renderPeopleListLine(line)
+                : renderInstructionLine(line)}
             </p>
           );
         })}
@@ -3006,15 +3007,16 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       ? formatQuestionRangeLabel(primaryBlock.questionNumbers)
       : '';
     const contentHeading = primaryBlock.contentHeading?.trim() ?? '';
-    const displayContentHeading = /^Which title is the most suitable for the text\?$/i.test(
-      contentHeading,
-    )
-      ? `Question ${
-          primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ??
-          primaryBlock.questionNumbers[0] ??
-          ''
-        }`
-      : contentHeading;
+    const displayContentHeading =
+      /^Which title is the most suitable for the text\?$/i.test(contentHeading)
+        ? `Question ${
+            primaryBlock.questionNumbers[
+              primaryBlock.questionNumbers.length - 1
+            ] ??
+            primaryBlock.questionNumbers[0] ??
+            ''
+          }`
+        : contentHeading;
 
     return (
       <section
@@ -3120,9 +3122,14 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       />
 
       <PageBody className="relative z-10 pb-24">
-        <div className="fixed top-4 left-[4.75rem] z-50 sm:left-[4.75rem]">
-          <SidebarTrigger className="border-border/70 bg-background text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground -ml-1 h-9 w-9 cursor-pointer rounded-xl border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]" />
-        </div>
+        <SidebarTrigger
+          className="border-border/70 bg-background text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground fixed top-4 z-50 hidden h-5 w-5 cursor-pointer rounded-xl border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] lg:inline-flex"
+          style={{
+            left: sidebarOpen
+              ? 'calc(var(--sidebar-width) + 0.75rem)'
+              : 'calc(var(--sidebar-width-icon) + 0.75rem)',
+          }}
+        />
 
         <div className="mx-auto flex w-full max-w-[500px] flex-col gap-4 px-4 py-6 sm:px-0 sm:py-8 lg:py-10">
           <div className="flex items-center justify-between gap-3">
@@ -3186,7 +3193,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             </div>
           </div>
 
-          <section className="border-border/70 bg-background overflow-hidden rounded-[20px] border shadow-none backdrop-blur-none dark:border-white/10 dark:bg-white/[0.035] dark:backdrop-blur-xl dark:shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)]">
+          <section className="border-border/70 bg-background overflow-hidden rounded-[20px] border shadow-none backdrop-blur-none dark:border-white/10 dark:bg-white/[0.035] dark:shadow-[0_40px_120px_-60px_rgba(0,0,0,0.95)] dark:backdrop-blur-xl">
             <div className="px-5 py-5 sm:px-6">
               <div className="flex items-center gap-3">
                 <div
@@ -3425,14 +3432,14 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       <Dialog open={showScoreModal} onOpenChange={setShowScoreModal}>
         <DialogContent
           overlayClassName="!bg-[rgba(0,0,0,0.55)] !backdrop-blur-[3px]"
-          className="!max-w-[420px] !max-h-[calc(100vh-1.5rem)] !overflow-y-auto !overflow-x-hidden !rounded-[24px] !border-0 !bg-[#ffffff] dark:!bg-[#111111] !p-0 !text-[#1a1a1a] dark:!text-[#f5f5f5] !shadow-[0_24px_80px_rgba(0,0,0,0.4)] dark:!shadow-[0_24px_80px_rgba(0,0,0,0.65)] [&>button]:hidden"
+          className="!max-h-[calc(100vh-1.5rem)] !max-w-[420px] !overflow-x-hidden !overflow-y-auto !rounded-[24px] !border-0 !bg-[#ffffff] !p-0 !text-[#1a1a1a] !shadow-[0_24px_80px_rgba(0,0,0,0.4)] dark:!bg-[#111111] dark:!text-[#f5f5f5] dark:!shadow-[0_24px_80px_rgba(0,0,0,0.65)] [&>button]:hidden"
         >
-          <DialogHeader className="!flex-row !items-center !justify-between !space-y-0 !text-left border-b border-[#f0f0f0] dark:border-[#2a2a2a] bg-[#ffffff] dark:bg-[#111111] px-4 py-3">
+          <DialogHeader className="!flex-row !items-center !justify-between !space-y-0 border-b border-[#f0f0f0] bg-[#ffffff] px-4 py-3 !text-left dark:border-[#2a2a2a] dark:bg-[#111111]">
             <div className="flex items-center gap-2.5">
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-[9px] bg-[#EAF3DE] text-[#3B6D11] dark:bg-[#1d2d15] dark:text-[#8bd27c]">
                 <Check className="h-3.5 w-3.5" />
               </span>
-              <span className="text-[10px] font-black tracking-[0.2em] uppercase text-[#1a1a1a] dark:text-[#f5f5f5]">
+              <span className="text-[10px] font-black tracking-[0.2em] text-[#1a1a1a] uppercase dark:text-[#f5f5f5]">
                 Test completed
               </span>
             </div>
@@ -3447,7 +3454,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             </button>
           </DialogHeader>
 
-          <div className="grid gap-0 border-b border-[#f0f0f0] bg-[#ffffff] px-4 py-4 dark:border-[#2a2a2a] dark:bg-[#111111] sm:grid-cols-[120px_minmax(0,1fr)] sm:items-center">
+          <div className="grid gap-0 border-b border-[#f0f0f0] bg-[#ffffff] px-4 py-4 sm:grid-cols-[120px_minmax(0,1fr)] sm:items-center dark:border-[#2a2a2a] dark:bg-[#111111]">
             <div className="flex justify-center">
               <div className="relative flex h-[104px] w-[104px] items-center justify-center">
                 <svg
@@ -3493,10 +3500,10 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                 </svg>
 
                 <div className="relative flex flex-col items-center justify-center text-center">
-                  <span className="text-[9px] font-black tracking-[0.2em] uppercase text-[#888888] dark:text-[#9b9b9b]">
+                  <span className="text-[9px] font-black tracking-[0.2em] text-[#888888] uppercase dark:text-[#9b9b9b]">
                     Your band
                   </span>
-                  <span className="mt-1 text-[28px] font-black leading-none text-[#1a1a1a] dark:text-[#f5f5f5]">
+                  <span className="mt-1 text-[28px] leading-none font-black text-[#1a1a1a] dark:text-[#f5f5f5]">
                     {bandScoreLabel}
                   </span>
                   <span className="mt-1.5 text-[10px] font-medium text-[#888888] dark:text-[#9b9b9b]">
@@ -3507,7 +3514,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             </div>
 
             <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-2 rounded-full bg-[#EAF3DE] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#3B6D11] dark:bg-[#1d2d15] dark:text-[#8bd27c]">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#EAF3DE] px-3 py-1 text-[10px] font-black tracking-[0.18em] text-[#3B6D11] uppercase dark:bg-[#1d2d15] dark:text-[#8bd27c]">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -3524,7 +3531,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                 {performanceLabel}
               </div>
 
-              <DialogTitle className="text-[18px] font-bold leading-tight text-[#1a1a1a] dark:text-[#f5f5f5]">
+              <DialogTitle className="text-[18px] leading-tight font-bold text-[#1a1a1a] dark:text-[#f5f5f5]">
                 {performanceLabel}
               </DialogTitle>
 
@@ -3566,7 +3573,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                       </svg>
                     </span>
                     <div className="min-w-0">
-                      <div className="text-[9px] font-black tracking-[0.22em] uppercase text-[#888888] dark:text-[#9b9b9b]">
+                      <div className="text-[9px] font-black tracking-[0.22em] text-[#888888] uppercase dark:text-[#9b9b9b]">
                         Next target
                       </div>
                       <div className="text-[13px] font-bold text-[#1a1a1a] dark:text-[#f5f5f5]">
@@ -3576,10 +3583,10 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                   </div>
 
                   <div className="text-right">
-                    <div className="text-[18px] font-black leading-none text-[#3B6D11] dark:text-[#8bd27c]">
+                    <div className="text-[18px] leading-none font-black text-[#3B6D11] dark:text-[#8bd27c]">
                       {nextTarget.needed}
                     </div>
-                    <div className="text-[10px] font-semibold tracking-[0.14em] uppercase text-[#888888] dark:text-[#9b9b9b]">
+                    <div className="text-[10px] font-semibold tracking-[0.14em] text-[#888888] uppercase dark:text-[#9b9b9b]">
                       more correct answers
                     </div>
                   </div>
@@ -3588,12 +3595,12 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 divide-y divide-[#f0f0f0] border-b border-[#f0f0f0] bg-[#f0f0f0] dark:divide-[#2a2a2a] dark:border-[#2a2a2a] dark:bg-[#1a1a1a] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <div className="grid grid-cols-1 divide-y divide-[#f0f0f0] border-b border-[#f0f0f0] bg-[#f0f0f0] sm:grid-cols-3 sm:divide-x sm:divide-y-0 dark:divide-[#2a2a2a] dark:border-[#2a2a2a] dark:bg-[#1a1a1a]">
             <div className="bg-white px-4 py-3.5 text-center dark:bg-[#141414]">
               <div className="inline-flex h-7 w-7 items-center justify-center rounded-[10px] bg-[#EAF3DE] text-[#3B6D11] dark:bg-[#1d2d15] dark:text-[#8bd27c]">
                 <Check className="h-3.5 w-3.5" />
               </div>
-              <div className="mt-2.5 text-[24px] font-black leading-none text-[#1a1a1a] dark:text-[#f5f5f5]">
+              <div className="mt-2.5 text-[24px] leading-none font-black text-[#1a1a1a] dark:text-[#f5f5f5]">
                 {score} / {totalQuestions}
               </div>
               <div className="mt-1.5 text-[13px] font-semibold text-[#3B6D11] dark:text-[#8bd27c]">
@@ -3605,7 +3612,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
               <div className="inline-flex h-7 w-7 items-center justify-center rounded-[10px] bg-[#FDECEA] text-[#c0392b] dark:bg-[#2a1717] dark:text-[#ff8c84]">
                 <X className="h-3.5 w-3.5" />
               </div>
-              <div className="mt-2.5 text-[24px] font-black leading-none text-[#1a1a1a] dark:text-[#f5f5f5]">
+              <div className="mt-2.5 text-[24px] leading-none font-black text-[#1a1a1a] dark:text-[#f5f5f5]">
                 {incorrectAnswerCount}
               </div>
               <div className="mt-1.5 text-[13px] font-semibold text-[#c0392b] dark:text-[#ff8c84]">
@@ -3617,7 +3624,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
               <div className="inline-flex h-7 w-7 items-center justify-center rounded-[10px] bg-[#E6F1FB] text-[#185FA5] dark:bg-[#122033] dark:text-[#7cb4f5]">
                 <Clock className="h-3.5 w-3.5" />
               </div>
-              <div className="mt-2.5 text-[24px] font-black leading-none text-[#1a1a1a] dark:text-[#f5f5f5]">
+              <div className="mt-2.5 text-[24px] leading-none font-black text-[#1a1a1a] dark:text-[#f5f5f5]">
                 {timeUsedMinutes} min
               </div>
               <div className="mt-1.5 text-[13px] font-semibold text-[#185FA5] dark:text-[#7cb4f5]">
@@ -3626,7 +3633,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             </div>
           </div>
 
-          <DialogFooter className="!block space-y-3.5 px-4 pb-4 pt-3.5">
+          <DialogFooter className="!block space-y-3.5 px-4 pt-3.5 pb-4">
             <button
               type="button"
               onClick={handleCloseScoreModal}

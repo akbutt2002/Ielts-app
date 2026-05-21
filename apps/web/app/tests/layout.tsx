@@ -1,10 +1,6 @@
 import { use } from 'react';
 
-import {
-  Page,
-  PageMobileNavigation,
-  PageNavigation,
-} from '@kit/ui/page';
+import { Page, PageMobileNavigation, PageNavigation } from '@kit/ui/page';
 import { SidebarProvider } from '@kit/ui/shadcn-sidebar';
 
 import { AppLogo } from '~/components/app-logo';
@@ -12,17 +8,10 @@ import { navigationConfig } from '~/config/navigation.config';
 import { withI18n } from '~/lib/i18n/with-i18n';
 import { requireUserInServerComponent } from '~/lib/server/require-user-in-server-component';
 
-// home imports
-import { HomeMobileNavigation } from './_components/home-mobile-navigation';
-import { HomeSidebar } from './_components/home-sidebar';
+import { HomeMobileNavigation } from '../home/_components/home-mobile-navigation';
+import { HomeSidebar } from '../home/_components/home-sidebar';
 
-function HomeLayout({ children }: React.PropsWithChildren) {
-  return <SidebarLayout>{children}</SidebarLayout>;
-}
-
-export default withI18n(HomeLayout);
-
-function SidebarLayout({ children }: React.PropsWithChildren) {
+function TestsLayout({ children }: React.PropsWithChildren) {
   const sidebarMinimized = navigationConfig.sidebarCollapsed;
   const [user] = use(Promise.all([requireUserInServerComponent()]));
 
@@ -42,6 +31,8 @@ function SidebarLayout({ children }: React.PropsWithChildren) {
     </SidebarProvider>
   );
 }
+
+export default withI18n(TestsLayout);
 
 function MobileNavigation() {
   return (

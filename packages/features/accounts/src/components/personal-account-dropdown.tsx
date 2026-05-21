@@ -116,10 +116,10 @@ export function PersonalAccountDropdown({
         </If>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className={'xl:!min-w-[15rem]'}>
-        <DropdownMenuItem className={'!h-10 rounded-none'}>
+      <DropdownMenuContent className={'w-52 xl:!min-w-[13rem]'}>
+        <DropdownMenuItem className={'!h-9 rounded-none px-2'}>
           <div
-            className={'flex flex-col justify-start truncate text-left text-xs'}
+            className={'flex flex-col justify-start truncate text-left text-[11px]'}
           >
             <div className={'text-muted-foreground'}>
               <Trans i18nKey={'common:signedInAs'} />
@@ -135,10 +135,10 @@ export function PersonalAccountDropdown({
 
         <DropdownMenuItem asChild>
           <Link
-            className={'s-full flex cursor-pointer items-center space-x-2'}
+            className={'s-full flex cursor-pointer items-center space-x-1.5 px-2 py-1.5 text-sm'}
             href={paths.home}
           >
-            <Home className={'h-5'} />
+            <Home className={'h-4'} />
 
             <span>
               <Trans i18nKey={'common:routes.home'} />
@@ -157,11 +157,11 @@ export function PersonalAccountDropdown({
         <DropdownMenuItem
           data-test={'account-dropdown-sign-out'}
           role={'button'}
-          className={'cursor-pointer'}
+          className={'cursor-pointer px-2 py-1.5 text-sm'}
           onClick={signOutRequested}
         >
-          <span className={'flex w-full items-center space-x-2'}>
-            <LogOut className={'h-5'} />
+          <span className={'flex w-full items-center space-x-1.5'}>
+            <LogOut className={'h-4'} />
 
             <span>
               <Trans i18nKey={'auth:signOut'} />

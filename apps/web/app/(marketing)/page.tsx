@@ -1,22 +1,17 @@
-import React from 'react';
 import { withI18n } from '~/lib/i18n/with-i18n';
-import { IELTSHero } from '@kit/ui/ielts/hero';
 
-import { 
-  FeaturesSection, 
-  StatsSection, 
-  TestimonialsSection 
-} from './_components/marketing-client-components';
+import { MarketingLandingPage } from './_components/landing-page';
+
+export const generateMetadata = async () => {
+  return {
+    title: 'IELTS practice tests | Master your IELTS',
+    description:
+      'Practice Cambridge IELTS tests, get instant band scores, and prepare with a premium simulation platform.',
+  };
+};
 
 function Home() {
-  return (
-    <main className="min-h-screen bg-background overflow-hidden">
-      <IELTSHero />
-      <FeaturesSection />
-      <StatsSection />
-      <TestimonialsSection />
-    </main>
-  );
+  return <MarketingLandingPage />;
 }
 
 export default withI18n(Home);
