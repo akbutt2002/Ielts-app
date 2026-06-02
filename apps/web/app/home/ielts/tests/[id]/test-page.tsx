@@ -1197,6 +1197,13 @@ function answerMatches(userAnswer: string, correctAnswer: string) {
   );
 }
 
+function parsePairedChoiceSelection(value: string) {
+  return value
+    .split('|')
+    .map((part) => normalizeAnswerText(part))
+    .filter(Boolean);
+}
+
 const questionRangePattern =
   /^Questions?\s+\d+(?:(?:\s*(?:to|-|\u2013|\u2014)\s*|\s+and\s+)\d+)?\.?$/i;
 const boxRangePattern =
@@ -2222,6 +2229,39 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     () => sourceQuestionBlocks.map((qBlock) => parseQuestionBlock(qBlock)),
     [sourceQuestionBlocks],
   );
+  const pairedChoiceQuestionBlocks = useMemo(
+    () =>
+      isListening
+        ? parsedQuestionBlocks.filter(
+            (block) =>
+              block.questionNumbers.length === 2 &&
+              (block.choices?.length ?? 0) > 0,
+          )
+        : [],
+    [isListening, parsedQuestionBlocks],
+  );
+  const pairedChoiceBlockLookup = useMemo(() => {
+    const lookup = new Map<number, ParsedQuestionBlock>();
+
+    pairedChoiceQuestionBlocks.forEach((block) => {
+      const firstQuestion = block.questionNumbers[0];
+
+      if (firstQuestion) {
+        lookup.set(firstQuestion, block);
+      }
+    });
+
+    return lookup;
+  }, [pairedChoiceQuestionBlocks]);
+  const pairedChoiceHiddenQuestionNumbers = useMemo(
+    () =>
+      new Set(
+        pairedChoiceQuestionBlocks
+          .map((block) => block.questionNumbers[1] ?? 0)
+          .filter((qNum) => qNum > 0),
+      ),
+    [pairedChoiceQuestionBlocks],
+  );
   const visibleQuestionBlocks = useMemo(() => {
     if (isListening) {
       return parsedQuestionBlocks;
@@ -2330,13 +2370,35 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     test?.total_answers ||
     answerLookup.size ||
     40;
-  const answeredQuestionCount = visibleQuestionNumbers.filter((qNum) =>
-    Boolean((userAnswers[qNum] ?? '').trim()),
-  ).length;
+  const answeredQuestionCount = useMemo(() => {
+    let count = 0;
+
+    visibleQuestionNumbers.forEach((qNum) => {
+      if (pairedChoiceHiddenQuestionNumbers.has(qNum)) {
+        return;
+      }
+
+      const pairedBlock = pairedChoiceBlockLookup.get(qNum);
+
+      if (pairedBlock) {
+        count += parsePairedChoiceSelection(userAnswers[qNum] ?? '').length;
+        return;
+      }
+
+      if ((userAnswers[qNum] ?? '').trim()) {
+        count += 1;
+      }
+    });
+
+    return count;
+  }, [
+    pairedChoiceBlockLookup,
+    pairedChoiceHiddenQuestionNumbers,
+    userAnswers,
+    visibleQuestionNumbers,
+  ]);
   const isAllAnswered =
-    visibleQuestionNumbers.length > 0
-      ? answeredQuestionCount >= visibleQuestionNumbers.length
-      : Object.keys(userAnswers).length >= totalQuestions;
+    answeredQuestionCount >= totalQuestions;
   const isTestLocked = isSubmitted || timeLeft === 0;
 
   useEffect(() => {
@@ -2392,8 +2454,40 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       scoredQuestionNumbers.length > 0
         ? scoredQuestionNumbers
         : Array.from(answerLookup.keys());
+    const handledPairedQuestionNumbers = new Set<number>();
+
+    pairedChoiceQuestionBlocks.forEach((block) => {
+      const [firstQuestion, secondQuestion] = block.questionNumbers;
+
+      if (!firstQuestion || !secondQuestion) {
+        return;
+      }
+
+      handledPairedQuestionNumbers.add(firstQuestion);
+      handledPairedQuestionNumbers.add(secondQuestion);
+
+      const selectedChoices = parsePairedChoiceSelection(
+        userAnswers[firstQuestion] ?? '',
+      );
+      const correctChoices = Array.from(
+        new Set(
+          block.questionNumbers
+            .map((qNum) => answerLookup.get(qNum) ?? '')
+            .map((answer) => normalizeAnswerText(answer))
+            .filter(Boolean),
+        ),
+      );
+
+      score += selectedChoices.filter((choice) =>
+        correctChoices.includes(choice),
+      ).length;
+    });
 
     questionNumbersToScore.forEach((qNum) => {
+      if (handledPairedQuestionNumbers.has(qNum)) {
+        return;
+      }
+
       const correctAnswer = answerLookup.get(qNum) ?? '';
 
       if (answerMatches(userAnswers[qNum] ?? '', correctAnswer)) {
@@ -2863,13 +2957,31 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     prompt,
     choices,
     showPrompt = true,
+    pairedQuestionNumbers = [],
   }: {
     qNum: number;
     prompt: string;
     choices: string[];
     showPrompt?: boolean;
+    pairedQuestionNumbers?: number[];
   }) => {
-    const correctAnswer = getCorrectAnswer(qNum);
+    const isPairedChoiceRow =
+      pairedQuestionNumbers.length === 2 && choices.length > 0;
+    const pairedCorrectAnswers = isPairedChoiceRow
+      ? Array.from(
+          new Set(
+            pairedQuestionNumbers
+              .map((questionNumber) => {
+                const answer = answerLookup.get(questionNumber) ?? '';
+                return normalizeAnswerText(answer);
+              })
+              .filter(Boolean),
+          ),
+        )
+      : [];
+    const correctAnswer = isPairedChoiceRow
+      ? pairedCorrectAnswers.join(' / ')
+      : getCorrectAnswer(qNum);
     const userAnswer = userAnswers[qNum] ?? '';
     const normalizedPrompt = compactPromptLines(
       stripQuestionNumberPrefix(prompt, qNum),
@@ -2877,13 +2989,22 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     const hasBlank = showPrompt && /__+/.test(normalizedPrompt);
     const hasChoices = choices.length > 0;
     const shouldRenderBlankInput = hasBlank;
+    const selectedChoices = isPairedChoiceRow
+      ? parsePairedChoiceSelection(userAnswer)
+      : [];
     const promptWithoutBlanks = compactPromptLines(
       normalizedPrompt
         .replace(/__+/g, '')
         .replace(/\s{2,}/g, ' ')
         .trim(),
     );
-    const isCorrect = isSubmitted && answerMatches(userAnswer, correctAnswer);
+    const isCorrect = isPairedChoiceRow
+      ? isSubmitted &&
+        selectedChoices.length > 0 &&
+        selectedChoices.every((choice) =>
+          pairedCorrectAnswers.includes(choice),
+        )
+      : isSubmitted && answerMatches(userAnswer, correctAnswer);
     const normalizedUserAnswer = normalizeAnswerText(userAnswer);
     return (
       <div key={qNum} className="group relative space-y-3 pl-10">
@@ -2913,9 +3034,12 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
               <div className="flex flex-wrap gap-2 pt-1">
                 {choices.map((choice) => {
                   const normalizedChoice = normalizeAnswerText(choice);
-                  const isSelected = normalizedUserAnswer === normalizedChoice;
-                  const isChoiceCorrect =
-                    isSubmitted && answerMatches(choice, correctAnswer);
+                  const isSelected = isPairedChoiceRow
+                    ? selectedChoices.includes(normalizedChoice)
+                    : normalizedUserAnswer === normalizedChoice;
+                  const isChoiceCorrect = isPairedChoiceRow
+                    ? pairedCorrectAnswers.includes(normalizedChoice)
+                    : isSubmitted && answerMatches(choice, correctAnswer);
                   const isWrongSelection =
                     isSubmitted && isSelected && !isChoiceCorrect;
 
@@ -2926,10 +3050,30 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                       disabled={isTestLocked}
                       onClick={() =>
                         !isTestLocked &&
-                        setUserAnswers((previous) => ({
-                          ...previous,
-                          [qNum]: choice,
-                        }))
+                        setUserAnswers((previous) => {
+                          if (!isPairedChoiceRow) {
+                            return {
+                              ...previous,
+                              [qNum]: choice,
+                            };
+                          }
+
+                          const normalizedSelectedChoices = selectedChoices.slice();
+                          const selectedIndex = normalizedSelectedChoices.indexOf(
+                            normalizedChoice,
+                          );
+
+                          if (selectedIndex >= 0) {
+                            normalizedSelectedChoices.splice(selectedIndex, 1);
+                          } else if (normalizedSelectedChoices.length < 2) {
+                            normalizedSelectedChoices.push(normalizedChoice);
+                          }
+
+                          return {
+                            ...previous,
+                            [qNum]: normalizedSelectedChoices.join('|'),
+                          };
+                        })
                       }
                       className={`min-w-[46px] rounded-full border px-4 py-2 text-[10px] font-black tracking-[0.2em] uppercase shadow-sm transition-all ${
                         isSubmitted
@@ -3041,6 +3185,10 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             ''
           }`
         : contentHeading;
+    const isPairedListeningChoiceBlock =
+      isListening &&
+      primaryBlock.questionNumbers.length === 2 &&
+      (primaryBlock.choices?.length ?? 0) > 0;
 
     return (
       <section
@@ -3068,34 +3216,69 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
         </div>
 
         <div className="space-y-6">
-          {[primaryBlock, ...continuationBlocks].map((block, blockGroupIdx) => (
-            <div
-              key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
-              className={cn(
-                'space-y-6',
-                blockGroupIdx > 0 && 'border-border/60 border-t pt-6',
-              )}
-            >
-              {block.items.map((item) => {
-                const itemPrompt = compactPromptLines(
-                  stripQuestionNumberPrefix(item.prompt, item.qNum),
-                );
-                const displayPrompt =
-                  sectionTitlePrompt &&
-                  (!itemPrompt ||
-                    /^question\s+\d+$/i.test(itemPrompt) ||
-                    itemPrompt === block.header.trim())
-                    ? sectionTitlePrompt
-                    : item.prompt;
+          {[primaryBlock, ...continuationBlocks].map((block, blockGroupIdx) => {
+            if (isPairedListeningChoiceBlock && blockGroupIdx === 0) {
+              const item = block.items[0];
 
-                return renderQuestionRow({
-                  qNum: item.qNum,
-                  prompt: displayPrompt,
-                  choices: block.choices,
-                });
-              })}
-            </div>
-          ))}
+              if (!item) {
+                return null;
+              }
+
+              const itemPrompt = compactPromptLines(
+                stripQuestionNumberPrefix(item.prompt, item.qNum),
+              );
+              const displayPrompt =
+                sectionTitlePrompt &&
+                (!itemPrompt ||
+                  /^question\s+\d+$/i.test(itemPrompt) ||
+                  itemPrompt === block.header.trim())
+                  ? sectionTitlePrompt
+                  : item.prompt;
+
+              return (
+                <div
+                  key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
+                  className="space-y-6"
+                >
+                  {renderQuestionRow({
+                    qNum: item.qNum,
+                    prompt: displayPrompt,
+                    choices: block.choices,
+                    pairedQuestionNumbers: block.questionNumbers,
+                  })}
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
+                className={cn(
+                  'space-y-6',
+                  blockGroupIdx > 0 && 'border-border/60 border-t pt-6',
+                )}
+              >
+                {block.items.map((item) => {
+                  const itemPrompt = compactPromptLines(
+                    stripQuestionNumberPrefix(item.prompt, item.qNum),
+                  );
+                  const displayPrompt =
+                    sectionTitlePrompt &&
+                    (!itemPrompt ||
+                      /^question\s+\d+$/i.test(itemPrompt) ||
+                      itemPrompt === block.header.trim())
+                      ? sectionTitlePrompt
+                      : item.prompt;
+
+                  return renderQuestionRow({
+                    qNum: item.qNum,
+                    prompt: displayPrompt,
+                    choices: block.choices,
+                  });
+                })}
+              </div>
+            );
+          })}
         </div>
       </section>
     );
