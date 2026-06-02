@@ -1079,6 +1079,26 @@ function parseQuestionBlock(block: QuestionBlock): ParsedQuestionBlock {
     displayInstructionLines.pop();
   }
 
+  if (
+    items.length === 0 &&
+    questionNumbers.length > 0 &&
+    (block.choices ?? []).length > 0 &&
+    displayInstructionLines.length > 0
+  ) {
+    const fallbackPrompt = compactPromptLines(
+      displayInstructionLines.pop() ?? '',
+    );
+
+    if (fallbackPrompt) {
+      items.push(
+        ...questionNumbers.map((qNum) => ({
+          qNum,
+          prompt: fallbackPrompt,
+        })),
+      );
+    }
+  }
+
   return {
     header: block.header,
     questionNumbers,
