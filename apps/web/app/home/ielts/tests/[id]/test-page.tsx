@@ -2397,8 +2397,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     userAnswers,
     visibleQuestionNumbers,
   ]);
-  const isAllAnswered =
-    answeredQuestionCount >= totalQuestions;
+  const isAllAnswered = answeredQuestionCount >= totalQuestions;
   const isTestLocked = isSubmitted || timeLeft === 0;
 
   useEffect(() => {
@@ -3001,9 +3000,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     const isCorrect = isPairedChoiceRow
       ? isSubmitted &&
         selectedChoices.length > 0 &&
-        selectedChoices.every((choice) =>
-          pairedCorrectAnswers.includes(choice),
-        )
+        selectedChoices.every((choice) => pairedCorrectAnswers.includes(choice))
       : isSubmitted && answerMatches(userAnswer, correctAnswer);
     const normalizedUserAnswer = normalizeAnswerText(userAnswer);
     return (
@@ -3058,10 +3055,10 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                             };
                           }
 
-                          const normalizedSelectedChoices = selectedChoices.slice();
-                          const selectedIndex = normalizedSelectedChoices.indexOf(
-                            normalizedChoice,
-                          );
+                          const normalizedSelectedChoices =
+                            selectedChoices.slice();
+                          const selectedIndex =
+                            normalizedSelectedChoices.indexOf(normalizedChoice);
 
                           if (selectedIndex >= 0) {
                             normalizedSelectedChoices.splice(selectedIndex, 1);
@@ -3175,8 +3172,16 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       ? formatQuestionRangeLabel(primaryBlock.questionNumbers)
       : '';
     const contentHeading = primaryBlock.contentHeading?.trim() ?? '';
-    const displayContentHeading =
-      /^Which title is the most suitable for the text\?$/i.test(contentHeading)
+    const isPairedListeningChoiceBlock =
+      isListening &&
+      primaryBlock.questionNumbers.length === 2 &&
+      (primaryBlock.choices?.length ?? 0) > 0;
+    const shouldInlinePairedListeningPrompt = isPairedListeningChoiceBlock;
+    const displayContentHeading = shouldInlinePairedListeningPrompt
+      ? ''
+      : /^Which title is the most suitable for the text\?$/i.test(
+            contentHeading,
+          )
         ? `Question ${
             primaryBlock.questionNumbers[
               primaryBlock.questionNumbers.length - 1
@@ -3185,11 +3190,6 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             ''
           }`
         : contentHeading;
-    const isPairedListeningChoiceBlock =
-      isListening &&
-      primaryBlock.questionNumbers.length === 2 &&
-      (primaryBlock.choices?.length ?? 0) > 0;
-
     return (
       <section
         key={`${primaryBlock.header}-${groupIdx}`}
@@ -3210,7 +3210,21 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
 
           {primaryBlock.instructions ? (
             <div className="border-border/60 bg-muted/20 rounded-2xl border p-4">
-              {renderInstructionText(primaryBlock.instructions)}
+              {renderInstructionText(
+                shouldInlinePairedListeningPrompt
+                  ? [
+                      primaryBlock.instructions,
+                      compactPromptLines(
+                        stripQuestionNumberPrefix(
+                          primaryBlock.items[0]?.prompt ?? '',
+                          primaryBlock.items[0]?.qNum ?? 0,
+                        ),
+                      ),
+                    ]
+                      .filter(Boolean)
+                      .join('\n')
+                  : primaryBlock.instructions,
+              )}
             </div>
           ) : null}
         </div>
@@ -3242,9 +3256,12 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                 >
                   {renderQuestionRow({
                     qNum: item.qNum,
-                    prompt: displayPrompt,
+                    prompt: shouldInlinePairedListeningPrompt
+                      ? ''
+                      : displayPrompt,
                     choices: block.choices,
                     pairedQuestionNumbers: block.questionNumbers,
+                    showPrompt: !shouldInlinePairedListeningPrompt,
                   })}
                 </div>
               );
