@@ -2725,7 +2725,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                   ? renderInstructionLine(line)
                   : isOpinionListLine
                     ? renderOpinionListLine(line)
-                : renderInstructionLine(line)}
+                    : renderInstructionLine(line)}
             </p>
           );
         })}
@@ -3117,9 +3117,8 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                   const isSelected = isPairedChoiceRow
                     ? selectedChoices.includes(normalizedChoice)
                     : normalizedUserAnswer === normalizedChoice;
-                  const isChoiceCorrect = correctChoiceValues.includes(
-                    normalizedChoice,
-                  );
+                  const isChoiceCorrect =
+                    correctChoiceValues.includes(normalizedChoice);
                   const isWrongSelection =
                     isSubmitted && isSelected && !isChoiceCorrect;
 
@@ -3257,10 +3256,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     const listeningPartLabel = isListening
       ? `Part ${Math.min(
           4,
-          Math.max(
-            1,
-            Math.ceil((primaryBlock.questionNumbers[0] ?? 1) / 10),
-          ),
+          Math.max(1, Math.ceil((primaryBlock.questionNumbers[0] ?? 1) / 10)),
         )}`
       : '';
     const contentHeading = primaryBlock.contentHeading?.trim() ?? '';
@@ -3397,16 +3393,16 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                       !(shouldHideListeningLeadInRow && item.qNum === 11),
                   )
                   .map((item) => {
-                  const itemPrompt = compactPromptLines(
-                    stripQuestionNumberPrefix(item.prompt, item.qNum),
-                  );
-                  const displayPrompt =
-                    sectionTitlePrompt &&
-                    (!itemPrompt ||
-                      /^question\s+\d+$/i.test(itemPrompt) ||
-                      itemPrompt === block.header.trim())
-                      ? sectionTitlePrompt
-                      : item.prompt;
+                    const itemPrompt = compactPromptLines(
+                      stripQuestionNumberPrefix(item.prompt, item.qNum),
+                    );
+                    const displayPrompt =
+                      sectionTitlePrompt &&
+                      (!itemPrompt ||
+                        /^question\s+\d+$/i.test(itemPrompt) ||
+                        itemPrompt === block.header.trim())
+                        ? sectionTitlePrompt
+                        : item.prompt;
 
                     return renderQuestionRow({
                       qNum: item.qNum,
@@ -3419,78 +3415,80 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
               )}
             </div>
           ) : (
-            [primaryBlock, ...continuationBlocks].map((block, blockGroupIdx) => {
-              if (isPairedListeningChoiceBlock && blockGroupIdx === 0) {
-                const item = block.items[0];
+            [primaryBlock, ...continuationBlocks].map(
+              (block, blockGroupIdx) => {
+                if (isPairedListeningChoiceBlock && blockGroupIdx === 0) {
+                  const item = block.items[0];
 
-                if (!item) {
-                  return null;
+                  if (!item) {
+                    return null;
+                  }
+
+                  const itemPrompt = compactPromptLines(
+                    stripQuestionNumberPrefix(item.prompt, item.qNum),
+                  );
+                  const displayPrompt =
+                    sectionTitlePrompt &&
+                    (!itemPrompt ||
+                      /^question\s+\d+$/i.test(itemPrompt) ||
+                      itemPrompt === block.header.trim())
+                      ? sectionTitlePrompt
+                      : item.prompt;
+
+                  return (
+                    <div
+                      key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
+                      className="space-y-6"
+                    >
+                      {renderQuestionRow({
+                        qNum: item.qNum,
+                        prompt: shouldInlinePairedListeningPrompt
+                          ? ''
+                          : displayPrompt,
+                        choices: block.choices,
+                        pairedQuestionNumbers: block.questionNumbers,
+                        showPrompt: !shouldInlinePairedListeningPrompt,
+                        hideQuestionNumber: isPairedListeningChoiceBlock,
+                      })}
+                    </div>
+                  );
                 }
-
-                const itemPrompt = compactPromptLines(
-                  stripQuestionNumberPrefix(item.prompt, item.qNum),
-                );
-                const displayPrompt =
-                  sectionTitlePrompt &&
-                  (!itemPrompt ||
-                    /^question\s+\d+$/i.test(itemPrompt) ||
-                    itemPrompt === block.header.trim())
-                    ? sectionTitlePrompt
-                    : item.prompt;
 
                 return (
                   <div
                     key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
-                    className="space-y-6"
+                    className={cn(
+                      'space-y-6',
+                      blockGroupIdx > 0 && 'border-border/60 border-t pt-6',
+                    )}
                   >
-                    {renderQuestionRow({
-                      qNum: item.qNum,
-                      prompt: shouldInlinePairedListeningPrompt
-                        ? ''
-                        : displayPrompt,
-                      choices: block.choices,
-                      pairedQuestionNumbers: block.questionNumbers,
-                      showPrompt: !shouldInlinePairedListeningPrompt,
-                      hideQuestionNumber: isPairedListeningChoiceBlock,
-                    })}
+                    {block.items
+                      .filter(
+                        (item) =>
+                          !(shouldHideListeningLeadInRow && item.qNum === 11),
+                      )
+                      .map((item) => {
+                        const itemPrompt = compactPromptLines(
+                          stripQuestionNumberPrefix(item.prompt, item.qNum),
+                        );
+                        const displayPrompt =
+                          sectionTitlePrompt &&
+                          (!itemPrompt ||
+                            /^question\s+\d+$/i.test(itemPrompt) ||
+                            itemPrompt === block.header.trim())
+                            ? sectionTitlePrompt
+                            : item.prompt;
+
+                        return renderQuestionRow({
+                          qNum: item.qNum,
+                          prompt: displayPrompt,
+                          choices: block.choices,
+                        });
+                      })}
                   </div>
                 );
-              }
-
-              return (
-                <div
-                  key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
-                  className={cn(
-                    'space-y-6',
-                    blockGroupIdx > 0 && 'border-border/60 border-t pt-6',
-                  )}
-                >
-                  {block.items
-                    .filter(
-                      (item) =>
-                        !(shouldHideListeningLeadInRow && item.qNum === 11),
-                    )
-                    .map((item) => {
-                    const itemPrompt = compactPromptLines(
-                      stripQuestionNumberPrefix(item.prompt, item.qNum),
-                    );
-                    const displayPrompt =
-                      sectionTitlePrompt &&
-                      (!itemPrompt ||
-                        /^question\s+\d+$/i.test(itemPrompt) ||
-                        itemPrompt === block.header.trim())
-                        ? sectionTitlePrompt
-                        : item.prompt;
-
-                      return renderQuestionRow({
-                        qNum: item.qNum,
-                        prompt: displayPrompt,
-                        choices: block.choices,
-                      });
-                    })}
-                </div>
-              );
-            })
+              },
+            )
           )}
         </div>
       </section>
