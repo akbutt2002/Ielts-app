@@ -1294,6 +1294,7 @@ function formatInstructionLines(text: string) {
     if (
       questionRangePattern.test(line) ||
       /^List of Headings$/i.test(line) ||
+      /^Opinions$/i.test(line) ||
       isPeopleListHeading
     ) {
       formattedLines.push(line);
@@ -1332,6 +1333,7 @@ function formatInstructionLines(text: string) {
       if (
         questionRangePattern.test(upcomingLine) ||
         /^List of Headings$/i.test(upcomingLine) ||
+        /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
         /^(TRUE|FALSE|NOT GIVEN|YES|NO)$/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
@@ -1382,6 +1384,10 @@ function compactPromptLines(prompt: string) {
   }
 
   return prompt.trim();
+}
+
+function stripLeadingBulletMarker(prompt: string) {
+  return prompt.replace(/^\s*[•·]\s*/, '').trim();
 }
 
 function formatQuestionRangeLabel(questionNumbers: number[]) {
@@ -2632,11 +2638,41 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       );
     };
 
+    const renderOpinionListLine = (line: string) => {
+      const opinionMatch = line.match(/^([A-H])(?:[.)])?\s+(.+)$/);
+
+      if (!opinionMatch?.[1] || !opinionMatch[2]) {
+        return renderInstructionLine(line);
+      }
+
+      const [, letter, remainder] = opinionMatch;
+
+      return (
+        <>
+          <strong className="text-foreground font-bold">{letter}</strong>{' '}
+          <span>{remainder}</span>
+        </>
+      );
+    };
+
+    let inOpinionsBlock = false;
+
     return (
       <div className="space-y-1.5">
         {lines.map((line, index) => {
           const style = getInstructionLineStyle(line);
           const isPeopleListLine = /^[A-D](?:[.)])?\s+\S/.test(line);
+          const isOpinionsHeading = /^Opinions$/i.test(line);
+          const isOpinionListLine =
+            inOpinionsBlock &&
+            /^\s*[A-H](?:[.)])?\s+\S/.test(line) &&
+            !isPeopleListLine;
+
+          if (isOpinionsHeading) {
+            inOpinionsBlock = true;
+          } else if (inOpinionsBlock && !isOpinionListLine) {
+            inOpinionsBlock = false;
+          }
 
           return (
             <p
@@ -2651,6 +2687,10 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             >
               {isPeopleListLine
                 ? renderPeopleListLine(line)
+                : isOpinionsHeading
+                  ? renderInstructionLine(line)
+                  : isOpinionListLine
+                    ? renderOpinionListLine(line)
                 : renderInstructionLine(line)}
             </p>
           );
@@ -2957,12 +2997,14 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     choices,
     showPrompt = true,
     pairedQuestionNumbers = [],
+    hideQuestionNumber = false,
   }: {
     qNum: number;
     prompt: string;
     choices: string[];
     showPrompt?: boolean;
     pairedQuestionNumbers?: number[];
+    hideQuestionNumber?: boolean;
   }) => {
     const isPairedChoiceRow =
       pairedQuestionNumbers.length === 2 && choices.length > 0;
@@ -2983,7 +3025,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       : getCorrectAnswer(qNum);
     const userAnswer = userAnswers[qNum] ?? '';
     const normalizedPrompt = compactPromptLines(
-      stripQuestionNumberPrefix(prompt, qNum),
+      stripQuestionNumberPrefix(stripLeadingBulletMarker(prompt), qNum),
     );
     const hasBlank = showPrompt && /__+/.test(normalizedPrompt);
     const hasChoices = choices.length > 0;
@@ -3005,9 +3047,11 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     const normalizedUserAnswer = normalizeAnswerText(userAnswer);
     return (
       <div key={qNum} className="group relative space-y-3 pl-10">
-        <div className="bg-foreground text-background absolute top-0 left-0 flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black shadow-md transition-transform group-hover:scale-110">
-          {qNum}
-        </div>
+        {!hideQuestionNumber ? (
+          <div className="bg-foreground text-background absolute top-0 left-0 flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black shadow-md transition-transform group-hover:scale-110">
+            {qNum}
+          </div>
+        ) : null}
 
         <div className="flex items-start gap-2">
           {isSubmitted ? (
@@ -3190,6 +3234,44 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             ''
           }`
         : contentHeading;
+    const listeningInstructionText =
+      isListening &&
+      primaryBlock.questionNumbers.length > 1 &&
+      !isPairedListeningChoiceBlock
+        ? primaryBlock.instructions
+            .split(/\r?\n/)
+            .filter((line) => {
+              const normalizedLine = line.trim();
+
+              if (!normalizedLine) {
+                return true;
+              }
+
+              const firstQuestionNumber = primaryBlock.items[0]?.qNum ?? 0;
+
+              if (!firstQuestionNumber) {
+                return true;
+              }
+
+              return !new RegExp(`^${firstQuestionNumber}\\b`).test(
+                normalizedLine,
+              );
+            })
+            .join('\n')
+        : primaryBlock.instructions;
+    const shouldFlattenListeningQuestionRows =
+      isListening &&
+      primaryBlock.questionNumbers.length > 1 &&
+      !isPairedListeningChoiceBlock;
+    const pairedInstructionText = shouldInlinePairedListeningPrompt
+      ? primaryBlock.instructions
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter(
+            (line, index) => index !== 0 || !questionRangePattern.test(line),
+          )
+          .join('\n')
+      : primaryBlock.instructions;
     return (
       <section
         key={`${primaryBlock.header}-${groupIdx}`}
@@ -3213,7 +3295,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
               {renderInstructionText(
                 shouldInlinePairedListeningPrompt
                   ? [
-                      primaryBlock.instructions,
+                      pairedInstructionText,
                       compactPromptLines(
                         stripQuestionNumberPrefix(
                           primaryBlock.items[0]?.prompt ?? '',
@@ -3223,59 +3305,17 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                     ]
                       .filter(Boolean)
                       .join('\n')
-                  : primaryBlock.instructions,
+                  : listeningInstructionText,
               )}
             </div>
           ) : null}
         </div>
 
         <div className="space-y-6">
-          {[primaryBlock, ...continuationBlocks].map((block, blockGroupIdx) => {
-            if (isPairedListeningChoiceBlock && blockGroupIdx === 0) {
-              const item = block.items[0];
-
-              if (!item) {
-                return null;
-              }
-
-              const itemPrompt = compactPromptLines(
-                stripQuestionNumberPrefix(item.prompt, item.qNum),
-              );
-              const displayPrompt =
-                sectionTitlePrompt &&
-                (!itemPrompt ||
-                  /^question\s+\d+$/i.test(itemPrompt) ||
-                  itemPrompt === block.header.trim())
-                  ? sectionTitlePrompt
-                  : item.prompt;
-
-              return (
-                <div
-                  key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
-                  className="space-y-6"
-                >
-                  {renderQuestionRow({
-                    qNum: item.qNum,
-                    prompt: shouldInlinePairedListeningPrompt
-                      ? ''
-                      : displayPrompt,
-                    choices: block.choices,
-                    pairedQuestionNumbers: block.questionNumbers,
-                    showPrompt: !shouldInlinePairedListeningPrompt,
-                  })}
-                </div>
-              );
-            }
-
-            return (
-              <div
-                key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
-                className={cn(
-                  'space-y-6',
-                  blockGroupIdx > 0 && 'border-border/60 border-t pt-6',
-                )}
-              >
-                {block.items.map((item) => {
+          {shouldFlattenListeningQuestionRows ? (
+            <div className="space-y-6">
+              {[primaryBlock, ...continuationBlocks].flatMap((block) =>
+                block.items.map((item) => {
                   const itemPrompt = compactPromptLines(
                     stripQuestionNumberPrefix(item.prompt, item.qNum),
                   );
@@ -3291,11 +3331,81 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                     qNum: item.qNum,
                     prompt: displayPrompt,
                     choices: block.choices,
+                    pairedQuestionNumbers: block.questionNumbers,
+                    showPrompt: true,
                   });
-                })}
-              </div>
-            );
-          })}
+                }),
+              )}
+            </div>
+          ) : (
+            [primaryBlock, ...continuationBlocks].map((block, blockGroupIdx) => {
+              if (isPairedListeningChoiceBlock && blockGroupIdx === 0) {
+                const item = block.items[0];
+
+                if (!item) {
+                  return null;
+                }
+
+                const itemPrompt = compactPromptLines(
+                  stripQuestionNumberPrefix(item.prompt, item.qNum),
+                );
+                const displayPrompt =
+                  sectionTitlePrompt &&
+                  (!itemPrompt ||
+                    /^question\s+\d+$/i.test(itemPrompt) ||
+                    itemPrompt === block.header.trim())
+                    ? sectionTitlePrompt
+                    : item.prompt;
+
+                return (
+                  <div
+                    key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
+                    className="space-y-6"
+                  >
+                    {renderQuestionRow({
+                      qNum: item.qNum,
+                      prompt: shouldInlinePairedListeningPrompt
+                        ? ''
+                        : displayPrompt,
+                      choices: block.choices,
+                      pairedQuestionNumbers: block.questionNumbers,
+                      showPrompt: !shouldInlinePairedListeningPrompt,
+                      hideQuestionNumber: isPairedListeningChoiceBlock,
+                    })}
+                  </div>
+                );
+              }
+
+              return (
+                <div
+                  key={`${block.header}-${groupIdx}-${blockGroupIdx}`}
+                  className={cn(
+                    'space-y-6',
+                    blockGroupIdx > 0 && 'border-border/60 border-t pt-6',
+                  )}
+                >
+                  {block.items.map((item) => {
+                    const itemPrompt = compactPromptLines(
+                      stripQuestionNumberPrefix(item.prompt, item.qNum),
+                    );
+                    const displayPrompt =
+                      sectionTitlePrompt &&
+                      (!itemPrompt ||
+                        /^question\s+\d+$/i.test(itemPrompt) ||
+                        itemPrompt === block.header.trim())
+                        ? sectionTitlePrompt
+                        : item.prompt;
+
+                    return renderQuestionRow({
+                      qNum: item.qNum,
+                      prompt: displayPrompt,
+                      choices: block.choices,
+                    });
+                  })}
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
     );
