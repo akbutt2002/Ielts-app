@@ -1139,6 +1139,16 @@ function getChoiceAnswerValue(option: string) {
   return trimmedOption;
 }
 
+function getChoiceComparisonValue(option: string) {
+  return normalizeAnswerText(getChoiceAnswerValue(option));
+}
+
+function getChoiceComparisonValues(answer: string) {
+  return splitAnswerVariants(answer)
+    .map((variant) => getChoiceComparisonValue(variant))
+    .filter(Boolean);
+}
+
 function buildAnswerLookup(test: any) {
   const lookup = new Map<number, string>();
 
@@ -1200,7 +1210,7 @@ function answerMatches(userAnswer: string, correctAnswer: string) {
 function parsePairedChoiceSelection(value: string) {
   return value
     .split('|')
-    .map((part) => normalizeAnswerText(part))
+    .map((part) => getChoiceComparisonValue(part))
     .filter(Boolean);
 }
 
@@ -2235,6 +2245,30 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     () => sourceQuestionBlocks.map((qBlock) => parseQuestionBlock(qBlock)),
     [sourceQuestionBlocks],
   );
+  const listeningLeadInQuestion = useMemo(() => {
+    if (
+      !isListening ||
+      !/Cambridge 19 Listening Test 1/i.test(test?.title ?? '')
+    ) {
+      return null;
+    }
+
+    const leadInBlock = parsedQuestionBlocks.find(
+      (block) => block.questionNumbers[0] === 11,
+    );
+    const leadInItem = leadInBlock?.items[0];
+
+    if (!leadInBlock || !leadInItem) {
+      return null;
+    }
+
+    return {
+      qNum: leadInItem.qNum,
+      prompt: leadInItem.prompt,
+      choices: leadInBlock.choices ?? [],
+      pairedQuestionNumbers: leadInBlock.questionNumbers ?? [],
+    };
+  }, [isListening, parsedQuestionBlocks, test?.title]);
   const pairedChoiceQuestionBlocks = useMemo(
     () =>
       isListening
@@ -2478,7 +2512,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
         new Set(
           block.questionNumbers
             .map((qNum) => answerLookup.get(qNum) ?? '')
-            .map((answer) => normalizeAnswerText(answer))
+            .map((answer) => getChoiceComparisonValue(answer))
             .filter(Boolean),
         ),
       );
@@ -3008,20 +3042,12 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
   }) => {
     const isPairedChoiceRow =
       pairedQuestionNumbers.length === 2 && choices.length > 0;
-    const pairedCorrectAnswers = isPairedChoiceRow
-      ? Array.from(
-          new Set(
-            pairedQuestionNumbers
-              .map((questionNumber) => {
-                const answer = answerLookup.get(questionNumber) ?? '';
-                return normalizeAnswerText(answer);
-              })
-              .filter(Boolean),
-          ),
-        )
-      : [];
     const correctAnswer = isPairedChoiceRow
-      ? pairedCorrectAnswers.join(' / ')
+      ? pairedQuestionNumbers
+          .map((questionNumber) => answerLookup.get(questionNumber) ?? '')
+          .map((answer) => getChoiceComparisonValue(answer))
+          .filter(Boolean)
+          .join(' / ')
       : getCorrectAnswer(qNum);
     const userAnswer = userAnswers[qNum] ?? '';
     const normalizedPrompt = compactPromptLines(
@@ -3033,6 +3059,18 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     const selectedChoices = isPairedChoiceRow
       ? parsePairedChoiceSelection(userAnswer)
       : [];
+    const correctChoiceValues = isPairedChoiceRow
+      ? Array.from(
+          new Set(
+            pairedQuestionNumbers
+              .map((questionNumber) => {
+                const answer = answerLookup.get(questionNumber) ?? '';
+                return getChoiceComparisonValue(answer);
+              })
+              .filter(Boolean),
+          ),
+        )
+      : getChoiceComparisonValues(correctAnswer);
     const promptWithoutBlanks = compactPromptLines(
       normalizedPrompt
         .replace(/__+/g, '')
@@ -3042,9 +3080,10 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     const isCorrect = isPairedChoiceRow
       ? isSubmitted &&
         selectedChoices.length > 0 &&
-        selectedChoices.every((choice) => pairedCorrectAnswers.includes(choice))
-      : isSubmitted && answerMatches(userAnswer, correctAnswer);
-    const normalizedUserAnswer = normalizeAnswerText(userAnswer);
+        selectedChoices.every((choice) => correctChoiceValues.includes(choice))
+      : isSubmitted &&
+        correctChoiceValues.includes(getChoiceComparisonValue(userAnswer));
+    const normalizedUserAnswer = getChoiceComparisonValue(userAnswer);
     return (
       <div key={qNum} className="group relative space-y-3 pl-10">
         {!hideQuestionNumber ? (
@@ -3074,13 +3113,13 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
             {hasChoices && !hasBlank ? (
               <div className="flex flex-wrap gap-2 pt-1">
                 {choices.map((choice) => {
-                  const normalizedChoice = normalizeAnswerText(choice);
+                  const normalizedChoice = getChoiceComparisonValue(choice);
                   const isSelected = isPairedChoiceRow
                     ? selectedChoices.includes(normalizedChoice)
                     : normalizedUserAnswer === normalizedChoice;
-                  const isChoiceCorrect = isPairedChoiceRow
-                    ? pairedCorrectAnswers.includes(normalizedChoice)
-                    : isSubmitted && answerMatches(choice, correctAnswer);
+                  const isChoiceCorrect = correctChoiceValues.includes(
+                    normalizedChoice,
+                  );
                   const isWrongSelection =
                     isSubmitted && isSelected && !isChoiceCorrect;
 
@@ -3095,7 +3134,7 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                           if (!isPairedChoiceRow) {
                             return {
                               ...previous,
-                              [qNum]: choice,
+                              [qNum]: normalizedChoice,
                             };
                           }
 
@@ -3215,6 +3254,15 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     const displayBlockTitle = shouldShowQuestionBlockTitle(primaryBlock)
       ? formatQuestionRangeLabel(primaryBlock.questionNumbers)
       : '';
+    const listeningPartLabel = isListening
+      ? `Part ${Math.min(
+          4,
+          Math.max(
+            1,
+            Math.ceil((primaryBlock.questionNumbers[0] ?? 1) / 10),
+          ),
+        )}`
+      : '';
     const contentHeading = primaryBlock.contentHeading?.trim() ?? '';
     const isPairedListeningChoiceBlock =
       isListening &&
@@ -3272,12 +3320,24 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
           )
           .join('\n')
       : primaryBlock.instructions;
+    const shouldHideListeningLeadInRow =
+      Boolean(listeningLeadInQuestion) &&
+      primaryBlock.questionNumbers[0] === 11;
+    const shouldRenderListeningLeadInRow =
+      Boolean(listeningLeadInQuestion) &&
+      primaryBlock.questionNumbers[0] === 12;
     return (
       <section
         key={`${primaryBlock.header}-${groupIdx}`}
         className="border-border/60 bg-background/80 space-y-5 rounded-3xl border p-6 shadow-sm"
       >
         <div className="space-y-2">
+          {listeningPartLabel ? (
+            <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
+              {listeningPartLabel}
+            </div>
+          ) : null}
+
           {displayBlockTitle ? (
             <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
               {displayBlockTitle}
@@ -3291,7 +3351,11 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
           ) : null}
 
           {primaryBlock.instructions ? (
-            <div className="border-border/60 bg-muted/20 rounded-2xl border p-4">
+            <div className="border-border/60 bg-muted/20 relative overflow-hidden rounded-2xl border p-4">
+              {isListening ? (
+                <div className="bg-foreground absolute top-0 bottom-0 left-0 w-1.5" />
+              ) : null}
+
               {renderInstructionText(
                 shouldInlinePairedListeningPrompt
                   ? [
@@ -3312,10 +3376,27 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
         </div>
 
         <div className="space-y-6">
+          {shouldRenderListeningLeadInRow ? (
+            <div>
+              {renderQuestionRow({
+                qNum: listeningLeadInQuestion!.qNum,
+                prompt: listeningLeadInQuestion!.prompt,
+                choices: listeningLeadInQuestion!.choices,
+                pairedQuestionNumbers:
+                  listeningLeadInQuestion!.pairedQuestionNumbers,
+              })}
+            </div>
+          ) : null}
+
           {shouldFlattenListeningQuestionRows ? (
             <div className="space-y-6">
               {[primaryBlock, ...continuationBlocks].flatMap((block) =>
-                block.items.map((item) => {
+                block.items
+                  .filter(
+                    (item) =>
+                      !(shouldHideListeningLeadInRow && item.qNum === 11),
+                  )
+                  .map((item) => {
                   const itemPrompt = compactPromptLines(
                     stripQuestionNumberPrefix(item.prompt, item.qNum),
                   );
@@ -3327,14 +3408,14 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                       ? sectionTitlePrompt
                       : item.prompt;
 
-                  return renderQuestionRow({
-                    qNum: item.qNum,
-                    prompt: displayPrompt,
-                    choices: block.choices,
-                    pairedQuestionNumbers: block.questionNumbers,
-                    showPrompt: true,
-                  });
-                }),
+                    return renderQuestionRow({
+                      qNum: item.qNum,
+                      prompt: displayPrompt,
+                      choices: block.choices,
+                      pairedQuestionNumbers: block.questionNumbers,
+                      showPrompt: true,
+                    });
+                  }),
               )}
             </div>
           ) : (
@@ -3384,7 +3465,12 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                     blockGroupIdx > 0 && 'border-border/60 border-t pt-6',
                   )}
                 >
-                  {block.items.map((item) => {
+                  {block.items
+                    .filter(
+                      (item) =>
+                        !(shouldHideListeningLeadInRow && item.qNum === 11),
+                    )
+                    .map((item) => {
                     const itemPrompt = compactPromptLines(
                       stripQuestionNumberPrefix(item.prompt, item.qNum),
                     );
@@ -3396,12 +3482,12 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
                         ? sectionTitlePrompt
                         : item.prompt;
 
-                    return renderQuestionRow({
-                      qNum: item.qNum,
-                      prompt: displayPrompt,
-                      choices: block.choices,
-                    });
-                  })}
+                      return renderQuestionRow({
+                        qNum: item.qNum,
+                        prompt: displayPrompt,
+                        choices: block.choices,
+                      });
+                    })}
                 </div>
               );
             })
@@ -4051,6 +4137,14 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
 
                       {listeningImages.length > 0 ? (
                         <section className="space-y-3">
+                          {/Cambridge 19 Listening Test 1/i.test(
+                            test?.title ?? '',
+                          ) ? (
+                            <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
+                              Questions 16-20
+                            </div>
+                          ) : null}
+
                           <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
                             Diagram
                           </div>
