@@ -362,7 +362,7 @@ export function ExamScreen({
 
         <PageBody className="relative overflow-hidden">
           <div className="mx-auto w-full max-w-[1800px] px-4 pb-12 sm:px-6 lg:px-8">
-            <div className="grid gap-6 lg:h-[calc(100vh-8.5rem)] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <div className="grid gap-6 lg:h-[calc(100vh-8.5rem)] lg:grid-cols-2">
               <PassagePanel passages={readingPassages} />
 
               <section className="border-border/60 bg-background/80 min-h-0 overflow-hidden rounded-[28px] border shadow-sm">
