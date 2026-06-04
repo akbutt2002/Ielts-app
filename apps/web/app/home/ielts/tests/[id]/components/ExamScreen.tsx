@@ -24,6 +24,7 @@ import { QuestionGroup } from './QuestionGroup';
 import {
   answerMatches,
   getChoiceComparisonValue,
+  getPairedChoiceComparisonValues,
   parsePairedChoiceSelection,
 } from '../utils/answer-matcher';
 import { renderInstructionText } from './instruction-renderers';
@@ -130,6 +131,7 @@ export function ExamScreen({
     parsePairedChoiceSelection,
     answerMatches,
     getChoiceComparisonValue,
+    getPairedChoiceComparisonValues,
   });
   const bandScore = getBandScore(score);
   const bandScoreLabel = formatBandValue(bandScore);

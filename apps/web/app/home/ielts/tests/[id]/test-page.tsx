@@ -255,14 +255,12 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
   }, [isListening, parsedQuestionBlocks, test?.title]);
   const pairedChoiceQuestionBlocks = useMemo(
     () =>
-      isListening
-        ? parsedQuestionBlocks.filter(
-            (block) =>
-              block.questionNumbers.length === 2 &&
-              (block.choices?.length ?? 0) > 0,
-          )
-        : [],
-    [isListening, parsedQuestionBlocks],
+      parsedQuestionBlocks.filter(
+        (block) =>
+          block.questionNumbers.length === 2 &&
+          (block.choices?.length ?? 0) > 0,
+      ),
+    [parsedQuestionBlocks],
   );
   const pairedChoiceBlockLookup = useMemo(() => {
     const lookup = new Map<number, ParsedQuestionBlock>();
@@ -522,4 +520,5 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     renderStartScreen()
   );
 }
+
 

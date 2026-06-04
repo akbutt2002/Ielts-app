@@ -1,12 +1,22 @@
+function normalizeAnswerAlias(value: string) {
+  if (value === 'ng') {
+    return 'not given';
+  }
+
+  return value;
+}
+
 export function normalizeAnswerText(value: string) {
-  return value
+  return normalizeAnswerAlias(
+    value
     .normalize('NFKC')
     .replace(/[\u2018\u2019\u0060]/g, "'")
     .replace(/[\u2013\u2014]/g, '-')
     .replace(/[^a-z0-9]+/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim()
-    .toLowerCase();
+    .toLowerCase(),
+  );
 }
 
 export function splitAnswerVariants(answer: string) {
@@ -34,6 +44,21 @@ export function getChoiceComparisonValue(option: string) {
 export function getChoiceComparisonValues(answer: string) {
   return splitAnswerVariants(answer)
     .map((variant) => getChoiceComparisonValue(variant))
+    .filter(Boolean);
+}
+
+export function getPairedChoiceComparisonValues(answer: string) {
+  return splitAnswerVariants(answer)
+    .flatMap((variant) =>
+      variant
+        .replace(/\([^)]*\)/g, ' ')
+        .replace(/[\u2013\u2014]/g, '-')
+        .replace(/[\/,]+/g, ' ')
+        .split(/\s+/)
+        .map((part) => part.trim())
+        .filter((part) => /^[A-H]$/i.test(part))
+        .map((part) => getChoiceComparisonValue(part)),
+    )
     .filter(Boolean);
 }
 

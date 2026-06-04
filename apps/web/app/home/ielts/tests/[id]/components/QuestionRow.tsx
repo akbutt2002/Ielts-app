@@ -7,6 +7,7 @@ import { cn } from '@kit/ui/utils';
 import {
   getChoiceComparisonValue,
   getChoiceComparisonValues,
+  getPairedChoiceComparisonValues,
   parsePairedChoiceSelection,
 } from '../utils/answer-matcher';
 import {
@@ -20,6 +21,8 @@ type QuestionRowProps = {
   prompt: string;
   choices: string[];
   showPrompt?: boolean;
+  showPromptTextWhenBlank?: boolean;
+  inlineBlankPrompt?: boolean;
   pairedQuestionNumbers?: number[];
   hideQuestionNumber?: boolean;
   answerLookup: Map<number, string>;
@@ -35,6 +38,8 @@ export function QuestionRow({
   prompt,
   choices,
   showPrompt = true,
+  showPromptTextWhenBlank = false,
+  inlineBlankPrompt = false,
   pairedQuestionNumbers = [],
   hideQuestionNumber = false,
   answerLookup,
@@ -53,6 +58,14 @@ export function QuestionRow({
         .filter(Boolean)
         .join(' / ')
     : answerLookup.get(qNum) ?? '';
+  const displayCorrectAnswer = isPairedChoiceRow
+    ? pairedQuestionNumbers
+        .slice()
+        .reverse()
+        .map((questionNumber) => answerLookup.get(questionNumber) ?? '')
+        .map((answer) => answer.trim())
+        .find((answer) => answer && answer !== '&') ?? ''
+    : correctAnswer;
   const userAnswer = userAnswers[qNum] ?? '';
   const normalizedPrompt = compactPromptLines(
     stripQuestionNumberPrefix(stripLeadingBulletMarker(prompt), qNum),
@@ -67,9 +80,9 @@ export function QuestionRow({
     ? Array.from(
         new Set(
           pairedQuestionNumbers
-            .map((questionNumber) => {
+            .flatMap((questionNumber) => {
               const answer = answerLookup.get(questionNumber) ?? '';
-              return getChoiceComparisonValue(answer);
+              return getPairedChoiceComparisonValues(answer);
             })
             .filter(Boolean),
         ),
@@ -87,6 +100,34 @@ export function QuestionRow({
       selectedChoices.every((choice) => correctChoiceValues.includes(choice))
     : isSubmitted &&
       correctChoiceValues.includes(getChoiceComparisonValue(userAnswer));
+  const inlinePromptParts = inlineBlankPrompt
+    ? normalizedPrompt
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+    : [];
+  const renderInlineBlankPrompt = inlinePromptParts.length > 0;
+  const inlineBlankInput = (
+    <input
+      type="text"
+      placeholder="..."
+      className={`border-border/75 border-b-foreground/20 bg-muted/35 text-foreground focus:border-primary focus:bg-primary/5 focus:ring-primary/10 inline-flex w-24 shrink-0 rounded-md border border-b-2 px-2.5 py-1.5 text-sm font-black shadow-sm transition-all outline-none focus:ring-2 ${
+        isSubmitted
+          ? isCorrect
+            ? 'border-green-500 border-b-green-500 bg-green-500/10'
+            : 'border-destructive border-b-destructive bg-destructive/10'
+          : ''
+      }`}
+      value={userAnswer}
+      disabled={isTestLocked}
+      onChange={(event) =>
+        setUserAnswers((previous) => ({
+          ...previous,
+          [qNum]: event.target.value,
+        }))
+      }
+    />
+  );
   const normalizedUserAnswer = getChoiceComparisonValue(userAnswer);
 
   return (
@@ -107,25 +148,80 @@ export function QuestionRow({
         <div className="min-w-0 flex-1 space-y-3">
           {showPrompt && (normalizedPrompt || promptWithoutBlanks) ? (
             shouldRenderBlankInput ? (
-              <input
-                type="text"
-                placeholder="..."
-                className={`border-border/75 border-b-foreground/20 bg-muted/35 text-foreground focus:border-primary focus:bg-primary/5 focus:ring-primary/10 w-full max-w-xs rounded-md border border-b-2 px-2.5 py-1.5 text-sm font-black shadow-sm transition-all outline-none focus:ring-2 ${
-                  isSubmitted
-                    ? isCorrect
-                      ? 'border-green-500 border-b-green-500 bg-green-500/10'
-                      : 'border-destructive border-b-destructive bg-destructive/10'
-                    : ''
-                }`}
-                value={userAnswer}
-                disabled={isTestLocked}
-                onChange={(event) =>
-                  setUserAnswers((previous) => ({
-                    ...previous,
-                    [qNum]: event.target.value,
-                  }))
-                }
-              />
+              renderInlineBlankPrompt ? (
+                <p className="text-foreground text-sm leading-relaxed font-bold tracking-tight whitespace-pre-wrap">
+                  {inlinePromptParts.map((line, lineIdx) => {
+                    const isBlankLine = /^_+$/.test(line);
+
+                    if (isBlankLine) {
+                      return (
+                        <span
+                          key={`${qNum}-inline-blank-${lineIdx}`}
+                          className="mx-2 inline-flex align-middle"
+                        >
+                          {inlineBlankInput}
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <span
+                        key={`${qNum}-inline-text-${lineIdx}`}
+                        className="inline"
+                      >
+                        {line}
+                        {lineIdx < inlinePromptParts.length - 1 ? ' ' : ''}
+                      </span>
+                    );
+                  })}
+                </p>
+              ) : showPromptTextWhenBlank ? (
+                <div className="space-y-2">
+                  <p className="text-foreground text-sm leading-relaxed font-bold tracking-tight whitespace-pre-wrap">
+                    {promptWithoutBlanks}
+                  </p>
+
+                  <input
+                    type="text"
+                    placeholder="..."
+                    className={`border-border/75 border-b-foreground/20 bg-muted/35 text-foreground focus:border-primary focus:bg-primary/5 focus:ring-primary/10 w-full max-w-xs rounded-md border border-b-2 px-2.5 py-1.5 text-sm font-black shadow-sm transition-all outline-none focus:ring-2 ${
+                      isSubmitted
+                        ? isCorrect
+                          ? 'border-green-500 border-b-green-500 bg-green-500/10'
+                          : 'border-destructive border-b-destructive bg-destructive/10'
+                        : ''
+                    }`}
+                    value={userAnswer}
+                    disabled={isTestLocked}
+                    onChange={(event) =>
+                      setUserAnswers((previous) => ({
+                        ...previous,
+                        [qNum]: event.target.value,
+                      }))
+                    }
+                  />
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  placeholder="..."
+                  className={`border-border/75 border-b-foreground/20 bg-muted/35 text-foreground focus:border-primary focus:bg-primary/5 focus:ring-primary/10 w-full max-w-xs rounded-md border border-b-2 px-2.5 py-1.5 text-sm font-black shadow-sm transition-all outline-none focus:ring-2 ${
+                    isSubmitted
+                      ? isCorrect
+                        ? 'border-green-500 border-b-green-500 bg-green-500/10'
+                        : 'border-destructive border-b-destructive bg-destructive/10'
+                      : ''
+                  }`}
+                  value={userAnswer}
+                  disabled={isTestLocked}
+                  onChange={(event) =>
+                    setUserAnswers((previous) => ({
+                      ...previous,
+                      [qNum]: event.target.value,
+                    }))
+                  }
+                />
+              )
             ) : (
               <p className="text-foreground text-sm leading-relaxed font-bold tracking-tight whitespace-pre-wrap">
                 {hasChoices ? promptWithoutBlanks : normalizedPrompt}
@@ -221,7 +317,7 @@ export function QuestionRow({
                 Answer:
               </span>
               <span className="text-xs font-black text-green-500">
-                {correctAnswer || '-'}
+                {displayCorrectAnswer || '-'}
               </span>
             </div>
           )}
@@ -230,3 +326,4 @@ export function QuestionRow({
     </div>
   );
 }
+

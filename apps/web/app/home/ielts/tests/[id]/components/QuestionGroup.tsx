@@ -98,6 +98,11 @@ export function QuestionGroup({
     primaryBlock.questionNumbers.length === 2 &&
     (primaryBlock.choices?.length ?? 0) > 0;
   const shouldInlinePairedListeningPrompt = isPairedListeningChoiceBlock;
+  const shouldInlinePairedReadingChoicePrompt =
+    !isListening &&
+    primaryBlock.questionNumbers.length === 2 &&
+    (primaryBlock.choices?.length ?? 0) > 0 &&
+    [20, 22].includes(primaryBlock.questionNumbers[0] ?? 0);
   const displayContentHeading = shouldInlinePairedListeningPrompt
     ? ''
     : /^Which title is the most suitable for the text\?$/i.test(contentHeading)
@@ -148,12 +153,40 @@ export function QuestionGroup({
         )
         .join('\n')
     : primaryBlock.instructions;
+  const pairedReadingInstructionText =
+    shouldInlinePairedReadingChoicePrompt &&
+    primaryBlock.items[0]
+      ? [
+          primaryBlock.instructions,
+          compactPromptLines(
+            stripQuestionNumberPrefix(
+              primaryBlock.items[0]?.prompt ?? '',
+              primaryBlock.items[0]?.qNum ?? 0,
+            ),
+          ),
+        ]
+          .filter(Boolean)
+          .join('\n')
+      : primaryBlock.instructions;
   const shouldHideListeningLeadInRow =
     Boolean(listeningLeadInQuestion) &&
     primaryBlock.questionNumbers[0] === 11;
   const shouldRenderListeningLeadInRow =
     Boolean(listeningLeadInQuestion) &&
     primaryBlock.questionNumbers[0] === 12;
+  const shouldShowPromptTextWhenBlank =
+    !isListening &&
+    primaryBlock.questionNumbers[0] === 14 &&
+    primaryBlock.questionNumbers.includes(19) &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldShowPromptTextWhenBlankForQuestions15To21 =
+    !isListening &&
+    primaryBlock.questionNumbers[0] === 15 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      21 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderInlineBlankPromptForQuestions15To21 =
+    shouldShowPromptTextWhenBlankForQuestions15To21;
 
   return (
     <section
@@ -198,7 +231,9 @@ export function QuestionGroup({
                   ]
                     .filter(Boolean)
                     .join('\n')
-                : listeningInstructionText,
+                : shouldInlinePairedReadingChoicePrompt
+                  ? pairedReadingInstructionText
+                  : listeningInstructionText,
             )}
           </div>
         ) : null}
@@ -255,6 +290,13 @@ export function QuestionGroup({
                       choices={block.choices}
                       pairedQuestionNumbers={block.questionNumbers}
                       showPrompt={true}
+                      showPromptTextWhenBlank={
+                        shouldShowPromptTextWhenBlank ||
+                        shouldShowPromptTextWhenBlankForQuestions15To21
+                      }
+                      inlineBlankPrompt={
+                        shouldRenderInlineBlankPromptForQuestions15To21
+                      }
                       answerLookup={answerLookup}
                       userAnswers={userAnswers}
                       isSubmitted={isSubmitted}
@@ -269,7 +311,10 @@ export function QuestionGroup({
         ) : (
           [primaryBlock, ...continuationBlocks].map(
             (block: any, blockGroupIdx: number) => {
-              if (isPairedListeningChoiceBlock && blockGroupIdx === 0) {
+              if (
+                (isPairedListeningChoiceBlock || shouldInlinePairedReadingChoicePrompt) &&
+                blockGroupIdx === 0
+              ) {
                 const item = block.items[0];
 
                 if (!item) {
@@ -296,12 +341,22 @@ export function QuestionGroup({
                       key={`${block.header}-${groupIdx}-${blockGroupIdx}-${item.qNum}`}
                       qNum={item.qNum}
                       prompt={
-                        shouldInlinePairedListeningPrompt ? '' : displayPrompt
+                        shouldInlinePairedListeningPrompt ||
+                        shouldInlinePairedReadingChoicePrompt
+                          ? ''
+                          : displayPrompt
                       }
                       choices={block.choices}
                       pairedQuestionNumbers={block.questionNumbers}
-                      showPrompt={!shouldInlinePairedListeningPrompt}
-                      hideQuestionNumber={isPairedListeningChoiceBlock}
+                      showPrompt={
+                        !shouldInlinePairedListeningPrompt &&
+                        !shouldInlinePairedReadingChoicePrompt
+                      }
+                      showPromptTextWhenBlank={shouldShowPromptTextWhenBlank}
+                      hideQuestionNumber={
+                        isPairedListeningChoiceBlock ||
+                        shouldInlinePairedReadingChoicePrompt
+                      }
                       answerLookup={answerLookup}
                       userAnswers={userAnswers}
                       isSubmitted={isSubmitted}
@@ -344,6 +399,13 @@ export function QuestionGroup({
                           qNum={item.qNum}
                           prompt={displayPrompt}
                           choices={block.choices}
+                          showPromptTextWhenBlank={
+                            shouldShowPromptTextWhenBlank ||
+                            shouldShowPromptTextWhenBlankForQuestions15To21
+                          }
+                          inlineBlankPrompt={
+                            shouldRenderInlineBlankPromptForQuestions15To21
+                          }
                           answerLookup={answerLookup}
                           userAnswers={userAnswers}
                           isSubmitted={isSubmitted}

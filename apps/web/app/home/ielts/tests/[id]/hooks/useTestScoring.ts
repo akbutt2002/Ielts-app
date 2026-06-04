@@ -6,6 +6,7 @@ export function calculateScore({
   parsePairedChoiceSelection,
   answerMatches,
   getChoiceComparisonValue,
+  getPairedChoiceComparisonValues,
 }: any) {
   let score = 0;
 
@@ -32,7 +33,9 @@ export function calculateScore({
       new Set(
         block.questionNumbers
           .map((qNum: number) => answerLookup.get(qNum) ?? '')
-          .map((answer: string) => getChoiceComparisonValue(answer))
+          .flatMap((answer: string) =>
+            getPairedChoiceComparisonValues(answer),
+          )
           .filter(Boolean),
       ),
     );
