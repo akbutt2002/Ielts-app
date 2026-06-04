@@ -1,0 +1,63 @@
+export function normalizeAnswerText(value: string) {
+  return value
+    .normalize('NFKC')
+    .replace(/[\u2018\u2019\u0060]/g, "'")
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/[^a-z0-9]+/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+export function splitAnswerVariants(answer: string) {
+  return answer
+    .split(/\s*\/\s*|\s+or\s+/i)
+    .map((part) => part.replace(/\([^)]*\)/g, '').trim())
+    .filter(Boolean);
+}
+
+export function getChoiceAnswerValue(option: string) {
+  const trimmedOption = option.trim();
+  const letterMatch = trimmedOption.match(/^([A-H])(?:[\s.)\-–—:]|$)/i);
+
+  if (letterMatch?.[1]) {
+    return letterMatch[1].toUpperCase();
+  }
+
+  return trimmedOption;
+}
+
+export function getChoiceComparisonValue(option: string) {
+  return normalizeAnswerText(getChoiceAnswerValue(option));
+}
+
+export function getChoiceComparisonValues(answer: string) {
+  return splitAnswerVariants(answer)
+    .map((variant) => getChoiceComparisonValue(variant))
+    .filter(Boolean);
+}
+
+export function answerMatches(userAnswer: string, correctAnswer: string) {
+  const normalizedUserAnswer = normalizeAnswerText(userAnswer ?? '');
+
+  if (!normalizedUserAnswer) {
+    return false;
+  }
+
+  const variants = splitAnswerVariants(correctAnswer);
+
+  if (variants.length === 0) {
+    return normalizeAnswerText(correctAnswer) === normalizedUserAnswer;
+  }
+
+  return variants.some(
+    (variant) => normalizeAnswerText(variant) === normalizedUserAnswer,
+  );
+}
+
+export function parsePairedChoiceSelection(value: string) {
+  return value
+    .split('|')
+    .map((part) => getChoiceComparisonValue(part))
+    .filter(Boolean);
+}
