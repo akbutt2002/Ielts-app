@@ -1,6 +1,31 @@
 'use client';
 
-import { renderInstructionText } from './instruction-renderers';
+import { normalizeInstructionFragment } from '../utils/instruction-formatter';
+
+function resolvePassageCardContent(passage: any) {
+  const heading = String(passage?.heading ?? '').trim();
+  const instruction = String(passage?.instruction ?? '').trim();
+  const lines = String(passage?.text ?? '')
+    .split(/\r?\n+/)
+    .map((line) => normalizeInstructionFragment(line))
+    .filter(Boolean);
+
+  if (/^You should spend about$/i.test(heading) && lines.length >= 2) {
+    const [introLine, titleLine, ...bodyLines] = lines;
+
+    return {
+      heading: titleLine,
+      instruction: [heading, introLine].filter(Boolean).join(' '),
+      bodyLines,
+    };
+  }
+
+  return {
+    heading,
+    instruction,
+    bodyLines: lines,
+  };
+}
 
 export function PassagePanel({ passages }: any) {
   return (
@@ -8,29 +33,34 @@ export function PassagePanel({ passages }: any) {
       <div className="flex h-full min-h-0 flex-col">
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-6">
           {passages.map(({ passage, passageNumber }: any) => (
-            <article
-              key={`${passage.heading ?? 'passage'}-${passageNumber}`}
-              className="border-border/60 bg-background/75 hover:border-foreground/15 hover:bg-background/90 space-y-4 rounded-[26px] border p-6 shadow-sm transition-colors"
-            >
-              <div className="text-muted-foreground text-[11px] font-black tracking-[0.24em] uppercase">
-                Reading Passage {passageNumber}
-              </div>
+            (() => {
+              const { heading, instruction, bodyLines } =
+                resolvePassageCardContent(passage);
 
-              {passage.heading ? (
+              return (
+              <article
+                key={`${passage.heading ?? 'passage'}-${passageNumber}`}
+                className="border-border/60 bg-background/75 hover:border-foreground/15 hover:bg-background/90 space-y-4 rounded-[26px] border p-6 shadow-sm transition-colors"
+              >
+                <div className="text-muted-foreground text-[11px] font-black tracking-[0.24em] uppercase">
+                  Reading Passage {passageNumber}
+                </div>
+
+              {heading ? (
                 <h3 className="text-foreground text-lg font-semibold tracking-tight">
-                  {passage.heading}
+                  {heading}
                 </h3>
               ) : null}
 
-              {passage.instruction ? (
+              {instruction ? (
                 <div className="text-muted-foreground text-sm leading-7">
-                  {renderInstructionText(passage.instruction)}
+                  {instruction}
                 </div>
               ) : null}
 
-              {passage.text ? (
+              {bodyLines.length > 0 ? (
                 <div className="text-foreground/90 space-y-3 text-sm leading-7">
-                  {passage.text.split(/\n+/).map((line: string, lineIdx: number) => (
+                  {bodyLines.map((line: string, lineIdx: number) => (
                     <p
                       key={`${passageNumber}-${lineIdx}-${line}`}
                       className="whitespace-pre-wrap"
@@ -40,7 +70,9 @@ export function PassagePanel({ passages }: any) {
                   ))}
                 </div>
               ) : null}
-            </article>
+              </article>
+              );
+            })()
           ))}
         </div>
       </div>

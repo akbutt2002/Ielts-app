@@ -28,6 +28,7 @@ import {
 } from '../utils/answer-matcher';
 import { renderInstructionText } from './instruction-renderers';
 import { calculateScore, getBandScore } from '../hooks/useTestScoring';
+import { normalizeInstructionFragment } from '../utils/instruction-formatter';
 
 const scoreTargetBands = [
   { band: 4.0, minimumCorrectAnswers: 10 },
@@ -532,7 +533,13 @@ export function ExamScreen({
 
                             {passage.instruction ? (
                               <div className="text-muted-foreground text-sm leading-7">
-                                {renderInstructionText(passage.instruction)}
+                                {passage.instruction
+                                  .split(/\r?\n+/)
+                                  .map((line: string) =>
+                                    normalizeInstructionFragment(line),
+                                  )
+                                  .filter(Boolean)
+                                  .join(' ')}
                               </div>
                             ) : null}
 
