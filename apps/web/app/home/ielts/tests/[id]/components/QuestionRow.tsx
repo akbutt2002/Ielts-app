@@ -107,6 +107,7 @@ export function QuestionRow({
         .filter(Boolean)
     : [];
   const renderInlineBlankPrompt = inlinePromptParts.length > 0;
+  const inlineBlankPattern = /_{2,}/g;
   const inlineBlankInput = (
     <input
       type="text"
@@ -160,6 +161,30 @@ export function QuestionRow({
                           className="mx-2 inline-flex align-middle"
                         >
                           {inlineBlankInput}
+                        </span>
+                      );
+                    }
+
+                    if (inlineBlankPattern.test(line)) {
+                      inlineBlankPattern.lastIndex = 0;
+                      const lineParts = line.split(inlineBlankPattern);
+
+                      return (
+                        <span
+                          key={`${qNum}-inline-text-${lineIdx}`}
+                          className="inline"
+                        >
+                          {lineParts.map((part, partIdx) => (
+                            <span key={`${qNum}-inline-part-${lineIdx}-${partIdx}`}>
+                              {part}
+                              {partIdx < lineParts.length - 1 ? (
+                                <span className="mx-2 inline-flex align-middle">
+                                  {inlineBlankInput}
+                                </span>
+                              ) : null}
+                            </span>
+                          ))}
+                          {lineIdx < inlinePromptParts.length - 1 ? ' ' : ''}
                         </span>
                       );
                     }

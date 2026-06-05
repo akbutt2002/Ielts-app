@@ -736,10 +736,45 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
           (part: ListeningPart) => part.blocks ?? part.questions ?? [],
         )
       : [];
-  const sourceBlocks =
+  let sourceBlocks =
     partBlocks.length > 0
       ? partBlocks
       : ((test?.questions ?? []) as QuestionBlock[]);
+  if (/Cambridge 19 IELTS General Reading Test 3/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      const text = String(block.text ?? '');
+      const splitMatch = text.match(/\nQuestions\s+37\s*[-–—]\s*40\b/i);
+
+      if (
+        !splitMatch ||
+        !block.question_numbers?.includes(33) ||
+        !block.question_numbers?.includes(40)
+      ) {
+        return [block];
+      }
+
+      const splitIndex = splitMatch.index ?? -1;
+
+      if (splitIndex <= 0) {
+        return [block];
+      }
+
+      return [
+        {
+          ...block,
+          header: 'Questions 33–36',
+          question_numbers: buildSequentialQuestionRange(33, 36),
+          text: text.slice(0, splitIndex).trim(),
+        },
+        {
+          ...block,
+          header: 'Questions 37–40',
+          question_numbers: buildSequentialQuestionRange(37, 40),
+          text: text.slice(splitIndex).trim(),
+        },
+      ];
+    });
+  }
   const normalizedBlocks = sourceBlocks.map((block: Partial<QuestionBlock>) =>
     normalizeQuestionBlock(block),
   );
@@ -1736,7 +1771,8 @@ export function parseStructuredSummaryBlock(
 
   while (
     contentLines.length > 0 &&
-    isStructuredNoteOverflowInstructionLine(contentLines[0] ?? '')
+    (isStructuredNoteOverflowInstructionLine(contentLines[0] ?? '') ||
+      isPureRangeLine(contentLines[0] ?? ''))
   ) {
     overflowInstructionLines.push(contentLines.shift() ?? '');
   }

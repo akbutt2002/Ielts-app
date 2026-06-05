@@ -268,6 +268,7 @@ export function ExamScreen({
                           key={`group-${groupIdx}`}
                           group={group}
                           groupIdx={groupIdx}
+                          testTitle={test?.title}
                           isListening={isListening}
                           listeningLeadInQuestion={listeningLeadInQuestion}
                           answerLookup={answerLookup}
@@ -377,6 +378,7 @@ export function ExamScreen({
                           key={`group-${groupIdx}`}
                           group={group}
                           groupIdx={groupIdx}
+                          testTitle={test?.title}
                           isListening={isListening}
                           listeningLeadInQuestion={listeningLeadInQuestion}
                           answerLookup={answerLookup}
@@ -572,6 +574,7 @@ export function ExamScreen({
                   key={`group-${groupIdx}`}
                   group={group}
                   groupIdx={groupIdx}
+                  testTitle={test?.title}
                   isListening={isListening}
                   listeningLeadInQuestion={listeningLeadInQuestion}
                   answerLookup={answerLookup}

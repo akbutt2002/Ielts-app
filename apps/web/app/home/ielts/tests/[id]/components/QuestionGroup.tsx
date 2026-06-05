@@ -19,6 +19,7 @@ import { QuestionRow } from './QuestionRow';
 export function QuestionGroup({
   group,
   groupIdx,
+  testTitle,
   isListening,
   listeningLeadInQuestion,
   answerLookup,
@@ -34,6 +35,17 @@ export function QuestionGroup({
   if (!primaryBlock) {
     return null;
   }
+
+  const groupedQuestionNumbers = Array.from(
+    new Set(
+      [primaryBlock, ...continuationBlocks].flatMap(
+        (block: any) => block.questionNumbers ?? [],
+      ),
+    ),
+  ).sort((a, b) => a - b);
+  const groupFirstQuestion = groupedQuestionNumbers[0] ?? 0;
+  const groupLastQuestion =
+    groupedQuestionNumbers[groupedQuestionNumbers.length - 1] ?? 0;
 
   const shouldShowQuestionBlockTitle = (block: any) => {
     const normalizedHeader = normalizeAnswerText(block.header ?? '');
@@ -187,6 +199,64 @@ export function QuestionGroup({
     (primaryBlock.choices?.length ?? 0) === 0;
   const shouldRenderInlineBlankPromptForQuestions15To21 =
     shouldShowPromptTextWhenBlankForQuestions15To21;
+  const shouldRenderInlineBlankPromptForQuestions28To32 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 28 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      32 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 7;
+  const shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 32 &&
+    groupLastQuestion === 35;
+  const shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 21 &&
+    groupLastQuestion === 27 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 8;
+  const shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 9 &&
+    groupLastQuestion === 14;
+  const shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 22 &&
+    groupLastQuestion === 27 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 33 &&
+    groupLastQuestion === 36;
+  const shouldRenderInlineBlankPromptForListeningQuestions16To20 =
+    isListening &&
+    /Cambridge 19 Listening Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 16 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      20 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderInlineBlankPromptForListeningQuestions25To30 =
+    isListening &&
+    /Cambridge 19 Listening Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 25 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      30 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
 
   return (
     <section
@@ -292,10 +362,20 @@ export function QuestionGroup({
                       showPrompt={true}
                       showPromptTextWhenBlank={
                         shouldShowPromptTextWhenBlank ||
-                        shouldShowPromptTextWhenBlankForQuestions15To21
+                        shouldShowPromptTextWhenBlankForQuestions15To21 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36
                       }
                       inlineBlankPrompt={
-                        shouldRenderInlineBlankPromptForQuestions15To21
+                        shouldRenderInlineBlankPromptForQuestions15To21 ||
+                        shouldRenderInlineBlankPromptForQuestions28To32 ||
+                        shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
+                        shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
+                        shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
+                        shouldRenderInlineBlankPromptForListeningQuestions25To30
                       }
                       answerLookup={answerLookup}
                       userAnswers={userAnswers}
@@ -401,10 +481,20 @@ export function QuestionGroup({
                           choices={block.choices}
                           showPromptTextWhenBlank={
                             shouldShowPromptTextWhenBlank ||
-                            shouldShowPromptTextWhenBlankForQuestions15To21
+                            shouldShowPromptTextWhenBlankForQuestions15To21 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36
                           }
                           inlineBlankPrompt={
-                            shouldRenderInlineBlankPromptForQuestions15To21
+                            shouldRenderInlineBlankPromptForQuestions15To21 ||
+                            shouldRenderInlineBlankPromptForQuestions28To32 ||
+                            shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
+                            shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
+                            shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
+                            shouldRenderInlineBlankPromptForListeningQuestions25To30
                           }
                           answerLookup={answerLookup}
                           userAnswers={userAnswers}
