@@ -82,9 +82,9 @@ export function formatInstructionLines(text: string) {
     const line = lines[index] ?? '';
     const nextLine = lines[index + 1];
     const isPeopleListHeading = /^List of People$/i.test(line);
-    const isPeopleListLetterOnly = /^[A-D](?:[.)])?$/.test(line);
+    const isPeopleListLetterOnly = /^[A-H](?:[.)])?$/.test(line);
     const isPeopleListEntry =
-      /^[A-D](?:[.)])?\s+\S/.test(line) ||
+      /^[A-H](?:[.)])?\s+\S/.test(line) ||
       (inPeopleList && isPeopleListLetterOnly);
 
     if (

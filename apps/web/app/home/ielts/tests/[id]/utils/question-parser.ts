@@ -1446,6 +1446,7 @@ export function isStructuredNoteOverflowInstructionLine(line: string) {
 
   return (
     /^Write your answers\b/i.test(normalizedLine) ||
+    /^boxes?$/i.test(normalizedLine) ||
     /^boxes?\s+\d+(?:\s*(?:to|-|\u2013|\u2014)\s*\d+)?(?:\s+on your answer sheet\.?)?$/i.test(
       normalizedLine,
     ) ||

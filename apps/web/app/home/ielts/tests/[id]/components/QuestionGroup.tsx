@@ -243,6 +243,21 @@ export function QuestionGroup({
     /Cambridge 19 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
     groupFirstQuestion === 33 &&
     groupLastQuestion === 36;
+  const shouldShowPromptTextWhenBlankForGeneralTest4Questions1To5 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 5;
+  const shouldShowPromptTextWhenBlankForGeneralTest4Questions25To27 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 25 &&
+    groupLastQuestion === 27;
+  const shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36 =
+    !isListening &&
+    /Cambridge 19 IELTS General Reading Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 31 &&
+    groupLastQuestion === 36;
   const shouldRenderInlineBlankPromptForListeningQuestions16To20 =
     isListening &&
     /Cambridge 19 Listening Test 1/i.test(testTitle ?? '') &&
@@ -367,7 +382,10 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
-                        shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36
+                        shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest4Questions1To5 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest4Questions25To27 ||
+                        shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36
                       }
                       inlineBlankPrompt={
                         shouldRenderInlineBlankPromptForQuestions15To21 ||
@@ -486,7 +504,10 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
-                            shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36
+                            shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest4Questions1To5 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest4Questions25To27 ||
+                            shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36
                           }
                           inlineBlankPrompt={
                             shouldRenderInlineBlankPromptForQuestions15To21 ||

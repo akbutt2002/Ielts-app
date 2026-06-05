@@ -88,7 +88,7 @@ function renderInstructionLine(line: string) {
 }
 
 function renderPeopleListLine(line: string) {
-  const peopleMatch = line.match(/^([A-D])(?:[.)])?\s+(.+)$/);
+  const peopleMatch = line.match(/^([A-H])(?:[.)])?\s+(.+)$/);
 
   if (!peopleMatch?.[1] || !peopleMatch[2]) {
     return renderInstructionLine(line);
@@ -130,7 +130,7 @@ export function renderInstructionText(text: string) {
     <div className="space-y-1.5">
       {lines.map((line, index) => {
         const style = getInstructionLineStyle(line);
-        const isPeopleListLine = /^[A-D](?:[.)])?\s+\S/.test(line);
+        const isPeopleListLine = /^[A-H](?:[.)])?\s+\S/.test(line);
         const isOpinionsHeading = /^Opinions$/i.test(line);
         const isOpinionListLine =
           inOpinionsBlock &&
