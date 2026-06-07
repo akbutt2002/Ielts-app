@@ -1333,7 +1333,7 @@ export function isStructuredNoteBlock(block: ParsedQuestionBlock) {
 export function isStructuredSummaryBlock(block: ParsedQuestionBlock) {
   return (
     block.choices.length === 0 &&
-    /Complete the summary below\.?/i.test(block.rawText)
+    /Complete the summary(?: below| using\b)/i.test(block.rawText)
   );
 }
 
@@ -1776,6 +1776,18 @@ export function parseStructuredSummaryBlock(
       isPureRangeLine(contentLines[0] ?? ''))
   ) {
     overflowInstructionLines.push(contentLines.shift() ?? '');
+  }
+
+  const firstContentLine = normalizeInstructionFragment(contentLines[0] ?? '');
+  const repeatedTitleIndex = contentLines.findIndex(
+    (line, index) =>
+      index > 0 &&
+      firstContentLine.length > 0 &&
+      normalizeInstructionFragment(line) === firstContentLine,
+  );
+
+  if (repeatedTitleIndex > 0) {
+    overflowInstructionLines.push(...contentLines.splice(0, repeatedTitleIndex));
   }
 
   const combinedInstructionText = [instructionText, ...overflowInstructionLines]

@@ -114,7 +114,9 @@ export function QuestionGroup({
     !isListening &&
     primaryBlock.questionNumbers.length === 2 &&
     (primaryBlock.choices?.length ?? 0) > 0 &&
-    [20, 22].includes(primaryBlock.questionNumbers[0] ?? 0);
+    ([20, 22].includes(primaryBlock.questionNumbers[0] ?? 0) ||
+      (/Cambridge 19 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
+        [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)));
   const displayContentHeading = shouldInlinePairedListeningPrompt
     ? ''
     : /^Which title is the most suitable for the text\?$/i.test(contentHeading)
@@ -258,6 +260,17 @@ export function QuestionGroup({
     /Cambridge 19 IELTS General Reading Test 4/i.test(testTitle ?? '') &&
     groupFirstQuestion === 31 &&
     groupLastQuestion === 36;
+  const shouldShowPromptTextWhenBlankForAcademicTest2Questions14To18 =
+    !isListening &&
+    /Cambridge 19 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 14 &&
+    groupLastQuestion === 18;
+  const shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 =
+    !isListening &&
+    /Cambridge 19 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 19 &&
+    groupLastQuestion === 22 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
   const shouldRenderInlineBlankPromptForListeningQuestions16To20 =
     isListening &&
     /Cambridge 19 Listening Test 1/i.test(testTitle ?? '') &&
@@ -299,9 +312,7 @@ export function QuestionGroup({
 
         {primaryBlock.instructions ? (
           <div className="border-border/60 bg-muted/20 relative overflow-hidden rounded-2xl border p-4">
-            {isListening ? (
-              <div className="bg-foreground absolute top-0 bottom-0 left-0 w-1.5" />
-            ) : null}
+            <div className="bg-foreground absolute top-0 bottom-0 left-0 w-1.5" />
 
             {renderInstructionText(
               shouldInlinePairedListeningPrompt
@@ -385,13 +396,15 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
                         shouldShowPromptTextWhenBlankForGeneralTest4Questions1To5 ||
                         shouldShowPromptTextWhenBlankForGeneralTest4Questions25To27 ||
-                        shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36
+                        shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36 ||
+                        shouldShowPromptTextWhenBlankForAcademicTest2Questions14To18
                       }
                       inlineBlankPrompt={
                         shouldRenderInlineBlankPromptForQuestions15To21 ||
                         shouldRenderInlineBlankPromptForQuestions28To32 ||
                         shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
                         shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
+                        shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                         shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
                         shouldRenderInlineBlankPromptForListeningQuestions25To30
                       }
@@ -507,13 +520,15 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
                             shouldShowPromptTextWhenBlankForGeneralTest4Questions1To5 ||
                             shouldShowPromptTextWhenBlankForGeneralTest4Questions25To27 ||
-                            shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36
+                            shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36 ||
+                            shouldShowPromptTextWhenBlankForAcademicTest2Questions14To18
                           }
                           inlineBlankPrompt={
                             shouldRenderInlineBlankPromptForQuestions15To21 ||
                             shouldRenderInlineBlankPromptForQuestions28To32 ||
                             shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
                             shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
+                            shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                             shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
                             shouldRenderInlineBlankPromptForListeningQuestions25To30
                           }

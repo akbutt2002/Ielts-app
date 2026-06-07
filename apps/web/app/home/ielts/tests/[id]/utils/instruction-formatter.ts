@@ -109,6 +109,12 @@ export function formatInstructionLines(text: string) {
       continue;
     }
 
+    if (/^[A-J](?:[.)])?$/.test(line) && nextLine) {
+      formattedLines.push(joinInstructionFragments(line, nextLine));
+      index++;
+      continue;
+    }
+
     if (/^(TRUE|FALSE|NOT GIVEN|YES|NO)$/i.test(line) && nextLine) {
       formattedLines.push(joinInstructionFragments(line, nextLine));
       index++;
@@ -131,6 +137,7 @@ export function formatInstructionLines(text: string) {
         /^List of Headings$/i.test(upcomingLine) ||
         /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
+        /^[A-J](?:[.)])?$/.test(upcomingLine) ||
         /^(TRUE|FALSE|NOT GIVEN|YES|NO)$/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
       ) {

@@ -10,14 +10,25 @@ function resolvePassageCardContent(passage: any) {
     .map((line) => normalizeInstructionFragment(line))
     .filter(Boolean);
 
-  if (/^You should spend about$/i.test(heading) && lines.length >= 2) {
-    const [introLine, titleLine, ...bodyLines] = lines;
+  if (/^You should spend about\b/i.test(heading) && lines.length >= 2) {
+    const titleLineIndex = lines.findIndex(
+      (line, index) => index > 0 && /^below\.?$/i.test(line),
+    );
 
-    return {
-      heading: titleLine,
-      instruction: [heading, introLine].filter(Boolean).join(' '),
-      bodyLines,
-    };
+    if (titleLineIndex !== -1 && lines[titleLineIndex + 1]) {
+      const introLines = lines.slice(0, titleLineIndex + 1);
+      const titleLine = lines[titleLineIndex + 1] ?? '';
+      const bodyLines = lines.slice(titleLineIndex + 2);
+
+      return {
+        heading: titleLine,
+        instruction: [heading, ...introLines]
+          .filter(Boolean)
+          .join(' ')
+          .replace(/\s+,/g, ','),
+        bodyLines,
+      };
+    }
   }
 
   return {
