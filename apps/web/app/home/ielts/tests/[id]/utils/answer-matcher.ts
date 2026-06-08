@@ -22,7 +22,15 @@ export function normalizeAnswerText(value: string) {
 export function splitAnswerVariants(answer: string) {
   return answer
     .split(/\s*\/\s*|\s+or\s+/i)
-    .map((part) => part.replace(/\([^)]*\)/g, '').trim())
+    .flatMap((part) => {
+      const trimmedPart = part.trim();
+      const withoutParentheses = trimmedPart.replace(/\([^)]*\)/g, '').trim();
+      const withParenthesesContent = trimmedPart
+        .replace(/\(([^)]*)\)/g, '$1')
+        .trim();
+
+      return [trimmedPart, withoutParentheses, withParenthesesContent];
+    })
     .filter(Boolean);
 }
 

@@ -10,11 +10,15 @@ export function calculateScore({
 }: any) {
   let score = 0;
 
-  const questionNumbersToScore =
-    scoredQuestionNumbers.length > 0
-      ? scoredQuestionNumbers
-      : Array.from(answerLookup.keys());
+  const questionNumbersToScore: number[] = Array.from(
+    new Set<number>(
+      scoredQuestionNumbers.length > 0
+        ? scoredQuestionNumbers
+        : Array.from(answerLookup.keys()),
+    ),
+  );
   const handledPairedQuestionNumbers = new Set<number>();
+  const handledPairedBlockKeys = new Set<string>();
 
   pairedChoiceQuestionBlocks.forEach((block: any) => {
     const [firstQuestion, secondQuestion] = block.questionNumbers;
@@ -23,6 +27,16 @@ export function calculateScore({
       return;
     }
 
+    const pairedBlockKey = [firstQuestion, secondQuestion]
+      .slice()
+      .sort((a, b) => a - b)
+      .join('-');
+
+    if (handledPairedBlockKeys.has(pairedBlockKey)) {
+      return;
+    }
+
+    handledPairedBlockKeys.add(pairedBlockKey);
     handledPairedQuestionNumbers.add(firstQuestion);
     handledPairedQuestionNumbers.add(secondQuestion);
 

@@ -256,11 +256,37 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
   const pairedChoiceQuestionBlocks = useMemo(
     () =>
       parsedQuestionBlocks.filter(
-        (block) =>
-          block.questionNumbers.length === 2 &&
-          (block.choices?.length ?? 0) > 0,
+        (block) => {
+          if (
+            block.questionNumbers.length !== 2 ||
+            (block.choices?.length ?? 0) === 0
+          ) {
+            return false;
+          }
+
+          const blockText = [
+            block.rawText,
+            block.instructions,
+            block.items[0]?.prompt,
+          ]
+            .filter(Boolean)
+            .join('\n');
+          const isListeningTest4MarathonQuestionBlock =
+            isListening &&
+            /Cambridge 19 Listening Test 4/i.test(test?.title ?? '') &&
+            block.questionNumbers[0] === 19 &&
+            /What does Liz say about running her first marathon\?/i.test(
+              blockText,
+            );
+
+          if (isListeningTest4MarathonQuestionBlock) {
+            return false;
+          }
+
+          return /(?:Choose\s+TWO|Which\s+TWO)/i.test(blockText);
+        },
       ),
-    [parsedQuestionBlocks],
+    [isListening, parsedQuestionBlocks, test?.title],
   );
   const pairedChoiceBlockLookup = useMemo(() => {
     const lookup = new Map<number, ParsedQuestionBlock>();

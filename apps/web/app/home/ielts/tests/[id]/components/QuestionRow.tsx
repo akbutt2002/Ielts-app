@@ -59,12 +59,14 @@ export function QuestionRow({
         .join(' / ')
     : answerLookup.get(qNum) ?? '';
   const displayCorrectAnswer = isPairedChoiceRow
-    ? pairedQuestionNumbers
-        .slice()
-        .reverse()
-        .map((questionNumber) => answerLookup.get(questionNumber) ?? '')
-        .map((answer) => answer.trim())
-        .find((answer) => answer && answer !== '&') ?? ''
+    ? Array.from(
+        new Set(
+          pairedQuestionNumbers
+            .map((questionNumber) => answerLookup.get(questionNumber) ?? '')
+            .map((answer) => answer.trim())
+            .filter((answer) => answer && answer !== '&'),
+        ),
+      ).join(' / ')
     : correctAnswer;
   const userAnswer = userAnswers[qNum] ?? '';
   const normalizedPrompt = compactPromptLines(

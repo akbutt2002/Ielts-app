@@ -95,9 +95,23 @@ export function QuestionGroup({
     return renderedSummaryBlock;
   }
 
-  const displayBlockTitle = shouldShowQuestionBlockTitle(primaryBlock)
-    ? formatQuestionRangeLabel(primaryBlock.questionNumbers)
-    : '';
+  const isListeningTest4TrainingProgrammesBlock =
+    isListening &&
+    /Cambridge 19 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 11 &&
+    /problems with some training programmes for new runners does Liz mention\?/i.test(
+      [primaryBlock.rawText, primaryBlock.instructions, primaryBlock.items[0]?.prompt]
+        .filter(Boolean)
+        .join('\n'),
+    );
+  const pairedChoiceQuestionNumbers = isListeningTest4TrainingProgrammesBlock
+    ? [11, 12]
+    : primaryBlock.questionNumbers;
+  const displayBlockTitle = isListeningTest4TrainingProgrammesBlock
+    ? 'Questions 11-12'
+    : shouldShowQuestionBlockTitle(primaryBlock)
+      ? formatQuestionRangeLabel(primaryBlock.questionNumbers)
+      : '';
   const listeningPartLabel = isListening
     ? `Part ${Math.min(
         4,
@@ -105,14 +119,24 @@ export function QuestionGroup({
       )}`
     : '';
   const contentHeading = primaryBlock.contentHeading?.trim() ?? '';
+  const isListeningTest4MarathonQuestionBlock =
+    isListening &&
+    /Cambridge 19 Listening Test 4/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 19 &&
+    /What does Liz say about running her first marathon\?/i.test(
+      [primaryBlock.rawText, primaryBlock.instructions, primaryBlock.items[0]?.prompt]
+        .filter(Boolean)
+        .join('\n'),
+    );
   const isPairedListeningChoiceBlock =
     isListening &&
-    primaryBlock.questionNumbers.length === 2 &&
+    !isListeningTest4MarathonQuestionBlock &&
+    pairedChoiceQuestionNumbers.length === 2 &&
     (primaryBlock.choices?.length ?? 0) > 0;
   const shouldInlinePairedListeningPrompt = isPairedListeningChoiceBlock;
   const shouldInlinePairedReadingChoicePrompt =
     !isListening &&
-    primaryBlock.questionNumbers.length === 2 &&
+    pairedChoiceQuestionNumbers.length === 2 &&
     (primaryBlock.choices?.length ?? 0) > 0 &&
     ([20, 22].includes(primaryBlock.questionNumbers[0] ?? 0) ||
       (/Cambridge 19 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
@@ -286,6 +310,153 @@ export function QuestionGroup({
       30 &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
+  const shouldShowPromptTextWhenBlankForListeningTest3Questions11To16 =
+    isListening &&
+    /Cambridge 19 Listening Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion <= 11 &&
+    groupLastQuestion >= 16 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldShowPromptTextWhenBlankForListeningTest4Questions15To18 =
+    isListening &&
+    /Cambridge 19 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 15 &&
+    groupLastQuestion === 18 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const listeningTest4Question15To18Prompts = new Map<number, string>([
+    [15, 'Ceri ____'],
+    [16, 'James ____'],
+    [17, 'Leo ____'],
+    [18, 'Mark ____'],
+  ]);
+  const shouldShowPromptTextWhenBlankForListeningTest4Questions26To30 =
+    isListening &&
+    /Cambridge 19 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 26 &&
+    groupLastQuestion === 30 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const listeningTest4Question26To30Prompts = new Map<number, string>([
+    [26, 'rare books ____'],
+    [27, 'children\'s books ____'],
+    [28, 'unwanted books ____'],
+    [29, 'requested books ____'],
+    [30, 'coursebooks ____'],
+  ]);
+
+  const shouldRenderListeningTest3ShoppingTable =
+    isListening &&
+    /Cambridge 19 Listening Test 3/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 7 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      10 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderListeningTest3Flowchart =
+    isListening &&
+    /Cambridge 19 Listening Test 3/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 26 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      30 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderListeningTest4ResponsibilitiesTable =
+    isListening &&
+    /Cambridge 19 Listening Test 4/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 7 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      10 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const listeningTest3InstructionText = shouldShowPromptTextWhenBlankForListeningTest4Questions15To18
+    ? [
+        'What reason prevented each of the following members of the Compton Park Runners Club from joining until recently?',
+        'Write the correct letter, A, B, or C next to Questions 15-18.',
+        'Reasons:',
+        'A a lack of confidence',
+        'B a dislike of running',
+        'C a lack of time',
+      ].join('\n')
+    : shouldRenderListeningTest3ShoppingTable
+      ? primaryBlock.instructions
+        .split(/\r?\n/)
+        .map((line: string) => line.trim())
+        .filter(Boolean)
+        .slice(0, 4)
+        .join('\n')
+    : shouldRenderListeningTest3Flowchart
+      ? [
+          'Complete the flowchart below.',
+          'Choose FIVE answers from the box and write the correct letter, A-H, next to Questions 26-30.',
+          'A size',
+          'B escape',
+          'C age',
+          'D water',
+          'E cereal',
+          'F calculations',
+          'G changes',
+          'H colour',
+        ].join('\n')
+      : shouldRenderListeningTest4ResponsibilitiesTable
+        ? primaryBlock.instructions
+            .split(/\r?\n/)
+            .map((line: string) => line.trim())
+            .filter(Boolean)
+            .slice(0, 4)
+            .join('\n')
+        : listeningInstructionText;
+  const renderListeningTest3ShoppingQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-test-3-shopping-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+  const renderListeningTest3FlowQuestion = (qNum: number, prompt: string) => (
+    <QuestionRow
+      key={`listening-test-3-flow-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+  const renderListeningTest4ResponsibilitiesQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-test-4-responsibilities-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
   return (
     <section
       key={`${primaryBlock.header}-${groupIdx}`}
@@ -329,7 +500,7 @@ export function QuestionGroup({
                     .join('\n')
                 : shouldInlinePairedReadingChoicePrompt
                   ? pairedReadingInstructionText
-                  : listeningInstructionText,
+                  : listeningTest3InstructionText,
             )}
           </div>
         ) : null}
@@ -356,7 +527,186 @@ export function QuestionGroup({
           </div>
         ) : null}
 
-        {shouldFlattenListeningQuestionRows ? (
+        {shouldRenderListeningTest3ShoppingTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black">
+              Shopping
+            </div>
+
+            <div className="border-border/60 grid grid-cols-3 border-b text-center text-sm">
+              <div className="border-border/60 border-r px-4 py-4" />
+              <div className="border-border/60 border-r px-4 py-4">
+                To buy
+              </div>
+              <div className="px-4 py-4">Other ideas</div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-3 border-b">
+              <div className="border-border/60 flex items-center justify-center border-r px-4 py-5 text-center text-sm font-black">
+                Fish market
+              </div>
+              <div className="border-border/60 flex items-center justify-center border-r px-4 py-5 text-center text-sm">
+                a dozen prawns
+              </div>
+              <div className="px-4 py-5">
+                {renderListeningTest3ShoppingQuestion(
+                  7,
+                  'a handful of 7 ____\n(type of seaweed)',
+                )}
+              </div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-3 border-b">
+              <div className="border-border/60 flex items-center justify-center border-r px-4 py-5 text-center text-sm font-black">
+                Organic Shop
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                {renderListeningTest3ShoppingQuestion(
+                  8,
+                  'beans and a 8 ____ for dessert',
+                )}
+              </div>
+              <div className="px-4 py-5">
+                {renderListeningTest3ShoppingQuestion(9, 'spices and 9 ____')}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3">
+              <div className="border-border/60 flex items-center justify-center border-r px-4 py-5 text-center text-sm font-black">
+                Bakery
+              </div>
+              <div className="border-border/60 flex items-center justify-center border-r px-4 py-5 text-center text-sm">
+                a brown loaf
+              </div>
+              <div className="px-4 py-5">
+                {renderListeningTest3ShoppingQuestion(10, 'a 10 ____ tart')}
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListeningTest4ResponsibilitiesTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black">
+              Responsibilities
+            </div>
+
+            <div className="border-border/60 grid grid-cols-4 border-b text-center text-sm font-semibold">
+              <div className="border-border/60 border-r px-3 py-4" />
+              <div className="border-border/60 border-r px-3 py-4">Task 1</div>
+              <div className="border-border/60 border-r px-3 py-4">Task 2</div>
+              <div className="px-3 py-4">Notes</div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-4 border-b">
+              <div className="border-border/60 flex items-center justify-center border-r px-3 py-5 text-center text-sm font-black">
+                Bakery section
+              </div>
+              <div className="border-border/60 flex items-center justify-center border-r px-3 py-5 text-center text-sm">
+                Check sell-by dates
+              </div>
+              <div className="border-border/60 flex items-center justify-center border-r px-3 py-5 text-center text-sm">
+                Change price labels
+              </div>
+              <div className="px-3 py-5">
+                {renderListeningTest4ResponsibilitiesQuestion(
+                  7,
+                  'Use 7 ____ labels',
+                )}
+              </div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-4 border-b">
+              <div className="border-border/60 flex items-center justify-center border-r px-3 py-5 text-center text-sm font-black">
+                Sushi takeaway counter
+              </div>
+              <div className="border-border/60 border-r px-3 py-5">
+                {renderListeningTest4ResponsibilitiesQuestion(
+                  8,
+                  'Re-stock with 8 ____ boxes if needed',
+                )}
+              </div>
+              <div className="border-border/60 flex items-center justify-center border-r px-3 py-5 text-center text-sm">
+                Wipe preparation area and clean the sink
+              </div>
+              <div className="flex items-center justify-center px-3 py-5 text-center text-sm">
+                Do not clean any knives
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4">
+              <div className="border-border/60 flex items-center justify-center border-r px-3 py-5 text-center text-sm font-black">
+                Meat and fish counters
+              </div>
+              <div className="border-border/60 flex items-center justify-center border-r px-3 py-5 text-center text-sm">
+                Clean the serving area, including the weighing scales
+              </div>
+              <div className="border-border/60 border-r px-3 py-5">
+                {renderListeningTest4ResponsibilitiesQuestion(
+                  9,
+                  'Collect 9 ____ for the fish from the cold-room',
+                )}
+              </div>
+              <div className="px-3 py-5">
+                {renderListeningTest4ResponsibilitiesQuestion(
+                  10,
+                  'Must wear special 10 ____',
+                )}
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListeningTest3Flowchart ? (
+          <div className="space-y-4">
+            <div className="border-border/60 bg-background/60 rounded-2xl border px-4 py-5 text-center shadow-sm">
+              {renderListeningTest3FlowQuestion(
+                26,
+                'Choose mice which are all the same 26 ____',
+              )}
+            </div>
+
+            <div className="text-primary text-center text-xl font-black leading-none">
+              ?
+            </div>
+
+            <div className="border-border/60 bg-background/60 rounded-2xl border px-4 py-5 text-center shadow-sm">
+              {renderListeningTest3FlowQuestion(
+                27,
+                'Divide the mice into two groups, each with a different 27 ____',
+              )}
+            </div>
+
+            <div className="text-primary text-center text-xl font-black leading-none">
+              ?
+            </div>
+
+            <div className="border-border/60 bg-background/60 space-y-4 rounded-2xl border px-4 py-5 text-center text-sm shadow-sm">
+              <p>Put each group in a separate cage.</p>
+              <p>Feed group A commercial mouse food.</p>
+              {renderListeningTest3FlowQuestion(
+                28,
+                'Feed group B the same, but also sugar contained in 28 ____',
+              )}
+            </div>
+
+            <div className="text-primary text-center text-xl font-black leading-none">
+              ?
+            </div>
+
+            <div className="border-border/60 bg-background/60 space-y-4 rounded-2xl border px-4 py-5 text-center text-sm shadow-sm">
+              <p>Take measurements using an electronic scale.</p>
+              {renderListeningTest3FlowQuestion(
+                29,
+                'Place them in a weighing chamber to prevent 29 ____',
+              )}
+            </div>
+
+            <div className="text-primary text-center text-xl font-black leading-none">
+              ?
+            </div>
+
+            <div className="border-border/60 bg-background/60 rounded-2xl border px-4 py-5 text-center shadow-sm">
+              {renderListeningTest3FlowQuestion(30, 'Do all necessary 30 ____')}
+            </div>
+          </div>
+        ) : shouldFlattenListeningQuestionRows ? (
           <div className="space-y-6">
             {[primaryBlock, ...continuationBlocks].flatMap((block: any) =>
               block.items
@@ -375,6 +725,14 @@ export function QuestionGroup({
                       itemPrompt === block.header.trim())
                       ? sectionTitlePrompt
                       : item.prompt;
+                  const scopedDisplayPrompt =
+                    shouldShowPromptTextWhenBlankForListeningTest4Questions15To18 &&
+                    listeningTest4Question15To18Prompts.has(item.qNum)
+                      ? listeningTest4Question15To18Prompts.get(item.qNum)!
+                      : shouldShowPromptTextWhenBlankForListeningTest4Questions26To30 &&
+                          listeningTest4Question26To30Prompts.has(item.qNum)
+                        ? listeningTest4Question26To30Prompts.get(item.qNum)!
+                        : displayPrompt;
 
                   return (
                     <QuestionRow
@@ -382,9 +740,9 @@ export function QuestionGroup({
                         '-',
                       )}-${item.qNum}-${itemIdx}`}
                       qNum={item.qNum}
-                      prompt={displayPrompt}
+                      prompt={scopedDisplayPrompt}
                       choices={block.choices}
-                      pairedQuestionNumbers={block.questionNumbers}
+                      pairedQuestionNumbers={isPairedListeningChoiceBlock ? pairedChoiceQuestionNumbers : []}
                       showPrompt={true}
                       showPromptTextWhenBlank={
                         shouldShowPromptTextWhenBlank ||
@@ -397,7 +755,16 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlankForGeneralTest4Questions1To5 ||
                         shouldShowPromptTextWhenBlankForGeneralTest4Questions25To27 ||
                         shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36 ||
-                        shouldShowPromptTextWhenBlankForAcademicTest2Questions14To18
+                        shouldShowPromptTextWhenBlankForAcademicTest2Questions14To18 ||
+                          ((shouldShowPromptTextWhenBlankForListeningTest3Questions11To16 &&
+                              item.qNum >= 11 &&
+                              item.qNum <= 16) ||
+                            (shouldShowPromptTextWhenBlankForListeningTest4Questions15To18 &&
+                              item.qNum >= 15 &&
+                              item.qNum <= 18) ||
+                            (shouldShowPromptTextWhenBlankForListeningTest4Questions26To30 &&
+                              item.qNum >= 26 &&
+                              item.qNum <= 30))
                       }
                       inlineBlankPrompt={
                         shouldRenderInlineBlankPromptForQuestions15To21 ||
@@ -406,7 +773,8 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
                         shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                         shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
-                        shouldRenderInlineBlankPromptForListeningQuestions25To30
+                        shouldRenderInlineBlankPromptForListeningQuestions25To30 ||
+                        shouldShowPromptTextWhenBlankForListeningTest4Questions26To30
                       }
                       answerLookup={answerLookup}
                       userAnswers={userAnswers}
@@ -458,7 +826,7 @@ export function QuestionGroup({
                           : displayPrompt
                       }
                       choices={block.choices}
-                      pairedQuestionNumbers={block.questionNumbers}
+                      pairedQuestionNumbers={pairedChoiceQuestionNumbers}
                       showPrompt={
                         !shouldInlinePairedListeningPrompt &&
                         !shouldInlinePairedReadingChoicePrompt
@@ -503,12 +871,20 @@ export function QuestionGroup({
                           itemPrompt === block.header.trim())
                           ? sectionTitlePrompt
                           : item.prompt;
+                      const scopedDisplayPrompt =
+                        shouldShowPromptTextWhenBlankForListeningTest4Questions15To18 &&
+                        listeningTest4Question15To18Prompts.has(item.qNum)
+                          ? listeningTest4Question15To18Prompts.get(item.qNum)!
+                          : shouldShowPromptTextWhenBlankForListeningTest4Questions26To30 &&
+                              listeningTest4Question26To30Prompts.has(item.qNum)
+                            ? listeningTest4Question26To30Prompts.get(item.qNum)!
+                            : displayPrompt;
 
                       return (
                         <QuestionRow
                           key={`${block.header}-${groupIdx}-${blockGroupIdx}-${item.qNum}-${itemIdx}`}
                           qNum={item.qNum}
-                          prompt={displayPrompt}
+                          prompt={scopedDisplayPrompt}
                           choices={block.choices}
                           showPromptTextWhenBlank={
                             shouldShowPromptTextWhenBlank ||
@@ -521,7 +897,16 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlankForGeneralTest4Questions1To5 ||
                             shouldShowPromptTextWhenBlankForGeneralTest4Questions25To27 ||
                             shouldShowPromptTextWhenBlankForGeneralTest4Questions31To36 ||
-                            shouldShowPromptTextWhenBlankForAcademicTest2Questions14To18
+                            shouldShowPromptTextWhenBlankForAcademicTest2Questions14To18 ||
+                          ((shouldShowPromptTextWhenBlankForListeningTest3Questions11To16 &&
+                              item.qNum >= 11 &&
+                              item.qNum <= 16) ||
+                            (shouldShowPromptTextWhenBlankForListeningTest4Questions15To18 &&
+                              item.qNum >= 15 &&
+                              item.qNum <= 18) ||
+                            (shouldShowPromptTextWhenBlankForListeningTest4Questions26To30 &&
+                              item.qNum >= 26 &&
+                              item.qNum <= 30))
                           }
                           inlineBlankPrompt={
                             shouldRenderInlineBlankPromptForQuestions15To21 ||
@@ -530,7 +915,8 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
                             shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                             shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
-                            shouldRenderInlineBlankPromptForListeningQuestions25To30
+                            shouldRenderInlineBlankPromptForListeningQuestions25To30 ||
+                        shouldShowPromptTextWhenBlankForListeningTest4Questions26To30
                           }
                           answerLookup={answerLookup}
                           userAnswers={userAnswers}

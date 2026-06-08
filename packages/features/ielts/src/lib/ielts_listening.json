@@ -2129,7 +2129,7 @@
         "blocks": [
           {
             "header": "PART 2 Questions 11-20",
-            "question_numbers": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+            "question_numbers": [11, 12],
             "text": "Choose\nTWO\nletters,\nA—E\n.\nWhich\nTWO\nproblems with some training programmes for new runners does Liz mention?",
             "choices": [
               "A There is a risk of serious injury.",
@@ -2181,7 +2181,7 @@
         "questions": [
           {
             "header": "PART 2 Questions 11-20",
-            "question_numbers": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+            "question_numbers": [11, 12],
             "text": "Choose\nTWO\nletters,\nA—E\n.\nWhich\nTWO\nproblems with some training programmes for new runners does Liz mention?",
             "choices": [
               "A There is a risk of serious injury.",
@@ -2397,7 +2397,7 @@
       },
       {
         "header": "PART 2 Questions 11-20",
-        "question_numbers": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+        "question_numbers": [11, 12],
         "text": "Choose\nTWO\nletters,\nA—E\n.\nWhich\nTWO\nproblems with some training programmes for new runners does Liz mention?",
         "choices": [
           "A There is a risk of serious injury.",
