@@ -254,38 +254,79 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     };
   }, [isListening, parsedQuestionBlocks, test?.title]);
   const pairedChoiceQuestionBlocks = useMemo(
-    () =>
-      parsedQuestionBlocks.filter(
-        (block) => {
-          if (
-            block.questionNumbers.length !== 2 ||
-            (block.choices?.length ?? 0) === 0
-          ) {
-            return false;
-          }
+    () => {
+      const parsedPairedBlocks = parsedQuestionBlocks.filter((block) => {
+        if (
+          block.questionNumbers.length !== 2 ||
+          (block.choices?.length ?? 0) === 0
+        ) {
+          return false;
+        }
 
-          const blockText = [
-            block.rawText,
-            block.instructions,
-            block.items[0]?.prompt,
-          ]
-            .filter(Boolean)
-            .join('\n');
-          const isListeningTest4MarathonQuestionBlock =
-            isListening &&
-            /Cambridge 19 Listening Test 4/i.test(test?.title ?? '') &&
-            block.questionNumbers[0] === 19 &&
-            /What does Liz say about running her first marathon\?/i.test(
-              blockText,
-            );
+        const blockText = [
+          block.rawText,
+          block.instructions,
+          block.items[0]?.prompt,
+        ]
+          .filter(Boolean)
+          .join('\n');
+        const isListeningTest4MarathonQuestionBlock =
+          isListening &&
+          /Cambridge 19 Listening Test 4/i.test(test?.title ?? '') &&
+          block.questionNumbers[0] === 19 &&
+          /What does Liz say about running her first marathon\?/i.test(
+            blockText,
+          );
 
-          if (isListeningTest4MarathonQuestionBlock) {
-            return false;
-          }
+        if (isListeningTest4MarathonQuestionBlock) {
+          return false;
+        }
 
-          return /(?:Choose\s+TWO|Which\s+TWO)/i.test(blockText);
-        },
-      ),
+        return /(?:Choose\s+TWO|Which\s+TWO)/i.test(blockText);
+      });
+
+      if (
+        !isListening ||
+        !/Cambridge 19 Listening Test 4/i.test(test?.title ?? '')
+      ) {
+        return parsedPairedBlocks;
+      }
+
+      const withListeningTest4Pairs = [...parsedPairedBlocks];
+      const addListeningTest4Pair = (questionNumbers: [number, number]) => {
+        const [firstQuestion, secondQuestion] = questionNumbers;
+        const hasPair = withListeningTest4Pairs.some((block) => {
+          const sortedNumbers = [...block.questionNumbers].sort((a, b) => a - b);
+
+          return (
+            sortedNumbers[0] === firstQuestion &&
+            sortedNumbers[1] === secondQuestion
+          );
+        });
+
+        if (hasPair) {
+          return;
+        }
+
+        const sourceBlock = parsedQuestionBlocks.find((block) =>
+          questionNumbers.every((qNum) => block.questionNumbers.includes(qNum)),
+        );
+
+        if (!sourceBlock || (sourceBlock.choices?.length ?? 0) === 0) {
+          return;
+        }
+
+        withListeningTest4Pairs.push({
+          ...sourceBlock,
+          questionNumbers,
+        });
+      };
+
+      addListeningTest4Pair([11, 12]);
+      addListeningTest4Pair([13, 14]);
+
+      return withListeningTest4Pairs;
+    },
     [isListening, parsedQuestionBlocks, test?.title],
   );
   const pairedChoiceBlockLookup = useMemo(() => {
@@ -546,5 +587,6 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     renderStartScreen()
   );
 }
+
 
 
