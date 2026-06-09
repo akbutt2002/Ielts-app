@@ -121,6 +121,61 @@ function renderOpinionListLine(line: string) {
   );
 }
 
+function renderMaryamMirzakhaniPhraseTable() {
+  const rows = [
+    [
+      { letter: 'A', text: 'appeal' },
+      { letter: 'B', text: 'determined' },
+      { letter: 'C', text: 'intrigued' },
+    ],
+    [
+      { letter: 'D', text: 'single' },
+      { letter: 'E', text: 'achievement' },
+      { letter: 'F', text: 'devoted' },
+    ],
+    [
+      { letter: 'G', text: 'involved' },
+      { letter: 'H', text: 'unique' },
+      { letter: 'I', text: 'innovative' },
+    ],
+    [
+      { letter: 'J', text: 'satisfaction' },
+      { letter: 'K', text: 'intent' },
+      null,
+    ],
+  ];
+
+  return (
+    <div className="border-border/70 mt-7 overflow-hidden rounded-2xl border bg-white/40 shadow-sm dark:bg-white/[0.03]">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`maryam-phrase-row-${rowIdx}`}
+          className={cn(
+            'grid grid-cols-3',
+            rowIdx < rows.length - 1 && 'border-border/70 border-b',
+          )}
+        >
+          {row.map((cell, cellIdx) => (
+            <div
+              key={`maryam-phrase-cell-${rowIdx}-${cellIdx}`}
+              className={cn(
+                'text-foreground flex min-h-20 items-center justify-center px-4 py-5 text-center text-[15px] leading-7',
+                cellIdx < row.length - 1 && 'border-border/70 border-r',
+              )}
+            >
+              {cell ? (
+                <span>
+                  <strong className="font-bold">{cell.letter}</strong>{' '}
+                  {cell.text}
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
 export function renderInstructionText(text: string) {
   const lines = formatInstructionLines(text);
 
@@ -384,6 +439,20 @@ export function renderStructuredSummaryBlock(
     return null;
   }
 
+  const shouldShowMaryamMirzakhaniPhraseTable =
+    /^Maryam Mirzakhani$/i.test(parsedSummaryBlock.title.trim()) &&
+    block.questionNumbers[0] === 27 &&
+    block.questionNumbers[block.questionNumbers.length - 1] === 32;
+
+  const maryamMirzakhaniSummaryText = shouldShowMaryamMirzakhaniPhraseTable
+    ? parsedSummaryBlock.summaryText
+        .replace(
+          /\s*A\s+appeal\s+B\s+determined\s+C\s+intrigued\s+D\s+single\s+E\s+achievement\s+F\s+devoted\s+G\s+involved\s+H\s+unique\s+I\s+innovative\s+J\s+satisfaction\s+K\s+intent\s*$/i,
+          '',
+        )
+        .trim()
+    : parsedSummaryBlock.summaryText;
+
   return (
     <div key={blockIdx} className="space-y-8">
       {renderInstructionCard({
@@ -398,8 +467,11 @@ export function renderStructuredSummaryBlock(
           </h3>
 
           <p className="text-foreground text-[15px] leading-[2.35]">
-            {renderInlineNoteText(parsedSummaryBlock.summaryText, deps)}
+            {renderInlineNoteText(maryamMirzakhaniSummaryText, deps)}
           </p>
+
+          {shouldShowMaryamMirzakhaniPhraseTable &&
+            renderMaryamMirzakhaniPhraseTable()}
 
           {deps.isSubmitted && (
             <div className="flex flex-wrap gap-2 pt-2">
