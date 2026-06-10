@@ -431,6 +431,12 @@ export function QuestionGroup({
     primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
       10 &&
     (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderGeneral18Test1CustomerComplaintsTable =
+    !isListening &&
+    /Cambridge 18 IELTS General Reading Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 23 &&
+    groupLastQuestion === 27 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
   const listeningTest3InstructionText = shouldShowPromptTextWhenBlankForListeningTest4Questions15To18
     ? [
         'What reason prevented each of the following members of the Compton Park Runners Club from joining until recently?',
@@ -473,6 +479,13 @@ export function QuestionGroup({
             .map((line: string) => line.trim())
             .filter(Boolean)
             .slice(0, 4)
+            .join('\n')
+      : shouldRenderGeneral18Test1CustomerComplaintsTable
+        ? primaryBlock.instructions
+            .split(/\r?\n/)
+            .map((line: string) => line.trim())
+            .filter(Boolean)
+            .slice(0, 3)
             .join('\n')
         : listeningInstructionText;
   const renderListeningTest2GuitarLessonQuestion = (
@@ -538,6 +551,26 @@ export function QuestionGroup({
   ) => (
     <QuestionRow
       key={`listening-test-4-responsibilities-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+  const renderGeneral18Test1CustomerComplaintsQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`general-18-test-1-customer-complaints-${qNum}`}
       qNum={qNum}
       prompt={prompt}
       choices={[]}
@@ -659,6 +692,108 @@ export function QuestionGroup({
                 renderAnswerStatusIcon={renderAnswerStatusIcon}
               />
             ))}
+          </div>
+        ) : shouldRenderGeneral18Test1CustomerComplaintsTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            <div className="border-border/60 border-b px-4 py-5 text-sm font-black">
+              Strategies for dealing with customer complaints
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[0.9fr_1.35fr_1.35fr] border-b text-sm font-semibold">
+              <div className="border-border/60 border-r px-4 py-4">Strategy</div>
+              <div className="border-border/60 border-r px-4 py-4">Your approach</div>
+              <div className="px-4 py-4">The customer...</div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[0.9fr_1.35fr_1.35fr] border-b">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Stay calm
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>Remember it is not a direct attack on you.</li>
+                  <li>
+                    {renderGeneral18Test1CustomerComplaintsQuestion(
+                      23,
+                      'Do not try to 23 ____ the argument.',
+                    )}
+                  </li>
+                </ul>
+              </div>
+              <div className="px-4 py-5">
+                <ul className="list-disc pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral18Test1CustomerComplaintsQuestion(
+                      24,
+                      'usually had 24 ____ that were not fulfilled.',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[0.9fr_1.35fr_1.35fr] border-b">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Listen well
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc pl-5 text-sm leading-relaxed">
+                  <li>Use short phrases in reply.</li>
+                </ul>
+              </div>
+              <div className="px-4 py-5">
+                <ul className="list-disc pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral18Test1CustomerComplaintsQuestion(
+                      25,
+                      'cannot recognise a 25 ____ until calm',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[0.9fr_1.35fr_1.35fr] border-b">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Get the facts
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc pl-5 text-sm leading-relaxed">
+                  <li>Ask questions and begin a proper conversation.</li>
+                </ul>
+              </div>
+              <div className="px-4 py-5">
+                <ul className="list-disc pl-5 text-sm leading-relaxed">
+                  <li>will start to trust you.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[0.9fr_1.35fr_1.35fr]">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Suggest action
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral18Test1CustomerComplaintsQuestion(
+                      26,
+                      "Be sure of your company's 26 ____ on complaints.",
+                    )}
+                  </li>
+                </ul>
+              </div>
+              <div className="px-4 py-5">
+                <ul className="list-disc pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral18Test1CustomerComplaintsQuestion(
+                      27,
+                      'may well make a verbal 27 ____ in future.',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         ) : shouldRenderListeningTest2GuitarLessonTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
@@ -1185,3 +1320,5 @@ export function QuestionGroup({
     </section>
   );
 }
+
+
