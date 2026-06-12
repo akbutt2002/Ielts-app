@@ -775,6 +775,27 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
       ];
     });
   }
+  if (/Cambridge 18 IELTS General Reading Test 2/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      const text = String(block.text ?? '');
+      const questionNumbers = block.question_numbers ?? [];
+
+      if (
+        questionNumbers[0] === 28 &&
+        questionNumbers.includes(31) &&
+        questionNumbers.includes(40) &&
+        /Questions\s+28/i.test(text)
+      ) {
+        return {
+          ...block,
+          header: 'SECTION 3 Questions 28-31',
+          question_numbers: buildSequentialQuestionRange(28, 31),
+        };
+      }
+
+      return block;
+    });
+  }
   const normalizedBlocks = sourceBlocks.map((block: Partial<QuestionBlock>) =>
     normalizeQuestionBlock(block),
   );

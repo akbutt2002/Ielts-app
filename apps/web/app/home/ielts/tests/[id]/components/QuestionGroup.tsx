@@ -16,6 +16,17 @@ import {
 } from './instruction-renderers';
 import { QuestionRow } from './QuestionRow';
 
+function RoadConstructionDiagram() {
+  return (
+    <div className="border-border/60 bg-background/70 overflow-hidden rounded-2xl border p-4 shadow-sm">
+      <img
+        src="/images/ielts/diagram-test-18-road.png"
+        alt="Roman road construction diagram for questions 38 to 40"
+        className="h-auto w-full rounded-xl object-contain"
+      />
+    </div>
+  );
+}
 export function QuestionGroup({
   group,
   groupIdx,
@@ -47,6 +58,11 @@ export function QuestionGroup({
   const groupLastQuestion =
     groupedQuestionNumbers[groupedQuestionNumbers.length - 1] ?? 0;
 
+  const shouldRenderGeneral18Test3RoadDiagram =
+    !isListening &&
+    /Cambridge 18 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 38 &&
+    groupLastQuestion === 40;
   const shouldShowQuestionBlockTitle = (block: any) => {
     const normalizedHeader = normalizeAnswerText(block.header ?? '');
 
@@ -158,7 +174,86 @@ export function QuestionGroup({
     ([20, 22].includes(primaryBlock.questionNumbers[0] ?? 0) ||
       (/Cambridge 19 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
         [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)));
-  const displayContentHeading = shouldInlinePairedListeningPrompt
+  const shouldUseGeneral18Test2Questions28To31Prompts =
+    !isListening &&
+    /Cambridge 18 IELTS General Reading Test 2/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 28 &&
+    primaryBlock.questionNumbers.includes(31) &&
+    (primaryBlock.choices?.length ?? 0) === 5;
+  const general18Test2Questions28To31Prompts = new Map<number, string>([
+    [28, "mention of Mawer's desire to oversee all the stages of her business"],
+    [29, 'reference to changing employment patterns among the general population'],
+    [30, 'the date when Clothkits was originally established as a product'],
+    [31, 'the benefits of sewing a garment and then wearing it'],
+  ]);
+  const shouldUseGeneral18Test3Questions28To33Prompts =
+    !isListening &&
+    /Cambridge 18 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 28 &&
+    primaryBlock.questionNumbers.includes(33) &&
+    (primaryBlock.choices?.length ?? 0) === 6;
+  const general18Test3Questions28To33Prompts = new Map<number, string>([
+    [28, 'the various functions of Roman roads'],
+    [29, 'reference to some current remains of Roman road building'],
+    [30, 'a description of preparations for building a road'],
+    [31, 'the period in history when road building began'],
+    [32, 'the consequence of damage caused by a natural disaster'],
+    [33, 'the total distance once crossed by Roman roads'],
+  ]);
+  const shouldUseGeneral18Test2Questions32To35Prompts =
+    !isListening &&
+    /Cambridge 18 IELTS General Reading Test 2/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 32 &&
+    primaryBlock.questionNumbers.includes(35) &&
+    (primaryBlock.choices?.length ?? 0) === 4;
+  const general18Test2Questions32To35Prompts = new Map<number, string>([
+    [32, 'in Paragraph A, the writer says that Kay Mawer was reminded about Clothkits by'],
+    [33, 'What does the reader learn about Clothkits in the 1960s and 1970s?'],
+    [34, 'Why did Clothkits close in 1991?'],
+    [35, 'What point does the writer make in Paragraph E?'],
+  ]);
+  const general18Test2Questions32To35Choices = new Map<number, string[]>([
+    [
+      32,
+      [
+        'A a shop she visited.',
+        'B a purchase she made.',
+        'C an outfit someone was wearing.',
+        'D a conversation with someone she knew.',
+      ],
+    ],
+    [
+      33,
+      [
+        'A Its designs represented the attitudes of the time.',
+        'B its products were only affordable for the wealthy.',
+        'C its creator tried many times to launch her company.',
+        'D its management was spread across numerous countries.',
+      ],
+    ],
+    [
+      34,
+      [
+        'A There were unexpected staffing problems.',
+        'B The funding for sewing activities was inadequate.',
+        'C Freeman\'s was an unsuitable partner.',
+        'D Records on Kennedy\'s database were lost.',
+      ],
+    ],
+    [
+      35,
+      [
+        'A Clothkits will reach more markets than in the past.',
+        'B Clothkits will need bigger premises than in the past.',
+        'C People are more concerned about throwing away items than in the past.',
+        'D People do less sewing now than in the past.',
+      ],
+    ],
+  ]);
+  const displayContentHeading = shouldInlinePairedListeningPrompt ||
+    shouldUseGeneral18Test2Questions28To31Prompts ||
+    shouldUseGeneral18Test3Questions28To33Prompts ||
+    shouldUseGeneral18Test2Questions32To35Prompts
     ? ''
     : /^Which title is the most suitable for the text\?$/i.test(contentHeading)
       ? `Question ${
@@ -265,6 +360,34 @@ export function QuestionGroup({
     groupFirstQuestion === 21 &&
     groupLastQuestion === 27 &&
     (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 =
+    !isListening &&
+    /Cambridge 18 IELTS General Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 22 &&
+    groupLastQuestion === 27 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const general18Test2Question22To27Prompts = new Map<number, string>([
+    [22, "Chefs' uniforms and 22 ____ must be washed for every shift."],
+    [23, 'Kitchen staff need to change the 23 ____ when they start chopping another kind of food.'],
+    [24, 'All staff must make sure their hands are clean after handling 24 ____.'],
+    [25, 'Workers in the kitchen should not attempt to repair 25 ____.'],
+    [26, '26 ____ are required to identify any chemicals kept in the kitchen.'],
+    [27, 'It is forbidden for kitchen staff to have drinks from the 27 ____.'],
+  ]);
+  const shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 =
+    !isListening &&
+    /Cambridge 18 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
+    (primaryBlock.questionNumbers?.[0] ?? 0) === 15 &&
+    primaryBlock.questionNumbers?.includes(20) &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+  const general18Test3Question15To20Prompts = new Map<number, string>([
+    [15, 'Parking is limited, so the use of alternative methods of transport and the 15 ____ of cars is encouraged.'],
+    [16, 'Staff with the highest 16 ____ are given parking spaces first.'],
+    [17, 'Some parking spaces are reserved for company vehicles during the 17 ____ but may be used by staff at other times.'],
+    [18, 'If an employee leaves the company permanently, their parking space will normally be given to their 18 ____.'],
+    [19, 'If an employee takes extended leave, their parking space will be given to the person who provides 19 ____ for the absent employee.'],
+    [20, 'All 20 ____ about car parking should be sent to the HR Manager.'],
+  ]);
   const shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 =
     !isListening &&
     /Cambridge 19 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
@@ -635,6 +758,9 @@ export function QuestionGroup({
       </div>
 
       <div className="space-y-6">
+        {shouldRenderGeneral18Test3RoadDiagram ? <RoadConstructionDiagram /> : null}
+
+
         {shouldRenderListeningLeadInRow ? (
           <div>
             <QuestionRow
@@ -1065,6 +1191,16 @@ export function QuestionGroup({
                     !(shouldHideListeningLeadInRow && item.qNum === 11),
                 )
                 .map((item: any, itemIdx: number) => {
+                  const shouldHideGeneral18Test2MergedExtraRow =
+                    shouldUseGeneral18Test2Questions28To31Prompts &&
+                    block.questionNumbers[0] === 28 &&
+                    block.questionNumbers.includes(40) &&
+                    item.qNum > 31;
+
+                  if (shouldHideGeneral18Test2MergedExtraRow) {
+                    return null;
+                  }
+
                   const itemPrompt = compactPromptLines(
                     stripQuestionNumberPrefix(item.prompt, item.qNum),
                   );
@@ -1076,7 +1212,22 @@ export function QuestionGroup({
                       ? sectionTitlePrompt
                       : item.prompt;
                   const scopedDisplayPrompt =
-                    shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
+                    shouldUseGeneral18Test2Questions28To31Prompts &&
+                    general18Test2Questions28To31Prompts.has(item.qNum)
+                      ? general18Test2Questions28To31Prompts.get(item.qNum)!
+                      : shouldUseGeneral18Test3Questions28To33Prompts &&
+                    general18Test3Questions28To33Prompts.has(item.qNum)
+                      ? general18Test3Questions28To33Prompts.get(item.qNum)!
+                      : shouldUseGeneral18Test2Questions32To35Prompts &&
+                    general18Test2Questions32To35Prompts.has(item.qNum)
+                      ? general18Test2Questions32To35Prompts.get(item.qNum)!
+                      : shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 &&
+                    general18Test2Question22To27Prompts.has(item.qNum)
+                      ? general18Test2Question22To27Prompts.get(item.qNum)!
+                      : shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 &&
+                    general18Test3Question15To20Prompts.has(item.qNum)
+                      ? general18Test3Question15To20Prompts.get(item.qNum)!
+                      : shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                     listeningTest2Question1To6Prompts.has(item.qNum)
                       ? listeningTest2Question1To6Prompts.get(item.qNum)!
                       : shouldShowPromptTextWhenBlankForListeningTest4Questions15To18 &&
@@ -1086,6 +1237,11 @@ export function QuestionGroup({
                           listeningTest4Question26To30Prompts.has(item.qNum)
                         ? listeningTest4Question26To30Prompts.get(item.qNum)!
                         : displayPrompt;
+                  const scopedChoices =
+                    shouldUseGeneral18Test2Questions32To35Prompts &&
+                    general18Test2Questions32To35Choices.has(item.qNum)
+                      ? general18Test2Questions32To35Choices.get(item.qNum)!
+                      : block.choices;
 
                   return (
                     <QuestionRow
@@ -1094,7 +1250,7 @@ export function QuestionGroup({
                       )}-${item.qNum}-${itemIdx}`}
                       qNum={item.qNum}
                       prompt={scopedDisplayPrompt}
-                      choices={block.choices}
+                      choices={scopedChoices}
                       pairedQuestionNumbers={isPairedListeningChoiceBlock ? pairedChoiceQuestionNumbers : []}
                       showPrompt={true}
                       showPromptTextWhenBlank={
@@ -1102,6 +1258,8 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlankForQuestions15To21 ||
                         shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
                         shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
+                        shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
+                        shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
@@ -1130,6 +1288,8 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForQuestions15To21 ||
                         shouldRenderInlineBlankPromptForQuestions28To32 ||
                         shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
+                        shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
+                        shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                         shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
                         shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                         shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
@@ -1225,6 +1385,16 @@ export function QuestionGroup({
                       !(shouldHideListeningLeadInRow && item.qNum === 11),
                   )
                   .map((item: any, itemIdx: number) => {
+                      const shouldHideGeneral18Test2MergedExtraRow =
+                        shouldUseGeneral18Test2Questions28To31Prompts &&
+                        block.questionNumbers[0] === 28 &&
+                        block.questionNumbers.includes(40) &&
+                        item.qNum > 31;
+
+                      if (shouldHideGeneral18Test2MergedExtraRow) {
+                        return null;
+                      }
+
                       const itemPrompt = compactPromptLines(
                         stripQuestionNumberPrefix(item.prompt, item.qNum),
                       );
@@ -1236,7 +1406,22 @@ export function QuestionGroup({
                           ? sectionTitlePrompt
                           : item.prompt;
                       const scopedDisplayPrompt =
-                        shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
+                        shouldUseGeneral18Test2Questions28To31Prompts &&
+                        general18Test2Questions28To31Prompts.has(item.qNum)
+                          ? general18Test2Questions28To31Prompts.get(item.qNum)!
+                          : shouldUseGeneral18Test3Questions28To33Prompts &&
+                        general18Test3Questions28To33Prompts.has(item.qNum)
+                          ? general18Test3Questions28To33Prompts.get(item.qNum)!
+                          : shouldUseGeneral18Test2Questions32To35Prompts &&
+                        general18Test2Questions32To35Prompts.has(item.qNum)
+                          ? general18Test2Questions32To35Prompts.get(item.qNum)!
+                          : shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 &&
+                        general18Test2Question22To27Prompts.has(item.qNum)
+                          ? general18Test2Question22To27Prompts.get(item.qNum)!
+                          : shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 &&
+                        general18Test3Question15To20Prompts.has(item.qNum)
+                          ? general18Test3Question15To20Prompts.get(item.qNum)!
+                          : shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                         listeningTest2Question1To6Prompts.has(item.qNum)
                           ? listeningTest2Question1To6Prompts.get(item.qNum)!
                           : shouldShowPromptTextWhenBlankForListeningTest4Questions15To18 &&
@@ -1246,18 +1431,25 @@ export function QuestionGroup({
                               listeningTest4Question26To30Prompts.has(item.qNum)
                             ? listeningTest4Question26To30Prompts.get(item.qNum)!
                             : displayPrompt;
+                      const scopedChoices =
+                        shouldUseGeneral18Test2Questions32To35Prompts &&
+                        general18Test2Questions32To35Choices.has(item.qNum)
+                          ? general18Test2Questions32To35Choices.get(item.qNum)!
+                          : block.choices;
 
                       return (
                         <QuestionRow
                           key={`${block.header}-${groupIdx}-${blockGroupIdx}-${item.qNum}-${itemIdx}`}
                           qNum={item.qNum}
                           prompt={scopedDisplayPrompt}
-                          choices={block.choices}
+                          choices={scopedChoices}
                           showPromptTextWhenBlank={
                             shouldShowPromptTextWhenBlank ||
                             shouldShowPromptTextWhenBlankForQuestions15To21 ||
                             shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
                             shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
+                        shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
+                            shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
@@ -1291,6 +1483,8 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForQuestions15To21 ||
                             shouldRenderInlineBlankPromptForQuestions28To32 ||
                             shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
+                        shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
+                            shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                             shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
                             shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                             shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
@@ -1320,5 +1514,9 @@ export function QuestionGroup({
     </section>
   );
 }
+
+
+
+
 
 
