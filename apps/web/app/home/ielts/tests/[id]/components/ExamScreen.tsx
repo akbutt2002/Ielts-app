@@ -276,6 +276,12 @@ export function ExamScreen({
                           <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
                             Questions 16-20
                           </div>
+                        ) : /Cambridge 18 Listening Test 2/i.test(
+                          test?.title ?? '',
+                        ) ? (
+                          <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
+                            Questions 15-20
+                          </div>
                         ) : null}
 
                         <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">

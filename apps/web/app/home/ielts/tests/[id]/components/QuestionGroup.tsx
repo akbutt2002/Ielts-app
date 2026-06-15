@@ -128,13 +128,21 @@ export function QuestionGroup({
     /Cambridge 19 Listening Test 2/i.test(testTitle ?? '') &&
     /Questions 7-10/i.test(primaryBlock.header ?? '') &&
     /A typical 45-minute guitar lesson/i.test(primaryBlock.rawText ?? primaryBlock.instructions ?? '');
+  const isListening18Test2JobTable =
+    isListening &&
+    /Cambridge 18 Listening Test 2/i.test(testTitle ?? '') &&
+    /Questions 6-10/i.test(primaryBlock.header ?? '') &&
+    primaryBlock.questionNumbers.includes(6) &&
+    primaryBlock.questionNumbers.includes(10);
   const displayBlockTitle = isListeningTest4TrainingProgrammesBlock
     ? 'Questions 11-12'
     : isListeningTest2GuitarLessonTable
       ? 'Questions 7-10'
-      : shouldShowQuestionBlockTitle(primaryBlock)
-        ? formatQuestionRangeLabel(primaryBlock.questionNumbers)
-        : '';
+      : isListening18Test2JobTable
+        ? 'Questions 6-10'
+        : shouldShowQuestionBlockTitle(primaryBlock)
+          ? formatQuestionRangeLabel(primaryBlock.questionNumbers)
+          : '';
   const listeningPartLabel = isListening
     ? `Part ${Math.min(
         4,
@@ -468,6 +476,13 @@ export function QuestionGroup({
     primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
       30 &&
     (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderInlineBlankPromptForListening18Test2Questions15To20 =
+    isListening &&
+    /Cambridge 18 Listening Test 2/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 15 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      20 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
 
   const shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 =
     isListening &&
@@ -533,6 +548,9 @@ export function QuestionGroup({
   const shouldRenderListeningTest2GuitarLessonTable =
     isListeningTest2GuitarLessonTable &&
     (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderListening18Test2JobTable =
+    isListening18Test2JobTable &&
+    (primaryBlock.choices?.length ?? 0) === 0;
   const shouldRenderListeningTest3ShoppingTable =
     isListening &&
     /Cambridge 19 Listening Test 3/i.test(testTitle ?? '') &&
@@ -569,6 +587,11 @@ export function QuestionGroup({
         'B a dislike of running',
         'C a lack of time',
       ].join('\n')
+    : shouldRenderListening18Test2JobTable
+      ? [
+          'Complete the table below.',
+          'Write ONE WORD AND/OR A NUMBER for each answer.',
+        ].join('\n')
     : shouldRenderListeningTest2GuitarLessonTable
       ? primaryBlock.instructions
           .split(/\r?\n/)
@@ -611,6 +634,26 @@ export function QuestionGroup({
             .slice(0, 3)
             .join('\n')
         : listeningInstructionText;
+  const renderListening18Test2JobQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-18-test-2-job-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
   const renderListeningTest2GuitarLessonQuestion = (
     qNum: number,
     prompt: string,
@@ -918,6 +961,80 @@ export function QuestionGroup({
                     )}
                   </li>
                 </ul>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening18Test2JobTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            <div className="border-border/60 grid grid-cols-4 border-b text-sm font-semibold">
+              <div className="border-border/60 border-r px-4 py-4">Location</div>
+              <div className="border-border/60 border-r px-4 py-4">Job title</div>
+              <div className="border-border/60 border-r px-4 py-4">Responsibilities include</div>
+              <div className="px-4 py-4">Pay and conditions</div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-4 border-b">
+              {/* Location */}
+              <div className="border-border/60 flex flex-col justify-center border-r px-4 py-5">
+                {renderListening18Test2JobQuestion(
+                  6,
+                  '6. 6 ____ Street',
+                )}
+              </div>
+              {/* Job title */}
+              <div className="border-border/60 flex items-center border-r px-4 py-5 text-sm font-medium text-foreground/80">
+                Breakfast supervisor
+              </div>
+              {/* Responsibilities include */}
+              <div className="border-border/60 flex flex-col justify-center border-r px-4 py-5 space-y-4">
+                <div className="text-foreground/80 text-sm leading-relaxed font-medium pl-10">
+                  Checking portions, etc. are correct
+                </div>
+                {renderListening18Test2JobQuestion(
+                  7,
+                  '7. Making sure 7 ____ is clean',
+                )}
+              </div>
+              {/* Pay and conditions */}
+              <div className="flex flex-col justify-center px-4 py-5 space-y-4">
+                {renderListening18Test2JobQuestion(
+                  8,
+                  '8. Starting salary 8 £ ____ per hour',
+                )}
+                <div className="text-foreground/80 text-sm leading-relaxed font-medium pl-10">
+                  Start work at 5.30 a.m.
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4">
+              {/* Location */}
+              <div className="border-border/60 flex items-center border-r px-4 py-5 text-sm font-medium text-foreground/80">
+                City Road
+              </div>
+              {/* Job title */}
+              <div className="border-border/60 flex items-center border-r px-4 py-5 text-sm font-medium text-foreground/80">
+                Junior chef
+              </div>
+              {/* Responsibilities include */}
+              <div className="border-border/60 flex flex-col justify-center border-r px-4 py-5 space-y-4">
+                <div className="text-foreground/80 text-sm leading-relaxed font-medium pl-10">
+                  Supporting senior chefs
+                </div>
+                {renderListening18Test2JobQuestion(
+                  9,
+                  '9. Maintaining stock and organising 9 ____',
+                )}
+              </div>
+              {/* Pay and conditions */}
+              <div className="flex flex-col justify-center px-4 py-5 space-y-4">
+                <div className="text-foreground/80 text-sm leading-relaxed font-medium pl-10">
+                  Annual salary £23,000
+                </div>
+                {renderListening18Test2JobQuestion(
+                  10,
+                  '10. No work on a 10 ____ once a month',
+                )}
               </div>
             </div>
           </div>
@@ -1295,6 +1412,7 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                         shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
                         shouldRenderInlineBlankPromptForListeningQuestions25To30 ||
+                        shouldRenderInlineBlankPromptForListening18Test2Questions15To20 ||
                         (shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                           item.qNum >= 1 &&
                           item.qNum <= 6) ||
@@ -1485,6 +1603,7 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                             shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
                             shouldRenderInlineBlankPromptForListeningQuestions25To30 ||
+                            shouldRenderInlineBlankPromptForListening18Test2Questions15To20 ||
                         (shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                           item.qNum >= 1 &&
                           item.qNum <= 6) ||

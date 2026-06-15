@@ -740,6 +740,41 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
     partBlocks.length > 0
       ? partBlocks
       : ((test?.questions ?? []) as QuestionBlock[]);
+  if (/Cambridge 18 Listening Test 2/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      const text = String(block.text ?? '');
+      const splitMatch = text.match(/(?:\r?\n|^)Questions\s+6\s*[-–—]\s*10\b/i);
+
+      if (
+        !splitMatch ||
+        !block.question_numbers?.includes(1) ||
+        !block.question_numbers?.includes(10)
+      ) {
+        return [block];
+      }
+
+      const splitIndex = splitMatch.index ?? -1;
+
+      if (splitIndex <= 0) {
+        return [block];
+      }
+
+      return [
+        {
+          ...block,
+          header: 'PART 1',
+          question_numbers: buildSequentialQuestionRange(1, 5),
+          text: text.slice(0, splitIndex).trim(),
+        },
+        {
+          ...block,
+          header: 'Questions 6-10',
+          question_numbers: buildSequentialQuestionRange(6, 10),
+          text: text.slice(splitIndex).trim(),
+        },
+      ];
+    });
+  }
   if (/Cambridge 19 IELTS General Reading Test 3/i.test(test?.title ?? '')) {
     sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
       const text = String(block.text ?? '');
@@ -1381,11 +1416,11 @@ export function isQuestionTokenLine(line: string) {
 }
 
 export function stripListMarker(line: string) {
-  return line.replace(/^[â€¢â—â–ªâ—¦\-â€“âˆ’]+\s*/, '').trim();
+  return line.replace(/^[•●▪◦\-–−]+\s*/, '').trim();
 }
 
 export function isBulletLikeLine(line: string) {
-  return /^[â€¢â—â–ªâ—¦\-â€“âˆ’]\s*/.test(line.trim());
+  return /^[•●▪◦\-–−]\s*/.test(line.trim());
 }
 
 export function replaceInlineQuestionNumberWithToken(
