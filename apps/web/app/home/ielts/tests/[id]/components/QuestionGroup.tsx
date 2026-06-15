@@ -1461,11 +1461,6 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                             shouldShowPromptTextWhenBlankForAcademicTest3Questions23To26 ||
                             shouldShowPromptTextWhenBlankForAcademicTest3Questions31To34 ||
-                        shouldShowPromptTextWhenBlankForAcademicTest3Questions31To34 ||
-                        shouldShowPromptTextWhenBlankForAcademicTest3Questions14To17 ||
-                        shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
-                        shouldShowPromptTextWhenBlankForAcademicTest3Questions23To26 ||
-                        shouldShowPromptTextWhenBlankForAcademicTest3Questions31To34 ||
                           ((shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                               item.qNum >= 1 &&
                               item.qNum <= 6) ||
@@ -1488,7 +1483,6 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
                             shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                             shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
-                        shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                             shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
                             shouldRenderInlineBlankPromptForListeningQuestions25To30 ||
                         (shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&

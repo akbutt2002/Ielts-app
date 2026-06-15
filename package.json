@@ -33,11 +33,6 @@
   },
   "prettier": "@kit/prettier-config",
   "packageManager": "pnpm@10.18.2",
-  "pnpm": {
-    "overrides": {
-      "react-is": "19.0.0"
-    }
-  },
   "devDependencies": {
     "@manypkg/cli": "^0.25.1",
     "@turbo/gen": "^2.5.8",

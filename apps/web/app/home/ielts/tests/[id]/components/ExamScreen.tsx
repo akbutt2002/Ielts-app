@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import Link from 'next/link';
 
 import {
@@ -31,13 +33,31 @@ import { renderInstructionText } from './instruction-renderers';
 import { calculateScore, getBandScore } from '../hooks/useTestScoring';
 import { normalizeInstructionFragment } from '../utils/instruction-formatter';
 
-const scoreTargetBands = [
+const scoreTargetBandsListening = [
   { band: 4.0, minimumCorrectAnswers: 10 },
   { band: 5.0, minimumCorrectAnswers: 15 },
   { band: 6.0, minimumCorrectAnswers: 23 },
   { band: 7.0, minimumCorrectAnswers: 30 },
   { band: 8.0, minimumCorrectAnswers: 35 },
   { band: 9.0, minimumCorrectAnswers: 39 },
+] as const;
+
+const scoreTargetBandsAcademic = [
+  { band: 4.0, minimumCorrectAnswers: 10 },
+  { band: 5.0, minimumCorrectAnswers: 15 },
+  { band: 6.0, minimumCorrectAnswers: 23 },
+  { band: 7.0, minimumCorrectAnswers: 30 },
+  { band: 8.0, minimumCorrectAnswers: 35 },
+  { band: 9.0, minimumCorrectAnswers: 39 },
+] as const;
+
+const scoreTargetBandsGeneral = [
+  { band: 4.0, minimumCorrectAnswers: 15 },
+  { band: 5.0, minimumCorrectAnswers: 23 },
+  { band: 6.0, minimumCorrectAnswers: 30 },
+  { band: 7.0, minimumCorrectAnswers: 34 },
+  { band: 8.0, minimumCorrectAnswers: 37 },
+  { band: 9.0, minimumCorrectAnswers: 40 },
 ] as const;
 
 export function ExamScreen({
@@ -66,6 +86,31 @@ export function ExamScreen({
   handleRetryTest,
   handleGoToTests,
 }: any) {
+  const testType = useMemo(() => {
+    const title = String(test?.title ?? '').toLowerCase();
+    const testTypeField = String(test?.test_type ?? '').toLowerCase();
+
+    if (title.includes('listening') || testTypeField === 'listening') {
+      return 'listening' as const;
+    }
+
+    if (title.includes('academic reading')) {
+      return 'academic' as const;
+    }
+
+    return 'general' as const;
+  }, [test]);
+
+  const scoreTargetBands = useMemo(() => {
+    if (testType === 'listening') {
+      return scoreTargetBandsListening;
+    }
+    if (testType === 'general') {
+      return scoreTargetBandsGeneral;
+    }
+    return scoreTargetBandsAcademic;
+  }, [testType]);
+
   function getPerformanceLabel(bandScore: number) {
     if (bandScore >= 8.5) return 'Exceptional performance';
     if (bandScore >= 7) return 'Strong performance';
@@ -133,7 +178,7 @@ export function ExamScreen({
     getChoiceComparisonValue,
     getPairedChoiceComparisonValues,
   });
-  const bandScore = getBandScore(score);
+  const bandScore = getBandScore(score, testType);
   const bandScoreLabel = formatBandValue(bandScore);
   const nextTarget = getNextTargetBand(score);
   const nextTargetBandLabel = formatBandValue(nextTarget.band);

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@kit/ielts": "workspace:*",
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -37,7 +38,6 @@
     "lucide-react": "^0.545.0",
     "react-top-loading-bar": "3.0.2",
     "recharts": "2.15.3",
-    "@kit/ielts": "workspace:*",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
     "eslint": "^9.37.0",
-    "next": "15.5.9",
+    "next": "15.5.18",
     "next-themes": "0.4.6",
     "prettier": "^3.6.2",
     "react-day-picker": "^9.11.1",
