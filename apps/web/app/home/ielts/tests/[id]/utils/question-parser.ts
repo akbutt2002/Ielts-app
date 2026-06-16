@@ -775,6 +775,102 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
       ];
     });
   }
+  if (/Cambridge 18 IELTS Academic Reading Test 1/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(19)) {
+        const cleanedText = [
+          'Look at the following purposes (Questions 19-21) and the list of timber cuts below.',
+          'Match each purpose with the correct timber cut, A, B or C.',
+          'Write the correct letter, A, B or C, in boxes 19-21 on your answer sheet.',
+          'NB You may use any letter more than once.',
+          'List of Timber Cuts',
+          'A a TSI Cut',
+          'B a Salvage Cut',
+          'C a Shelterwood Cut',
+          '19. To remove trees that are diseased',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            question_numbers: [19, 20, 21],
+            text: cleanedText,
+          },
+        ];
+      }
+
+      if (block.question_numbers?.includes(27)) {
+        const cleanedText = [
+          'Questions 27-31',
+          'Reading Passage 3 has six sections, A-F.',
+          'Which section contains the following information?',
+          'Write the correct letter, A-F, in boxes 27-31 on your answer sheet.',
+          '27. A reference to the cooperation that takes place to try and minimise risk',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            text: cleanedText,
+          },
+        ];
+      }
+
+      if (block.question_numbers?.includes(36)) {
+        const cleanedText = [
+          'Look at the following statements (Questions 36-40) and the list of people below.',
+          'Match each statement with the correct person, A, B, C or D.',
+          'Write the correct letter, A, B, C or D, in boxes 36-40 on your answer sheet.',
+          'NB You may use any letter more than once.',
+          'List of People',
+          'A Carolin Frueh',
+          'B Holger Krag',
+          'C Marlon Sorge',
+          'D Moriba Jah',
+          '36. Knowing the exact location of space junk would help prevent any possible danger.',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            text: cleanedText,
+          },
+        ];
+      }
+
+      const text = String(block.text ?? '');
+      const splitMatch = text.match(/(?:\r?\n|^)Questions\s+4\s*[-–—]\s*7\b/i);
+
+      if (
+        !splitMatch ||
+        !block.question_numbers?.includes(1) ||
+        !block.question_numbers?.includes(7)
+      ) {
+        return [block];
+      }
+
+      const splitIndex = splitMatch.index ?? -1;
+
+      if (splitIndex <= 0) {
+        return [block];
+      }
+
+      return [
+        {
+          ...block,
+          header: 'Questions 1-3',
+          question_numbers: buildSequentialQuestionRange(1, 3),
+          text: text.slice(0, splitIndex).trim(),
+        },
+        {
+          ...block,
+          header: 'Questions 4-7',
+          question_numbers: buildSequentialQuestionRange(4, 7),
+          text: text.slice(splitIndex).trim(),
+        },
+      ];
+    });
+  }
   if (/Cambridge 19 IELTS General Reading Test 3/i.test(test?.title ?? '')) {
     sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
       const text = String(block.text ?? '');
@@ -1178,6 +1274,7 @@ export function formatInstructionLines(text: string) {
         /^List of Headings$/i.test(upcomingLine) ||
         /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
+        /^[A-J](?:[.)])?(?:\s|$)/i.test(upcomingLine) ||
         /^(TRUE|FALSE|NOT GIVEN|YES|NO)$/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
       ) {

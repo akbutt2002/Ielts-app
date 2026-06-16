@@ -25,6 +25,7 @@ type QuestionRowProps = {
   inlineBlankPrompt?: boolean;
   pairedQuestionNumbers?: number[];
   hideQuestionNumber?: boolean;
+  narrowInput?: boolean;
   answerLookup: Map<number, string>;
   userAnswers: Record<number, string>;
   isSubmitted: boolean;
@@ -42,6 +43,7 @@ export function QuestionRow({
   inlineBlankPrompt = false,
   pairedQuestionNumbers = [],
   hideQuestionNumber = false,
+  narrowInput = false,
   answerLookup,
   userAnswers,
   isSubmitted,
@@ -114,7 +116,9 @@ export function QuestionRow({
     <input
       type="text"
       placeholder="..."
-      className={`border-border/75 border-b-foreground/20 bg-muted/35 text-foreground focus:border-primary focus:bg-primary/5 focus:ring-primary/10 inline-flex w-24 shrink-0 rounded-md border border-b-2 px-2.5 py-1.5 text-sm font-black shadow-sm transition-all outline-none focus:ring-2 ${
+      className={`border-border/75 border-b-foreground/20 bg-muted/35 text-foreground focus:border-primary focus:bg-primary/5 focus:ring-primary/10 inline-flex shrink-0 rounded-md border border-b-2 outline-none focus:ring-2 ${
+        narrowInput ? 'w-16 px-1.5 py-0.5 text-xs font-bold' : 'w-24 px-2.5 py-1.5 text-sm font-black'
+      } ${
         isSubmitted
           ? isCorrect
             ? 'border-green-500 border-b-green-500 bg-green-500/10'

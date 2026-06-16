@@ -484,6 +484,28 @@ export function QuestionGroup({
       20 &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
+  const shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 =
+    !isListening &&
+    /Cambridge 18 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 1 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      3 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+
+  const shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 =
+    !isListening &&
+    /Cambridge 18 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 22 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      26 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+
+  const shouldRenderAcademic18Test1Table =
+    !isListening &&
+    /Cambridge 18 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers.includes(4) &&
+    primaryBlock.questionNumbers.includes(7);
+
   const shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 =
     isListening &&
     /Cambridge 19 Listening Test 2/i.test(testTitle ?? '') &&
@@ -592,6 +614,11 @@ export function QuestionGroup({
           'Complete the table below.',
           'Write ONE WORD AND/OR A NUMBER for each answer.',
         ].join('\n')
+    : shouldRenderAcademic18Test1Table
+      ? [
+          'Complete the table below.',
+          'Choose ONE WORD ONLY from the passage for each answer.',
+        ].join('\n')
     : shouldRenderListeningTest2GuitarLessonTable
       ? primaryBlock.instructions
           .split(/\r?\n/)
@@ -618,7 +645,8 @@ export function QuestionGroup({
           'F calculations',
           'G changes',
           'H colour',
-        ].join('\n')
+          'I (dummy)', // Keep lines aligned or not
+        ].slice(0, 10).join('\n') // adjust/keep it clean
       : shouldRenderListeningTest4ResponsibilitiesTable
         ? primaryBlock.instructions
             .split(/\r?\n/)
@@ -646,6 +674,27 @@ export function QuestionGroup({
       showPrompt={true}
       inlineBlankPrompt={true}
       hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+  const renderAcademic18Test1TableQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`academic-18-test-1-table-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      narrowInput={true}
       answerLookup={answerLookup}
       userAnswers={userAnswers}
       isSubmitted={isSubmitted}
@@ -1038,6 +1087,86 @@ export function QuestionGroup({
               </div>
             </div>
           </div>
+        ) : shouldRenderAcademic18Test1Table ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            <div className="border-border/60 grid grid-cols-[140px_1fr_1.1fr_0.9fr] border-b text-xs font-semibold text-center">
+              <div className="border-border/60 border-r px-3 py-3"></div>
+              <div className="border-border/60 border-r px-3 py-3">Growth</div>
+              <div className="border-border/60 border-r px-3 py-3">Selection</div>
+              <div className="px-3 py-3">Sale</div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[140px_1fr_1.1fr_0.9fr] border-b">
+              {/* Column 1: Row Header */}
+              <div className="border-border/60 flex items-center border-r px-3 py-4 text-xs font-black bg-muted/5">
+                Intensive farming
+              </div>
+              {/* Column 2: Growth */}
+              <div className="border-border/60 flex flex-col justify-start border-r px-3 py-4">
+                <ul className="list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-foreground/80">
+                  <li>
+                    {renderAcademic18Test1TableQuestion(
+                      4,
+                      'wide range of 4 ____ used',
+                    )}
+                  </li>
+                  <li>techniques pollute air</li>
+                </ul>
+              </div>
+              {/* Column 3: Selection */}
+              <div className="border-border/60 flex flex-col justify-start border-r px-3 py-4">
+                <ul className="list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-foreground/80">
+                  <li>quality not good</li>
+                  <li>
+                    {renderAcademic18Test1TableQuestion(
+                      5,
+                      'varieties of fruit and vegetables chosen that can survive long 5 ____',
+                    )}
+                  </li>
+                </ul>
+              </div>
+              {/* Column 4: Sale */}
+              <div className="flex flex-col justify-start px-3 py-4">
+                <ul className="list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-foreground/80">
+                  <li>
+                    {renderAcademic18Test1TableQuestion(
+                      6,
+                      '6 6 ____ receive very little of overall income',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[140px_1fr_1.1fr_0.9fr]">
+              {/* Column 1: Row Header */}
+              <div className="border-border/60 flex items-center border-r px-3 py-4 text-xs font-black bg-muted/5">
+                Aeroponic urban farming
+              </div>
+              {/* Column 2: Growth */}
+              <div className="border-border/60 flex flex-col justify-start border-r px-3 py-4">
+                <ul className="list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-foreground/80">
+                  <li>no soil used</li>
+                  <li>nutrients added to water, which is recycled</li>
+                </ul>
+              </div>
+              {/* Column 3: Selection */}
+              <div className="border-border/60 flex flex-col justify-start border-r px-3 py-4">
+                <ul className="list-disc space-y-2.5 pl-4 text-xs leading-relaxed text-foreground/80">
+                  <li>
+                    {renderAcademic18Test1TableQuestion(
+                      7,
+                      'produce chosen because of its 7 ____',
+                    )}
+                  </li>
+                </ul>
+              </div>
+              {/* Column 4: Sale */}
+              <div className="px-3 py-4 bg-muted/5">
+                {/* Empty */}
+              </div>
+            </div>
+          </div>
         ) : shouldRenderListeningTest2GuitarLessonTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
             <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black">
@@ -1372,6 +1501,8 @@ export function QuestionGroup({
                       showPrompt={true}
                       showPromptTextWhenBlank={
                         shouldShowPromptTextWhenBlank ||
+                        shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
+                        shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                         shouldShowPromptTextWhenBlankForQuestions15To21 ||
                         shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
                         shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
@@ -1402,6 +1533,8 @@ export function QuestionGroup({
                               item.qNum <= 30))
                       }
                       inlineBlankPrompt={
+                        shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
+                        shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                         shouldRenderInlineBlankPromptForQuestions15To21 ||
                         shouldRenderInlineBlankPromptForQuestions28To32 ||
                         shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
@@ -1563,10 +1696,12 @@ export function QuestionGroup({
                           choices={scopedChoices}
                           showPromptTextWhenBlank={
                             shouldShowPromptTextWhenBlank ||
+                            shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
+                            shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                             shouldShowPromptTextWhenBlankForQuestions15To21 ||
                             shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
                             shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
-                        shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
+                            shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
                             shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
@@ -1593,10 +1728,12 @@ export function QuestionGroup({
                               item.qNum <= 30))
                           }
                           inlineBlankPrompt={
+                            shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
+                            shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                             shouldRenderInlineBlankPromptForQuestions15To21 ||
                             shouldRenderInlineBlankPromptForQuestions28To32 ||
                             shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
-                        shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
+                            shouldRenderInlineBlankPromptForGeneral18Test2Questions22To27 ||
                             shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                             shouldRenderInlineBlankPromptForGeneralTest3Questions22To27 ||
                             shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||

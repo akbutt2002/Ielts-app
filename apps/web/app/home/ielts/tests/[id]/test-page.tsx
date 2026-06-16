@@ -403,9 +403,13 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
       }
 
       const nextFirstQuestion = next.questionNumbers[0] ?? 0;
+      const currentGroupAllQuestions = currentGroup.flatMap(
+        (b) => b.questionNumbers,
+      );
 
       return (
-        nextFirstQuestion === currentGroupLastQuestion + 1 &&
+        (nextFirstQuestion === currentGroupLastQuestion + 1 ||
+          currentGroupAllQuestions.includes(nextFirstQuestion)) &&
         !next.instructions.trim() &&
         !next.contentHeading?.trim() &&
         !isStructuredGroupStarter(next)
