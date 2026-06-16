@@ -8,6 +8,7 @@ import {
   BarChart3,
   BookOpen,
   ChevronDown,
+  ChevronRight,
   GraduationCap,
   Headphones,
   type LucideIcon,
@@ -25,6 +26,7 @@ import {
 } from '@kit/ielts';
 
 import { cn } from '../../lib/utils';
+import { Button } from '../../shadcn/button';
 import { Card, CardContent } from '../../shadcn/card';
 import { Input } from '../../shadcn/input';
 import { SidebarTrigger } from '../../shadcn/sidebar';
@@ -35,6 +37,8 @@ type Tone = {
   dotStyle: React.CSSProperties;
   iconClassName: string;
   badgeClassName: string;
+  buttonClassName: string;
+  glowClassName: string;
 };
 
 type ModuleMeta = {
@@ -53,6 +57,9 @@ const moduleMeta: Record<IeltsModuleKey, ModuleMeta> = {
         'bg-[#E6F1FB] text-[#185FA5] dark:bg-[#185FA5]/15 dark:text-[#C8DFF4]',
       badgeClassName:
         'bg-[#E6F1FB] text-[#185FA5] dark:bg-[#185FA5]/15 dark:text-[#C8DFF4]',
+      buttonClassName:
+        'bg-[#185FA5] text-white hover:bg-[#185FA5]/95 dark:bg-[#185FA5] dark:text-white dark:hover:bg-[#185FA5]/95 shadow-[#185FA5]/25',
+      glowClassName: 'bg-[#185FA5]',
     },
   },
   academic: {
@@ -64,6 +71,9 @@ const moduleMeta: Record<IeltsModuleKey, ModuleMeta> = {
         'bg-[#EEEDFE] text-[#534AB7] dark:bg-[#534AB7]/15 dark:text-[#D7D4FF]',
       badgeClassName:
         'bg-[#EEEDFE] text-[#534AB7] dark:bg-[#534AB7]/15 dark:text-[#D7D4FF]',
+      buttonClassName:
+        'bg-[#534AB7] text-white hover:bg-[#534AB7]/95 dark:bg-[#534AB7] dark:text-white dark:hover:bg-[#534AB7]/95 shadow-[#534AB7]/25',
+      glowClassName: 'bg-[#534AB7]',
     },
   },
   listening: {
@@ -75,6 +85,9 @@ const moduleMeta: Record<IeltsModuleKey, ModuleMeta> = {
         'bg-[#FAEEDA] text-[#854F0B] dark:bg-[#854F0B]/15 dark:text-[#F7D7A2]',
       badgeClassName:
         'bg-[#FAEEDA] text-[#854F0B] dark:bg-[#854F0B]/15 dark:text-[#F7D7A2]',
+      buttonClassName:
+        'bg-[#854F0B] text-white hover:bg-[#854F0B]/95 dark:bg-[#854F0B] dark:text-white dark:hover:bg-[#854F0B]/95 shadow-[#854F0B]/25',
+      glowClassName: 'bg-[#854F0B]',
     },
   },
 };
@@ -500,11 +513,29 @@ function ListingRow({
               : 'pointer-events-none translate-x-2 scale-95 opacity-0',
           )}
         >
-          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-500 via-violet-500 to-amber-400 opacity-70 blur-[8px] dark:from-cyan-400 dark:via-fuchsia-500 dark:to-amber-300 dark:opacity-100" />
-          <span className="bg-background text-foreground ring-border/60 dark:bg-foreground dark:text-background relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-[3px] text-[9px] font-semibold shadow-[0_8px_20px_rgba(0,0,0,0.18)] ring-1 transition-transform duration-300 hover:scale-[1.03] dark:shadow-[0_8px_20px_rgba(0,0,0,0.42)] dark:ring-white/10">
-            <Play className="h-[9px] w-[9px] fill-current transition-transform duration-300" />
-            Start
-          </span>
+          <span className={cn("absolute inset-0 rounded-full opacity-35 blur-[8px] transition-opacity duration-300", config.tone.glowClassName)} />
+          <Button
+            asChild
+            className={cn(
+              "relative overflow-hidden h-[25px] rounded-full text-[8px] font-black tracking-widest uppercase pl-3 pr-2 border-none shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-300",
+              config.tone.buttonClassName
+            )}
+            size="sm"
+          >
+            <span>
+              <span className="flex items-center gap-1">
+                <span>Start Test</span>
+                <ChevronRight 
+                  size={8} 
+                  strokeWidth={3} 
+                  className={cn(
+                    "transition-transform duration-300",
+                    isHovered ? "translate-x-0.5" : "translate-x-0"
+                  )} 
+                />
+              </span>
+            </span>
+          </Button>
         </span>
       </div>
     </Link>
