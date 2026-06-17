@@ -130,7 +130,7 @@ export function StartScreen({
                   </div>
 
                   <div className="space-y-3.5">
-                    <h2 className="max-w-[15ch] text-[clamp(1rem,4vw,2rem)] leading-[0.95] font-black tracking-[-0.05em] text-[#0f0f1a] dark:text-[#f5f3ff]">
+                    <h2 className="max-w-none text-[clamp(1rem,4vw,2rem)] leading-[0.95] font-black tracking-[-0.05em] text-[#0f0f1a] dark:text-[#f5f3ff]">
                       {startScreen.displayTitle}
                     </h2>
                     <p className="max-w-[44ch] text-[13px] leading-[1.7] text-[#7b789a] dark:text-[#c1badd]">

@@ -230,29 +230,8 @@ export default function TestPage({ test }: { test: IeltsTestRecord }) {
     [sourceQuestionBlocks],
   );
   const listeningLeadInQuestion = useMemo(() => {
-    if (
-      !isListening ||
-      !/Cambridge 19 Listening Test 1/i.test(test?.title ?? '')
-    ) {
-      return null;
-    }
-
-    const leadInBlock = parsedQuestionBlocks.find(
-      (block) => block.questionNumbers[0] === 11,
-    );
-    const leadInItem = leadInBlock?.items[0];
-
-    if (!leadInBlock || !leadInItem) {
-      return null;
-    }
-
-    return {
-      qNum: leadInItem.qNum,
-      prompt: leadInItem.prompt,
-      choices: leadInBlock.choices ?? [],
-      pairedQuestionNumbers: leadInBlock.questionNumbers ?? [],
-    };
-  }, [isListening, parsedQuestionBlocks, test?.title]);
+    return null;
+  }, []);
   const pairedChoiceQuestionBlocks = useMemo(
     () => {
       const parsedPairedBlocks = parsedQuestionBlocks.filter((block) => {

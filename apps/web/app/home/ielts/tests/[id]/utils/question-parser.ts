@@ -927,6 +927,37 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
       return block;
     });
   }
+  if (/Cambridge 18 IELTS Academic Reading Test 3/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(1)) {
+        const cleanedText = [
+          'Questions 1-4',
+          'Reading Passage 1 has eight sections, A-H.',
+          'Which section contains the following information?',
+          'Write the correct letter, A-H, in boxes 1-4 on your answer sheet.',
+          '1. An explanation of the industrial processes that create potential raw materials for concrete',
+          '2. A reference to the various locations where high-rise wooden buildings can be found',
+          '3. An indication of how widely available the raw materials of concrete are',
+          '4. The belief that more high-rise wooden buildings are needed before wood can be regarded as a viable construction material',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            question_numbers: [1, 2, 3, 4],
+            text: cleanedText,
+          },
+        ];
+      }
+
+      const isSubsetOf2to4 = block.question_numbers?.every((q) => [2, 3, 4].includes(q));
+      if (isSubsetOf2to4) {
+        return [];
+      }
+
+      return [block];
+    });
+  }
   const normalizedBlocks = sourceBlocks.map((block: Partial<QuestionBlock>) =>
     normalizeQuestionBlock(block),
   );
