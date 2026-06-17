@@ -927,6 +927,32 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
       return block;
     });
   }
+  if (/Cambridge 18 Listening Test 1/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(1)) {
+        const text = String(block.text ?? '');
+        const cleanedText = text
+          .replace(/Name:\r?\n\s*Sadie Jones/i, 'Name: Sadie Jones')
+          .replace(/Year of birth:\r?\n\s*1991/i, 'Year of birth: 1991');
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      if (block.question_numbers?.includes(16)) {
+        const text = String(block.text ?? '');
+        const cleanedText = text.replace(
+          /16\r?\n\s*Fundraising\r?\n\s*[\u2026\.]+/i,
+          '16 Fundraising ……………',
+        );
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      return block;
+    });
+  }
   if (/Cambridge 18 IELTS Academic Reading Test 3/i.test(test?.title ?? '')) {
     sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
       if (block.question_numbers?.includes(1)) {
@@ -1610,7 +1636,7 @@ export function isStructuredNoteHeadingLine(line: string, nextLine?: string) {
     return false;
   }
 
-  if (normalizedLine.length > 48 || normalizedLine.split(/\s+/).length > 8) {
+  if (normalizedLine.length > 64 || normalizedLine.split(/\s+/).length > 10) {
     return false;
   }
 
