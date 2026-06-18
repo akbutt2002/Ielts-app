@@ -404,13 +404,11 @@ export function isQuestionContentHeadingLine(
   }
 
   if (
-    previousInstructionLines.some((entry) => /^List of Headings$/i.test(entry))
-  ) {
-    return false;
-  }
-
-  if (
-    previousInstructionLines.some((entry) => /^List of People$/i.test(entry))
+    previousInstructionLines.some(
+      (entry) =>
+        /^List of\b/i.test(entry) ||
+        /^(?:Opinions|Options)$/i.test(entry.trim()),
+    )
   ) {
     return false;
   }
@@ -2079,6 +2077,7 @@ export function isStructuredNoteOverflowInstructionLine(line: string) {
 
   return (
     /^Write your answers\b/i.test(normalizedLine) ||
+    /^Write the correct letters?\b/i.test(normalizedLine) ||
     /^boxes?$/i.test(normalizedLine) ||
     /^boxes?\s+\d+(?:\s*(?:to|-|\u2013|\u2014)\s*\d+)?(?:\s+on your answer sheet\.?)?$/i.test(
       normalizedLine,

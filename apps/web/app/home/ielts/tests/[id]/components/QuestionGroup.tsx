@@ -107,6 +107,7 @@ export function QuestionGroup({
     isTestLocked,
     setUserAnswers,
     renderAnswerStatusIcon,
+    testTitle,
   };
 
   const renderedNoteBlock = renderStructuredNoteBlock(
@@ -214,8 +215,10 @@ export function QuestionGroup({
     ([20, 22].includes(primaryBlock.questionNumbers[0] ?? 0) ||
       (/Cambridge 19 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
         [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
-      (/Cambridge 17 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
+      (/Cambridge 17 IELTS Academic Reading Test [14]/i.test(testTitle ?? '') &&
         [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
+      (/Cambridge 17 IELTS Academic Reading Test 3/i.test(testTitle ?? '') &&
+        [21].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
       (/Cambridge 18 IELTS Academic Reading Test 4/i.test(testTitle ?? '') &&
         [10, 12].includes(primaryBlock.questionNumbers[0] ?? 0)));
   const shouldUseGeneral18Test2Questions28To31Prompts =
@@ -589,11 +592,31 @@ export function QuestionGroup({
       26 &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
+  const shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 =
+    !isListening &&
+    /Cambridge 17 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 24 &&
+    groupLastQuestion === 26 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+
+  const shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 =
+    !isListening &&
+    /Cambridge 17 IELTS Academic Reading Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 23 &&
+    groupLastQuestion === 26 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+
   const shouldRenderAcademic18Test1Table =
     !isListening &&
     /Cambridge 18 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
     primaryBlock.questionNumbers.includes(4) &&
     primaryBlock.questionNumbers.includes(7);
+
+  const shouldRenderAcademic17Test4Table =
+    !isListening &&
+    /Cambridge 17 IELTS Academic Reading Test 4/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers.includes(7) &&
+    primaryBlock.questionNumbers.includes(13);
 
   const shouldRenderInlineBlankPromptForGeneral18Test4Questions35To40 =
     !isListening &&
@@ -739,6 +762,12 @@ export function QuestionGroup({
               'Complete the table below.',
               'Choose ONE WORD ONLY from the passage for each answer.',
             ].join('\n')
+          : shouldRenderAcademic17Test4Table
+            ? [
+                'Complete the table below.',
+                'Choose ONE WORD ONLY from the passage for each answer.',
+                'Write your answers in boxes 7-13 on your answer sheet.',
+              ].join('\n')
           : shouldRenderListeningTest2GuitarLessonTable
             ? primaryBlock.instructions
                 .split(/\r?\n/)
@@ -818,6 +847,23 @@ export function QuestionGroup({
       inlineBlankPrompt={true}
       hideQuestionNumber={true}
       narrowInput={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+  const renderAcademic17Test4TableQuestion = (qNum: number, prompt: string) => (
+    <QuestionRow
+      key={`academic-17-test-4-table-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
       answerLookup={answerLookup}
       userAnswers={userAnswers}
       isSubmitted={isSubmitted}
@@ -1517,6 +1563,94 @@ export function QuestionGroup({
               <div className="bg-muted/5 px-3 py-4">{/* Empty */}</div>
             </div>
           </div>
+        ) : shouldRenderAcademic17Test4Table ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            <div className="border-border/60 border-b px-4 py-5 text-sm font-black">
+              The study carried out by Rocha’s team
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[140px_1fr] border-b text-sm font-semibold">
+              <div className="border-border/60 border-r px-4 py-4">Aim</div>
+              <div className="px-4 py-4 leading-relaxed">
+                – to investigate the feeding habits of bats in farmland near the Ranomafana National Park
+              </div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[140px_1fr] border-b">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Method
+              </div>
+              <div className="px-4 py-5 space-y-3">
+                <div className="text-sm leading-relaxed">
+                  – ultrasonic recording to identify favourite feeding spots
+                </div>
+                <div>
+                  {renderAcademic17Test4TableQuestion(
+                    7,
+                    '– DNA analysis of bat 7 ____',
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="border-border/60 grid grid-cols-[140px_1fr] border-b">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Findings
+              </div>
+              <div className="px-4 py-5 space-y-4">
+                <div className="text-sm leading-relaxed font-medium">
+                  – the bats were most active in rice fields located on hills
+                </div>
+                <div>
+                  {renderAcademic17Test4TableQuestion(
+                    8,
+                    '– ate pests of rice, 8 ____ , sugarcane, nuts and fruit',
+                  )}
+                </div>
+                <div>
+                  {renderAcademic17Test4TableQuestion(
+                    9,
+                    '– prevent the spread of disease by eating 9 ____ and blackflies',
+                  )}
+                </div>
+                <div className="text-sm leading-relaxed font-semibold">
+                  – local attitudes to bats are mixed:
+                </div>
+                <div className="pl-6 space-y-3">
+                  <div>
+                    {renderAcademic17Test4TableQuestion(
+                      10,
+                      '– they provide food rich in 10 ____',
+                    )}
+                  </div>
+                  <div>
+                    {renderAcademic17Test4TableQuestion(
+                      11,
+                      '– the buildings where they roost become 11 ____',
+                    )}
+                  </div>
+                  <div>
+                    {renderAcademic17Test4TableQuestion(
+                      12,
+                      '– they play an important role in local 12 ____',
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[140px_1fr]">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Recommendation
+              </div>
+              <div className="px-4 py-5">
+                {renderAcademic17Test4TableQuestion(
+                  13,
+                  '– farmers should provide special 13 ____ to support the bat population',
+                )}
+              </div>
+            </div>
+          </div>
         ) : shouldRenderListeningTest2GuitarLessonTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
             <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black">
@@ -2008,6 +2142,8 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlank ||
                         shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                         shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
+                        shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||
+                        shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 ||
                         shouldShowPromptTextWhenBlankForQuestions15To21 ||
                         shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
                         shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
@@ -2044,6 +2180,8 @@ export function QuestionGroup({
                       inlineBlankPrompt={
                         shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                         shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
+                        shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||
+                        shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 ||
                         shouldRenderInlineBlankPromptForQuestions15To21 ||
                         shouldRenderInlineBlankPromptForQuestions28To32 ||
                         shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
@@ -2239,6 +2377,8 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlank ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
+                            shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||
+                            shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 ||
                             shouldShowPromptTextWhenBlankForQuestions15To21 ||
                             shouldShowPromptTextWhenBlankForGeneralTest2Questions1To7 ||
                             shouldShowPromptTextWhenBlankForGeneralTest2Questions32To35 ||
@@ -2275,6 +2415,8 @@ export function QuestionGroup({
                           inlineBlankPrompt={
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
+                            shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||
+                            shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 ||
                             shouldRenderInlineBlankPromptForQuestions15To21 ||
                             shouldRenderInlineBlankPromptForQuestions28To32 ||
                             shouldRenderInlineBlankPromptForGeneralTest2Questions21To27 ||
