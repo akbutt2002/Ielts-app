@@ -1,5 +1,6 @@
-import { type IeltsTestRecord } from '@kit/ielts';
 import type React from 'react';
+
+import { type IeltsTestRecord } from '@kit/ielts';
 
 type AnswerEntry = {
   q_no: number;
@@ -927,6 +928,39 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
       return block;
     });
   }
+  if (/Cambridge 18 IELTS General Reading Test 4/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(22)) {
+        const cleanedText = [
+          'Complete the table below',
+          'Choose ONE WORD ONLY from the text for each answer.',
+          'Write your answers in boxes 22—27 on your answer sheet.',
+          '22. Ensure all items of 22 ____ have good grip.',
+          '23. Ensure they are covered with 23 ____',
+          '24. Provide good lighting and install 24 ____',
+          '25. Try to avoid moving containers by hand, and use equipment such as 25 ____ instead.',
+          '26. Keep everything accessible so that employees don’t need to bend or 26 ____',
+          '27. Introduce a system of 27 ____ to increase variety.',
+        ].join('\n');
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      if (block.question_numbers?.includes(28)) {
+        const text = String(block.text ?? '');
+        const cleanedText = text.replace(
+          /28\s+Section\s+A\s+__+/gi,
+          '28 Section A',
+        );
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      return block;
+    });
+  }
   if (/Cambridge 18 Listening Test 1/i.test(test?.title ?? '')) {
     sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
       if (block.question_numbers?.includes(1)) {
@@ -953,6 +987,64 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
       return block;
     });
   }
+  if (/Cambridge 19 Listening Test 2/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(25)) {
+        const text = String(block.text ?? '');
+        const cleanedText = text.replace(/25\s+the\s+high\b/i, '25. The high');
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 18 Listening Test 3/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(1)) {
+        const text1to4 = [
+          'Questions 1-4',
+          'Complete the form below.',
+          'Write ONE WORD AND/OR A NUMBER for each answer.',
+          'Wayside Camera Club membership form',
+          'Name: Dan Green',
+          'Email address: [email protected]',
+          'Home address: 52 1. ____ Street, Peacetown',
+          'Heard about us: from a 2. ____',
+          'Reasons for joining: to enter competitions to 3. ____',
+          'Type of membership: 4. ____ membership (£30)',
+        ].join('\n');
+
+        const text5to10 = [
+          'Questions 5-10',
+          'Complete the table below.',
+          'Write NO MORE THAN TWO WORDS for each answer.',
+          'Photography competitions',
+          'Title of competition | Instructions | Feedback to Dan',
+          '5. ____ | A scene in the home | The picture’s composition was not good.',
+          '‘Beautiful Sunsets’ | Scene must show some 6. ____ | The 7. ____ was wrong.',
+          '8. ____ | Scene must show 9. ____ | The photograph was too 10. ____.',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            header: 'Questions 1-4',
+            question_numbers: [1, 2, 3, 4],
+            text: text1to4,
+          },
+          {
+            ...block,
+            header: 'Questions 5-10',
+            question_numbers: [5, 6, 7, 8, 9, 10],
+            text: text5to10,
+          },
+        ];
+      }
+      return [block];
+    });
+  }
   if (/Cambridge 18 IELTS Academic Reading Test 3/i.test(test?.title ?? '')) {
     sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
       if (block.question_numbers?.includes(1)) {
@@ -976,7 +1068,9 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
         ];
       }
 
-      const isSubsetOf2to4 = block.question_numbers?.every((q) => [2, 3, 4].includes(q));
+      const isSubsetOf2to4 = block.question_numbers?.every((q) =>
+        [2, 3, 4].includes(q),
+      );
       if (isSubsetOf2to4) {
         return [];
       }
@@ -984,6 +1078,292 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
       return [block];
     });
   }
+  if (/Cambridge 18 IELTS Academic Reading Test 4/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(1)) {
+        const cleanedText = [
+          'Questions 1-5',
+          'Reading Passage 1 has five paragraphs, A-E.',
+          'Which paragraph contains the following information?',
+          'Write the correct letter, A-E, in boxes 1-5 on your answer sheet.',
+          'NB You may use any letter more than once.',
+          '1. mention of several challenges to be overcome before a green roof can be installed',
+          '2. reference to a city where green roofs have been promoted for many years',
+          '3. a belief that existing green roofs should be used as a model for new ones',
+          '4. examples of how green roofs can work in combination with other green urban initiatives',
+          '5. the need to make a persuasive argument for the financial benefits of green roofs',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            question_numbers: [1, 2, 3, 4, 5],
+            text: cleanedText,
+          },
+        ];
+      }
+
+      if (
+        block.question_numbers?.includes(10) &&
+        block.question_numbers?.includes(11)
+      ) {
+        const cleanedText = [
+          'Choose TWO letters, A-E.',
+          'Write the correct letters in boxes 10 and 11 on your answer sheet.',
+          'Which TWO advantages of using newer buildings for green roofs are mentioned in Paragraph C of the passage?',
+          '10.',
+          '11.',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            text: cleanedText,
+          },
+        ];
+      }
+
+      if (
+        block.question_numbers?.includes(12) &&
+        block.question_numbers?.includes(13)
+      ) {
+        const cleanedText = [
+          'Choose TWO letters, A-E.',
+          'Write the correct letters in boxes 12 and 13 on your answer sheet.',
+          'Which TWO aims of new variations on the concept of green roofs are mentioned in Paragraph E of the passage?',
+          '12.',
+          '13.',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            text: cleanedText,
+          },
+        ];
+      }
+
+      const isSubsetOf2to5 = block.question_numbers?.every((q) =>
+        [2, 3, 4, 5].includes(q),
+      );
+      if (isSubsetOf2to5) {
+        return [];
+      }
+
+      return [block];
+    });
+  }
+  if (/Cambridge 17 Listening Test 2/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(1)) {
+        const text1to7 = [
+          'Questions 1 – 7',
+          'Complete the notes below.',
+          'Write ONE WORD ONLY for each answer.',
+          'Opportunities for voluntary work in Southoe village',
+          'Library',
+          '● Help with [[Q1]] books (times to be arranged)',
+          '● Help needed to keep [[Q2]] of books up to date',
+          '● Library is in the [[Q3]] Room in the village hall',
+          'Lunch club',
+          '● Help by providing [[Q4]]',
+          '● Help with hobbies such as [[Q5]]',
+          'Help for individuals needed next week',
+          '● Taking Mrs Carroll to [[Q6]]',
+          '● Work in the [[Q7]] at Mr Selsbury’s house',
+        ].join('\n');
+
+        const text8to10 = [
+          'Questions 8-10',
+          'Complete the table below.',
+          'Write ONE WORD ONLY for each answer.',
+          'Village social events',
+          'Date | Event | Location | Help needed',
+          'Date: 19 Oct | 8. ____ | Village hall | providing refreshments',
+          'Date: 18 Nov | dance | Village hall | checking 9. ____',
+          'Date: 31 Dec | New Year’s Eve party | Mountfort Hotel | designing the 10. ____',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            header: 'Questions 1–7',
+            question_numbers: [1, 2, 3, 4, 5, 6, 7],
+            text: text1to7,
+          },
+          {
+            ...block,
+            header: 'Questions 8–10',
+            question_numbers: [8, 9, 10],
+            text: text8to10,
+          },
+        ];
+      }
+      if (
+        block.question_numbers?.some((q) =>
+          [15, 16, 17, 18, 19, 20].includes(q),
+        )
+      ) {
+        const text = String(block.text ?? '');
+        const header = String(block.header ?? '');
+        return [
+          {
+            ...block,
+            text: text.replace(/__+/g, '').trim(),
+            header: header.replace(/__+/g, '').trim(),
+          },
+        ];
+      }
+      if (block.question_numbers?.includes(23)) {
+        const text23to27 = [
+          'Questions 23-27',
+          'Which opinion do the speakers give about each of the following aspects of The Emporium’s production of Romeo and Juliet?',
+          'Choose FIVE answers from the box and write the correct letter, A-G, next to Questions 23-27.',
+          'Opinions',
+          'A They both expected this to be more traditional.',
+          'B They both thought this was original.',
+          'C They agree this created the right atmosphere.',
+          'D They agree this was a major strength.',
+          'E They were both disappointed by this.',
+          'F They disagree about why this was an issue.',
+          'G They disagree about how this could be improved.',
+          '23. the set',
+          '24. the lighting',
+          '25. the costume design',
+          '26. the music',
+          '27. the actors’ delivery',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            header: 'Questions 23–27',
+            question_numbers: [23, 24, 25, 26, 27],
+            text: text23to27,
+          },
+        ];
+      }
+      if (
+        block.question_numbers?.some((q) => [24, 25, 26, 27].includes(q)) &&
+        !block.question_numbers?.includes(23)
+      ) {
+        return [];
+      }
+      return [block];
+    });
+  }
+  if (/Cambridge 17 Listening Test 3/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(11)) {
+        return {
+          ...block,
+          header: 'Questions 11–12',
+          question_numbers: [11, 12],
+          text: [
+            'Questions 11–12',
+            'Choose TWO letters, A-E.',
+            'Which TWO facts are given about the school’s extended hours childcare service?',
+          ].join('\n'),
+        };
+      }
+      if (block.question_numbers?.some((q) => [16, 25, 26, 27].includes(q))) {
+        const text = String(block.text ?? '');
+        const header = String(block.header ?? '');
+        return {
+          ...block,
+          text: text.replace(/__+/g, '').trim(),
+          header: header.replace(/__+/g, '').trim(),
+        };
+      }
+      if (block.question_numbers?.includes(31)) {
+        const text = String(block.text ?? '');
+        const cleanedText = text
+          .replace(
+            /–\s*Ringing\s+depended\s+on\s+what\s+is\s+called\s+the\r?\n\s*39\r?\n\s*‘\r?\n\s*__+\r?\n\s*’\s+of\s+dead\s+birds\./gi,
+            [
+              '– Ringing depended on what is called the ‘',
+              '39',
+              '____',
+              '’ of dead birds.',
+            ].join('\n'),
+          )
+          .replace(
+            /●\s*In\s+1931,\s+the\s+first\r?\n\s*40\r?\n\s*__+\r?\n\s*to\s+show\s+the\s+migration\s+of\s+European\s+birds\s+was\s+printed\./gi,
+            [
+              '● In 1931, the first',
+              '40',
+              '____',
+              'to show the migration of European birds was printed.',
+            ].join('\n'),
+          );
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 17 Listening Test 4/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
+      if (
+        block.question_numbers?.some((q) =>
+          [15, 16, 17, 18, 19, 20].includes(q),
+        )
+      ) {
+        const text = String(block.text ?? '');
+        const header = String(block.header ?? '');
+        return [
+          {
+            ...block,
+            text: text.replace(/__+/g, '').trim(),
+            header: header.replace(/__+/g, '').trim(),
+          },
+        ];
+      }
+      if (block.question_numbers?.includes(25)) {
+        const text25to30 = [
+          'Questions 25-30',
+          'What comment do the students make about the development of each of the following items of sporting equipment?',
+          'Choose SIX answers from the box and write the correct letter, A-H, next to Questions 25-30.',
+          'Comments about the development of the equipment',
+          'A It could cause excessive sweating.',
+          'B The material was being mass produced for another purpose.',
+          'C People often needed to make their own.',
+          'D It often had to be replaced.',
+          'E The material was expensive.',
+          'F It was unpopular among spectators.',
+          'G It caused injuries.',
+          'H No one liked it at first.',
+          'Items of sporting equipment',
+          '25. the table tennis bat',
+          '26. the cricket helmet',
+          '27. the cycle helmet',
+          '28. the golf club',
+          '29. the hockey stick',
+          '30. the football',
+        ].join('\n');
+
+        return [
+          {
+            ...block,
+            header: 'Questions 25–30',
+            question_numbers: [25, 26, 27, 28, 29, 30],
+            text: text25to30,
+            choices: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+          },
+        ];
+      }
+      if (
+        block.question_numbers?.some((q) => [26, 27, 28, 29, 30].includes(q)) &&
+        !block.question_numbers?.includes(25)
+      ) {
+        return [];
+      }
+      return [block];
+    });
+  }
+
   const normalizedBlocks = sourceBlocks.map((block: Partial<QuestionBlock>) =>
     normalizeQuestionBlock(block),
   );
@@ -1997,7 +2377,9 @@ export function parseStructuredSummaryBlock(
   );
 
   if (repeatedTitleIndex > 0) {
-    overflowInstructionLines.push(...contentLines.splice(0, repeatedTitleIndex));
+    overflowInstructionLines.push(
+      ...contentLines.splice(0, repeatedTitleIndex),
+    );
   }
 
   const combinedInstructionText = [instructionText, ...overflowInstructionLines]

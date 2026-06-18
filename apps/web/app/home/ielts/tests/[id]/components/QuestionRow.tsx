@@ -25,6 +25,7 @@ type QuestionRowProps = {
   inlineBlankPrompt?: boolean;
   pairedQuestionNumbers?: number[];
   hideQuestionNumber?: boolean;
+  keepQuestionNumberPrefix?: boolean;
   narrowInput?: boolean;
   answerLookup: Map<number, string>;
   userAnswers: Record<number, string>;
@@ -43,6 +44,7 @@ export function QuestionRow({
   inlineBlankPrompt = false,
   pairedQuestionNumbers = [],
   hideQuestionNumber = false,
+  keepQuestionNumberPrefix = false,
   narrowInput = false,
   answerLookup,
   userAnswers,
@@ -72,7 +74,9 @@ export function QuestionRow({
     : correctAnswer;
   const userAnswer = userAnswers[qNum] ?? '';
   const normalizedPrompt = compactPromptLines(
-    stripQuestionNumberPrefix(stripLeadingBulletMarker(prompt), qNum),
+    keepQuestionNumberPrefix
+      ? stripLeadingBulletMarker(prompt)
+      : stripQuestionNumberPrefix(stripLeadingBulletMarker(prompt), qNum),
   );
   const hasBlank = showPrompt && /__+/.test(normalizedPrompt);
   const hasChoices = choices.length > 0;
@@ -138,7 +142,13 @@ export function QuestionRow({
   const normalizedUserAnswer = getChoiceComparisonValue(userAnswer);
 
   return (
-    <div key={qNum} className="group relative space-y-3 pl-10">
+    <div
+      key={qNum}
+      className={cn(
+        'group relative space-y-3',
+        hideQuestionNumber ? '' : 'pl-10',
+      )}
+    >
       {!hideQuestionNumber ? (
         <div className="bg-foreground text-background absolute top-0 left-0 flex h-6 w-6 items-center justify-center rounded-lg text-[10px] font-black shadow-md transition-transform group-hover:scale-110">
           {qNum}
