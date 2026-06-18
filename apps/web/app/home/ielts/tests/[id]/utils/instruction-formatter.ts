@@ -82,9 +82,9 @@ export function formatInstructionLines(text: string) {
     const line = lines[index] ?? '';
     const nextLine = lines[index + 1];
     const isPeopleListHeading = /^List of People$/i.test(line);
-    const isPeopleListLetterOnly = /^[A-H](?:[.)])?$/.test(line);
+    const isPeopleListLetterOnly = /^[A-Z](?:[.)])?$/.test(line);
     const isPeopleListEntry =
-      /^[A-H](?:[.)])?\s+\S/.test(line) ||
+      /^[A-Z](?:[.)])?\s+\S/.test(line) ||
       (inPeopleList && isPeopleListLetterOnly);
 
     if (
@@ -109,7 +109,7 @@ export function formatInstructionLines(text: string) {
       continue;
     }
 
-    if (/^[A-J](?:[.)])?$/.test(line) && nextLine) {
+    if (/^[A-Z](?:[.)])?$/.test(line) && nextLine) {
       formattedLines.push(joinInstructionFragments(line, nextLine));
       index++;
       continue;
@@ -137,7 +137,7 @@ export function formatInstructionLines(text: string) {
         /^List of Headings$/i.test(upcomingLine) ||
         /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
-        /^[A-J](?:[.)])?(?:\s|$)/i.test(upcomingLine) ||
+        /^[A-Z](?:[.)])?(?:\s|$)/i.test(upcomingLine) ||
         /^(TRUE|FALSE|NOT GIVEN|YES|NO)$/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
       ) {

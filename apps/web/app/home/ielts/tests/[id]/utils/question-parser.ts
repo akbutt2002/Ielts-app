@@ -373,7 +373,7 @@ export function isChoiceLine(line: string) {
 
   return (
     /^(TRUE|FALSE|NOT GIVEN|NG|YES|NO)$/i.test(trimmedLine) ||
-    /^[A-H](?:[.)])?(?:\s+.+)?$/i.test(trimmedLine) ||
+    /^[A-Z](?:[.)])?(?:\s+.+)?$/i.test(trimmedLine) ||
     /^[ivxlcdm]+$/i.test(trimmedLine)
   );
 }
@@ -1361,6 +1361,49 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
         return [];
       }
       return [block];
+    });
+  }
+  if (/Cambridge 17 IELTS Academic Reading Test 1/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(27)) {
+        const text27to31 = [
+          'Complete the summary using the list of phrases, A-J, below.',
+          'A military innovation',
+          'B large reward',
+          'C widespread conspiracy',
+          'D relative safety',
+          'E new government',
+          'F decisive victory',
+          'G political debate',
+          'H strategic alliance',
+          'I popular solution',
+          'J religious conviction',
+          'Write the correct letter, A-J, in boxes 27-31 on your answer sheet.',
+          'The story behind the hunt for Charles II',
+          'Charles II’s father was executed by the Parliamentarian forces in 1649. Charles II then formed a',
+          '27',
+          '____',
+          'with the Scots, and in order to become King of Scots, he abandoned an important',
+          '28',
+          '____',
+          'that was held by his father and had contributed to his father’s death. The opposing sides then met outside Worcester in 1651. The battle led to a',
+          '29',
+          '____',
+          'for the Parliamentarians and Charles had to flee for his life. A',
+          '30',
+          '____',
+          'was offered for Charles’s capture, but after six weeks spent in hiding, he eventually managed to reach the',
+          '31',
+          '____',
+          'of continental Europe.',
+        ].join('\n');
+
+        return {
+          ...block,
+          text: text27to31,
+        };
+      }
+      return block;
     });
   }
 

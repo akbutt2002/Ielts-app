@@ -53,7 +53,7 @@ export type InstructionRenderDeps = {
 
 function renderInstructionLine(line: string) {
   const highlightPattern =
-    /(Questions?\s+\d+(?:(?:\s*(?:to|-)\s*|\s+and\s+)\d+)?|boxes?\s+\d+(?:\s*(?:to|-)\s*\d+)?|\bONE WORD(?: AND\/OR A NUMBER)?\b|\bNOT GIVEN\b|\bTRUE\b|\bFALSE\b|\bYES\b|\bNO\b|\bTWO\b|\bSIX\b|\b[A-H](?:\s*-\s*[A-H])\b|\b[ivxlcdm]+(?:\s*-\s*[ivxlcdm]+)\b|\b[A-H]\b(?:\s*,\s*\b[A-H]\b)*(?:\s+or\s+\b[A-H]\b))/gi;
+    /(Questions?\s+\d+(?:(?:\s*(?:to|-)\s*|\s+and\s+)\d+)?|boxes?\s+\d+(?:\s*(?:to|-)\s*\d+)?|\bONE WORD(?: AND\/OR A NUMBER)?\b|\bNOT GIVEN\b|\bTRUE\b|\bFALSE\b|\bYES\b|\bNO\b|\bTWO\b|\bSIX\b|\b[A-Z](?:\s*-\s*[A-Z])\b|\b[ivxlcdm]+(?:\s*-\s*[ivxlcdm]+)\b|\b[A-Z]\b(?:\s*,\s*\b[A-Z]\b)*(?:\s+or\s+\b[A-Z]\b))/gi;
 
   const parts = line.split(highlightPattern);
 
@@ -70,9 +70,9 @@ function renderInstructionLine(line: string) {
         /^(ONE WORD(?: AND\/OR A NUMBER)?|NOT GIVEN|TRUE|FALSE|YES|NO|TWO|SIX)$/i.test(
           normalizedPart,
         ) ||
-        /^[A-H](?:\s*-\s*[A-H])$/i.test(normalizedPart) ||
+        /^[A-Z](?:\s*-\s*[A-Z])$/i.test(normalizedPart) ||
         /^[ivxlcdm]+(?:\s*-\s*[ivxlcdm]+)$/i.test(normalizedPart) ||
-        /^\b[A-H]\b(?:\s*,\s*\b[A-H]\b)*(?:\s+or\s+\b[A-H]\b)$/i.test(
+        /^\b[A-Z]\b(?:\s*,\s*\b[A-Z]\b)*(?:\s+or\s+\b[A-Z]\b)$/i.test(
           normalizedPart,
         ));
 
@@ -88,7 +88,7 @@ function renderInstructionLine(line: string) {
 }
 
 function renderPeopleListLine(line: string) {
-  const peopleMatch = line.match(/^([A-H])(?:[.)])?\s+(.+)$/);
+  const peopleMatch = line.match(/^([A-Z])(?:[.)])?\s+(.+)$/);
 
   if (!peopleMatch?.[1] || !peopleMatch[2]) {
     return renderInstructionLine(line);
@@ -105,7 +105,7 @@ function renderPeopleListLine(line: string) {
 }
 
 function renderOpinionListLine(line: string) {
-  const opinionMatch = line.match(/^([A-H])(?:[.)])?\s+(.+)$/);
+  const opinionMatch = line.match(/^([A-Z])(?:[.)])?\s+(.+)$/);
 
   if (!opinionMatch?.[1] || !opinionMatch[2]) {
     return renderInstructionLine(line);
@@ -176,6 +176,63 @@ function renderMaryamMirzakhaniPhraseTable() {
     </div>
   );
 }
+
+function renderCharlesIIPhraseTable() {
+  const rows = [
+    [
+      { letter: 'A', text: 'military innovation' },
+      { letter: 'F', text: 'decisive victory' },
+    ],
+    [
+      { letter: 'B', text: 'large reward' },
+      { letter: 'G', text: 'political debate' },
+    ],
+    [
+      { letter: 'C', text: 'widespread conspiracy' },
+      { letter: 'H', text: 'strategic alliance' },
+    ],
+    [
+      { letter: 'D', text: 'relative safety' },
+      { letter: 'I', text: 'popular solution' },
+    ],
+    [
+      { letter: 'E', text: 'new government' },
+      { letter: 'J', text: 'religious conviction' },
+    ],
+  ];
+
+  return (
+    <div className="border-border/70 mt-7 overflow-hidden rounded-2xl border bg-white/40 shadow-sm dark:bg-white/[0.03]">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`charles-phrase-row-${rowIdx}`}
+          className={cn(
+            'grid grid-cols-2',
+            rowIdx < rows.length - 1 && 'border-border/70 border-b',
+          )}
+        >
+          {row.map((cell, cellIdx) => (
+            <div
+              key={`charles-phrase-cell-${rowIdx}-${cellIdx}`}
+              className={cn(
+                'text-foreground flex min-h-16 items-center justify-start px-8 py-4 text-left text-[15px] leading-7',
+                cellIdx < row.length - 1 && 'border-border/70 border-r',
+              )}
+            >
+              {cell ? (
+                <span>
+                  <strong className="font-bold">{cell.letter}</strong>{' '}
+                  <span className="ml-2">{cell.text}</span>
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function renderInstructionText(text: string) {
   const lines = formatInstructionLines(text);
 
@@ -185,11 +242,11 @@ export function renderInstructionText(text: string) {
     <div className="space-y-1.5">
       {lines.map((line, index) => {
         const style = getInstructionLineStyle(line);
-        const isPeopleListLine = /^[A-H](?:[.)])?\s+\S/.test(line);
+        const isPeopleListLine = /^[A-Z](?:[.)])?\s+\S/.test(line);
         const isOpinionsHeading = /^Opinions$/i.test(line);
         const isOpinionListLine =
           inOpinionsBlock &&
-          /^\s*[A-H](?:[.)])?\s+\S/.test(line) &&
+          /^\s*[A-Z](?:[.)])?\s+\S/.test(line) &&
           !isPeopleListLine;
 
         if (isOpinionsHeading) {
@@ -325,7 +382,8 @@ export function renderStructuredNoteBlock(
       {renderInstructionCard({
         block,
         text:
-          parsedFlowchartBlock?.instructionText ?? parsedNoteBlock.instructionText,
+          parsedFlowchartBlock?.instructionText ??
+          parsedNoteBlock.instructionText,
       })}
 
       {isFlowchartBlock && parsedFlowchartBlock ? (
@@ -441,8 +499,12 @@ export function renderStructuredSummaryBlock(
 
   const shouldShowMaryamMirzakhaniPhraseTable =
     /^Maryam Mirzakhani$/i.test(parsedSummaryBlock.title.trim()) &&
-    block.questionNumbers[0] === 27 &&
-    block.questionNumbers[block.questionNumbers.length - 1] === 32;
+    block.questionNumbers.includes(27);
+
+  const shouldShowCharlesIIPhraseTable =
+    /^The story behind the hunt for Charles II$/i.test(
+      parsedSummaryBlock.title.trim(),
+    ) && block.questionNumbers.includes(27);
 
   const maryamMirzakhaniSummaryText = shouldShowMaryamMirzakhaniPhraseTable
     ? parsedSummaryBlock.summaryText
@@ -453,12 +515,37 @@ export function renderStructuredSummaryBlock(
         .trim()
     : parsedSummaryBlock.summaryText;
 
+  const charlesIIInstructionText = shouldShowCharlesIIPhraseTable
+    ? parsedSummaryBlock.instructionText
+        .split('\n')
+        .filter((line) => {
+          const trimmed = line.trim();
+          return (
+            !trimmed.startsWith('A ') &&
+            !trimmed.startsWith('B ') &&
+            !trimmed.startsWith('C ') &&
+            !trimmed.startsWith('D ') &&
+            !trimmed.startsWith('E ') &&
+            !trimmed.startsWith('F ') &&
+            !trimmed.startsWith('G ') &&
+            !trimmed.startsWith('H ') &&
+            !trimmed.startsWith('I ') &&
+            !trimmed.startsWith('J ')
+          );
+        })
+        .join('\n')
+    : parsedSummaryBlock.instructionText;
+
   return (
     <div key={blockIdx} className="space-y-8">
       {renderInstructionCard({
         block,
-        text: parsedSummaryBlock.instructionText,
+        text: shouldShowCharlesIIPhraseTable
+          ? charlesIIInstructionText
+          : parsedSummaryBlock.instructionText,
       })}
+
+      {shouldShowCharlesIIPhraseTable && renderCharlesIIPhraseTable()}
 
       <div className="border-border/70 border-t pt-5">
         <div className="max-w-4xl space-y-5">

@@ -9,13 +9,13 @@ function normalizeAnswerAlias(value: string) {
 export function normalizeAnswerText(value: string) {
   return normalizeAnswerAlias(
     value
-    .normalize('NFKC')
-    .replace(/[\u2018\u2019\u0060]/g, "'")
-    .replace(/[\u2013\u2014]/g, '-')
-    .replace(/[^a-z0-9]+/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase(),
+      .normalize('NFKC')
+      .replace(/[\u2018\u2019\u0060]/g, "'")
+      .replace(/[\u2013\u2014]/g, '-')
+      .replace(/[^a-z0-9]+/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase(),
   );
 }
 
@@ -36,7 +36,7 @@ export function splitAnswerVariants(answer: string) {
 
 export function getChoiceAnswerValue(option: string) {
   const trimmedOption = option.trim();
-  const letterMatch = trimmedOption.match(/^([A-H])(?:[\s.)\-–—:]|$)/i);
+  const letterMatch = trimmedOption.match(/^([A-Z])(?:[\s.)\-–—:]|$)/i);
 
   if (letterMatch?.[1]) {
     return letterMatch[1].toUpperCase();
@@ -64,7 +64,7 @@ export function getPairedChoiceComparisonValues(answer: string) {
         .replace(/[\/,]+/g, ' ')
         .split(/\s+/)
         .map((part) => part.trim())
-        .filter((part) => /^[A-H]$/i.test(part))
+        .filter((part) => /^[A-Z]$/i.test(part))
         .map((part) => getChoiceComparisonValue(part)),
     )
     .filter(Boolean);

@@ -214,6 +214,8 @@ export function QuestionGroup({
     ([20, 22].includes(primaryBlock.questionNumbers[0] ?? 0) ||
       (/Cambridge 19 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
         [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
+      (/Cambridge 17 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
+        [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
       (/Cambridge 18 IELTS Academic Reading Test 4/i.test(testTitle ?? '') &&
         [10, 12].includes(primaryBlock.questionNumbers[0] ?? 0)));
   const shouldUseGeneral18Test2Questions28To31Prompts =
@@ -1031,21 +1033,29 @@ export function QuestionGroup({
 
       <div className="space-y-6">
         {isListening18Test3Q1to4 ? (
-          <div className="border-border/60 bg-muted/10 rounded-2xl border p-5 space-y-4 shadow-sm max-w-xl mx-auto w-full">
-            <div className="text-center space-y-1">
+          <div className="border-border/60 bg-muted/10 mx-auto w-full max-w-xl space-y-4 rounded-2xl border p-5 shadow-sm">
+            <div className="space-y-1 text-center">
               <h4 className="text-foreground text-lg font-extrabold tracking-wide uppercase">
                 Wayside Camera Club
               </h4>
-              <p className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+              <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
                 membership form
               </p>
             </div>
-            <div className="border-t border-border/40 my-3" />
-            <div className="grid grid-cols-[140px_1fr] gap-y-3 text-sm px-2">
-              <div className="text-muted-foreground font-semibold flex items-center">Name:</div>
-              <div className="text-foreground font-extrabold bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40">Dan Green</div>
-              <div className="text-muted-foreground font-semibold flex items-center">Email address:</div>
-              <div className="text-foreground font-extrabold bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40">dan1068@market.com</div>
+            <div className="border-border/40 my-3 border-t" />
+            <div className="grid grid-cols-[140px_1fr] gap-y-3 px-2 text-sm">
+              <div className="text-muted-foreground flex items-center font-semibold">
+                Name:
+              </div>
+              <div className="text-foreground bg-muted/30 border-border/40 rounded-lg border px-3 py-1.5 font-extrabold">
+                Dan Green
+              </div>
+              <div className="text-muted-foreground flex items-center font-semibold">
+                Email address:
+              </div>
+              <div className="text-foreground bg-muted/30 border-border/40 rounded-lg border px-3 py-1.5 font-extrabold">
+                dan1068@market.com
+              </div>
             </div>
           </div>
         ) : null}
@@ -1667,7 +1677,9 @@ export function QuestionGroup({
             <div className="border-border/60 bg-muted/20 grid grid-cols-[100px_1.5fr_1.2fr_1.5fr] border-b text-center text-sm font-bold">
               <div className="border-border/60 border-r px-4 py-4">Date</div>
               <div className="border-border/60 border-r px-4 py-4">Event</div>
-              <div className="border-border/60 border-r px-4 py-4">Location</div>
+              <div className="border-border/60 border-r px-4 py-4">
+                Location
+              </div>
               <div className="px-4 py-4">Help needed</div>
             </div>
 
@@ -1715,7 +1727,10 @@ export function QuestionGroup({
                 Mountfort Hotel
               </div>
               <div className="flex items-center justify-center px-4 py-5 text-center text-sm">
-                {renderListening17Test2TableQuestion(10, 'designing the 10. ____')}
+                {renderListening17Test2TableQuestion(
+                  10,
+                  'designing the 10. ____',
+                )}
               </div>
             </div>
           </div>
