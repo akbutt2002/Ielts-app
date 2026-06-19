@@ -195,8 +195,9 @@ export function detectQuestionMarker(line: string, questionNumbers: number[]) {
     }
 
     const firstChar = remainder.charAt(0);
+    const suffix = trimmed.slice(qStr.length);
 
-    if (!/[a-z]/.test(firstChar)) {
+    if (!/[a-z]/.test(firstChar) || (suffix.length > 0 && /^\s/.test(suffix))) {
       return {
         qNum,
         prompt: remainder.replace(/^[\s.:\)\-\u2013\u2014\]]+/, ''),
@@ -422,7 +423,7 @@ export function isQuestionContentHeadingLine(
   }
 
   if (
-    /^(?:Read|Look|Complete|Choose|Write|Do|Match|Label|Find|For|In boxes?|Questions?|NB)\b/i.test(
+    /^(?:Read|Look|Complete|Choose|Write|Do|Match|Label|Find|For|In boxes?|Questions?|NB|TRUE|FALSE|NOT GIVEN|YES|NO)\b/i.test(
       normalizedLine,
     )
   ) {
@@ -1753,7 +1754,7 @@ export function formatInstructionLines(text: string) {
         /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
         /^[A-J](?:[.)])?(?:\s|$)/i.test(upcomingLine) ||
-        /^(TRUE|FALSE|NOT GIVEN|YES|NO)$/i.test(upcomingLine) ||
+        /^(?:TRUE|FALSE|NOT GIVEN|YES|NO)\b/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
       ) {
         break;
@@ -2087,11 +2088,11 @@ export function isStructuredNoteOverflowInstructionLine(line: string) {
 }
 
 export function findStructuredInstructionEndIndex(rawLines: string[]) {
-  const index = rawLines.findIndex((line) =>
-    /(?:for each answer|on your answer sheet)\.?$/i.test(line),
-  );
-  if (index !== -1) {
-    return index;
+  for (let i = rawLines.length - 1; i >= 0; i--) {
+    const line = rawLines[i] ?? '';
+    if (/(?:for each answer|on your answer sheet)\.?$/i.test(line)) {
+      return i;
+    }
   }
   const chooseIndex = rawLines.findIndex((line) =>
     /^Choose\b/i.test(line.trim()),
@@ -2363,10 +2364,7 @@ export function parseStructuredFlowchartBlock(
     return null;
   }
 
-  const instructionText = rawLines
-    .slice(0, instructionEndIndex + 1)
-    .filter((line) => !isStructuredNoteOverflowInstructionLine(line))
-    .join('\n');
+  const instructionText = rawLines.slice(0, instructionEndIndex + 1).join('\n');
   const contentLines = rawLines.slice(instructionEndIndex + 1);
 
   if (contentLines.length === 0) {

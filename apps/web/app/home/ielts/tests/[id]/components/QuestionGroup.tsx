@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { cn } from '@kit/ui/utils';
 
 import { normalizeAnswerText } from '../utils/answer-matcher';
@@ -600,12 +602,14 @@ export function QuestionGroup({
     groupLastQuestion === 26 &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
-  const shouldRenderInlineBlankPromptForGeneral17Test1 =
+  const shouldRenderInlineBlankPromptForGeneral17 =
     !isListening &&
-    /Cambridge 17 IELTS General Reading Test 1/i.test(testTitle ?? '') &&
+    /Cambridge 17 IELTS General Reading Test/i.test(testTitle ?? '') &&
     ((groupFirstQuestion === 11 && groupLastQuestion === 14) ||
       (groupFirstQuestion === 15 && groupLastQuestion === 20) ||
-      (groupFirstQuestion === 28 && groupLastQuestion === 32));
+      (groupFirstQuestion === 21 && groupLastQuestion === 27) ||
+      (groupFirstQuestion === 22 && groupLastQuestion === 27)) &&
+    (primaryBlock.choices?.length ?? 0) === 0;
 
   const shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 =
     !isListening &&
@@ -783,6 +787,32 @@ export function QuestionGroup({
           })
           .join('\n')
       : primaryBlock.instructions;
+
+  const shouldRenderGeneral17Test4PlumbersTable =
+    !isListening &&
+    /Cambridge 17 IELTS General Reading Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 22 &&
+    groupLastQuestion === 27;
+
+  const general17Test4PlumbersInstructionText = useMemo(() => {
+    if (!shouldRenderGeneral17Test4PlumbersTable) {
+      return '';
+    }
+    const lines = primaryBlock.instructions.split(/\r?\n/);
+    const filteredLines = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (
+        /^(?:The work of plumbers|Type of|plumber|Work-related issues|Skills\/Actions needed|Residential|· Working underfloor in a)/i.test(
+          trimmed,
+        )
+      ) {
+        break;
+      }
+      filteredLines.push(line);
+    }
+    return filteredLines.join('\n');
+  }, [shouldRenderGeneral17Test4PlumbersTable, primaryBlock.instructions]);
 
   const listeningTest3InstructionText =
     shouldShowPromptTextWhenBlankForListeningTest4Questions15To18
@@ -1070,6 +1100,27 @@ export function QuestionGroup({
       renderAnswerStatusIcon={renderAnswerStatusIcon}
     />
   );
+
+  const renderGeneral17Test4PlumbersQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`general-17-test-4-plumbers-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
   return (
     <section
       key={`${primaryBlock.header}-${groupIdx}`}
@@ -1099,23 +1150,25 @@ export function QuestionGroup({
             <div className="bg-foreground absolute top-0 bottom-0 left-0 w-1.5" />
 
             {renderInstructionText(
-              shouldRenderGeneral17Test1PlacesTable
-                ? general17Test1PlacesInstructionText
-                : shouldInlinePairedListeningPrompt
-                  ? [
-                      pairedInstructionText,
-                      compactPromptLines(
-                        stripQuestionNumberPrefix(
-                          primaryBlock.items[0]?.prompt ?? '',
-                          primaryBlock.items[0]?.qNum ?? 0,
+              shouldRenderGeneral17Test4PlumbersTable
+                ? general17Test4PlumbersInstructionText
+                : shouldRenderGeneral17Test1PlacesTable
+                  ? general17Test1PlacesInstructionText
+                  : shouldInlinePairedListeningPrompt
+                    ? [
+                        pairedInstructionText,
+                        compactPromptLines(
+                          stripQuestionNumberPrefix(
+                            primaryBlock.items[0]?.prompt ?? '',
+                            primaryBlock.items[0]?.qNum ?? 0,
+                          ),
                         ),
-                      ),
-                    ]
-                      .filter(Boolean)
-                      .join('\n')
-                  : shouldInlinePairedReadingChoicePrompt
-                    ? pairedReadingInstructionText
-                    : listeningTest3InstructionText,
+                      ]
+                        .filter(Boolean)
+                        .join('\n')
+                    : shouldInlinePairedReadingChoicePrompt
+                      ? pairedReadingInstructionText
+                      : listeningTest3InstructionText,
             )}
 
             {shouldRenderGeneral17Test1PlacesTable &&
@@ -1214,6 +1267,117 @@ export function QuestionGroup({
                 renderAnswerStatusIcon={renderAnswerStatusIcon}
               />
             ))}
+          </div>
+        ) : shouldRenderGeneral17Test4PlumbersTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            {/* Table title */}
+            <div className="border-border/60 border-b px-4 py-5 text-sm font-black">
+              The work of plumbers
+            </div>
+
+            {/* Table headers */}
+            <div className="border-border/60 grid grid-cols-[1fr_2.2fr_2.8fr] border-b text-sm font-semibold">
+              <div className="border-border/60 border-r px-4 py-4">
+                Type of plumber
+              </div>
+              <div className="border-border/60 border-r px-4 py-4">
+                Work-related issues
+              </div>
+              <div className="px-4 py-4">Skills/Actions needed</div>
+            </div>
+
+            {/* Row 1: Residential */}
+            <div className="border-border/60 grid grid-cols-[1fr_2.2fr_2.8fr] border-b">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Residential
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral17Test4PlumbersQuestion(
+                      22,
+                      'Working underfloor in a 22 ____ area',
+                    )}
+                  </li>
+                  <li>Dealing with a wood product</li>
+                </ul>
+              </div>
+              <div className="px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>Plan carefully</li>
+                  <li>
+                    {renderGeneral17Test4PlumbersQuestion(
+                      23,
+                      'Always use the appropriate 23 ____ for each tool',
+                    )}
+                  </li>
+                  <li>
+                    {renderGeneral17Test4PlumbersQuestion(
+                      24,
+                      'Consider how different 24 ____ will be affected',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Row 2: Commercial */}
+            <div className="border-border/60 grid grid-cols-[1fr_2.2fr_2.8fr] border-b">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Commercial
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>
+                    Working with advanced equipment designed for integrated
+                    systems
+                  </li>
+                </ul>
+              </div>
+              <div className="px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>Fully comprehend instructions</li>
+                  <li>
+                    {renderGeneral17Test4PlumbersQuestion(
+                      25,
+                      'Take images of structures to locate important materials like 25 ____',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Row 3: Service */}
+            <div className="grid grid-cols-[1fr_2.2fr_2.8fr]">
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Service
+              </div>
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>Diagnosing problems and their causes</li>
+                  <li>
+                    Fully understanding something someone else installed, e.g.,
+                    a shower unit
+                  </li>
+                </ul>
+              </div>
+              <div className="px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral17Test4PlumbersQuestion(
+                      26,
+                      'Providing quick, 26 ____ solutions',
+                    )}
+                  </li>
+                  <li>
+                    {renderGeneral17Test4PlumbersQuestion(
+                      27,
+                      'Deal well with people who have a lot of 27 ____ or disruption as a result of their problems',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         ) : shouldRenderGeneral18Test1CustomerComplaintsTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
@@ -2423,7 +2587,7 @@ export function QuestionGroup({
                           choices={scopedChoices}
                           showPromptTextWhenBlank={
                             shouldShowPromptTextWhenBlank ||
-                            shouldRenderInlineBlankPromptForGeneral17Test1 ||
+                            shouldRenderInlineBlankPromptForGeneral17 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                             shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||
@@ -2462,7 +2626,7 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForListening17Test2Questions1To7
                           }
                           inlineBlankPrompt={
-                            shouldRenderInlineBlankPromptForGeneral17Test1 ||
+                            shouldRenderInlineBlankPromptForGeneral17 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                             shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||

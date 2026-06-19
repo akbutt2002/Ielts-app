@@ -61,7 +61,7 @@ export function QuestionRow({
         .map((answer) => getChoiceComparisonValue(answer))
         .filter(Boolean)
         .join(' / ')
-    : answerLookup.get(qNum) ?? '';
+    : (answerLookup.get(qNum) ?? '');
   const displayCorrectAnswer = isPairedChoiceRow
     ? Array.from(
         new Set(
@@ -78,8 +78,8 @@ export function QuestionRow({
       ? stripLeadingBulletMarker(prompt)
       : stripQuestionNumberPrefix(stripLeadingBulletMarker(prompt), qNum),
   );
-  const hasBlank = showPrompt && /__+/.test(normalizedPrompt);
   const hasChoices = choices.length > 0;
+  const hasBlank = showPrompt && /__+/.test(normalizedPrompt) && !hasChoices;
   const shouldRenderBlankInput = hasBlank;
   const selectedChoices = isPairedChoiceRow
     ? parsePairedChoiceSelection(userAnswer)
@@ -121,7 +121,9 @@ export function QuestionRow({
       type="text"
       placeholder="..."
       className={`border-border/75 border-b-foreground/20 bg-muted/35 text-foreground focus:border-primary focus:bg-primary/5 focus:ring-primary/10 inline-flex shrink-0 rounded-md border border-b-2 outline-none focus:ring-2 ${
-        narrowInput ? 'w-16 px-1.5 py-0.5 text-xs font-bold' : 'w-24 px-2.5 py-1.5 text-sm font-black'
+        narrowInput
+          ? 'w-16 px-1.5 py-0.5 text-xs font-bold'
+          : 'w-24 px-2.5 py-1.5 text-sm font-black'
       } ${
         isSubmitted
           ? isCorrect
@@ -191,7 +193,9 @@ export function QuestionRow({
                           className="inline"
                         >
                           {lineParts.map((part, partIdx) => (
-                            <span key={`${qNum}-inline-part-${lineIdx}-${partIdx}`}>
+                            <span
+                              key={`${qNum}-inline-part-${lineIdx}-${partIdx}`}
+                            >
                               {part}
                               {partIdx < lineParts.length - 1 ? (
                                 <span className="mx-2 inline-flex align-middle">
@@ -297,7 +301,8 @@ export function QuestionRow({
                           };
                         }
 
-                        const normalizedSelectedChoices = selectedChoices.slice();
+                        const normalizedSelectedChoices =
+                          selectedChoices.slice();
                         const selectedIndex =
                           normalizedSelectedChoices.indexOf(normalizedChoice);
 
@@ -367,4 +372,3 @@ export function QuestionRow({
     </div>
   );
 }
-
