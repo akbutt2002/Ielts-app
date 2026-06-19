@@ -11,6 +11,7 @@ import {
 } from '../utils/question-parser';
 import { QuestionRow } from './QuestionRow';
 import {
+  renderGeneral17Test1PlacesTable,
   renderInstructionText,
   renderStructuredNoteBlock,
   renderStructuredSummaryBlock,
@@ -599,6 +600,13 @@ export function QuestionGroup({
     groupLastQuestion === 26 &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
+  const shouldRenderInlineBlankPromptForGeneral17Test1 =
+    !isListening &&
+    /Cambridge 17 IELTS General Reading Test 1/i.test(testTitle ?? '') &&
+    ((groupFirstQuestion === 11 && groupLastQuestion === 14) ||
+      (groupFirstQuestion === 15 && groupLastQuestion === 20) ||
+      (groupFirstQuestion === 28 && groupLastQuestion === 32));
+
   const shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 =
     !isListening &&
     /Cambridge 17 IELTS Academic Reading Test 3/i.test(testTitle ?? '') &&
@@ -742,6 +750,40 @@ export function QuestionGroup({
     groupLastQuestion === 10 &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
+  const shouldRenderGeneral17Test1PlacesTable =
+    !isListening &&
+    /Cambridge 17 IELTS General Reading Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 5;
+
+  const general17Test1PlacesInstructionText =
+    shouldRenderGeneral17Test1PlacesTable
+      ? primaryBlock.instructions
+          .split('\n')
+          .filter((line: string) => {
+            const trimmed = line.trim();
+            if (/^[A-H](?:\s|$)/i.test(trimmed)) {
+              return false;
+            }
+            const lower = trimmed.toLowerCase();
+            const placeNames = [
+              'information desk',
+              'green channel',
+              'hotel reservation counter',
+              'level two',
+              'lost and found counter',
+              'reception desk',
+              'red channel',
+              'baggage claim belt',
+            ];
+            if (placeNames.includes(lower)) {
+              return false;
+            }
+            return true;
+          })
+          .join('\n')
+      : primaryBlock.instructions;
+
   const listeningTest3InstructionText =
     shouldShowPromptTextWhenBlankForListeningTest4Questions15To18
       ? [
@@ -768,58 +810,58 @@ export function QuestionGroup({
                 'Choose ONE WORD ONLY from the passage for each answer.',
                 'Write your answers in boxes 7-13 on your answer sheet.',
               ].join('\n')
-          : shouldRenderListeningTest2GuitarLessonTable
-            ? primaryBlock.instructions
-                .split(/\r?\n/)
-                .map((line: string) => line.trim())
-                .filter(Boolean)
-                .slice(0, 3)
-                .join('\n')
-            : shouldRenderListeningTest3ShoppingTable
+            : shouldRenderListeningTest2GuitarLessonTable
               ? primaryBlock.instructions
                   .split(/\r?\n/)
                   .map((line: string) => line.trim())
                   .filter(Boolean)
-                  .slice(0, 4)
+                  .slice(0, 3)
                   .join('\n')
-              : shouldRenderListeningTest3Flowchart
-                ? [
-                    'Complete the flowchart below.',
-                    'Choose FIVE answers from the box and write the correct letter, A-H, next to Questions 26-30.',
-                    'A size',
-                    'B escape',
-                    'C age',
-                    'D water',
-                    'E cereal',
-                    'F calculations',
-                    'G changes',
-                    'H colour',
-                    'I (dummy)', // Keep lines aligned or not
-                  ]
-                    .slice(0, 10)
-                    .join('\n') // adjust/keep it clean
-                : shouldRenderListeningTest4ResponsibilitiesTable
-                  ? primaryBlock.instructions
-                      .split(/\r?\n/)
-                      .map((line: string) => line.trim())
-                      .filter(Boolean)
-                      .slice(0, 4)
-                      .join('\n')
-                  : shouldRenderGeneral18Test1CustomerComplaintsTable
+              : shouldRenderListeningTest3ShoppingTable
+                ? primaryBlock.instructions
+                    .split(/\r?\n/)
+                    .map((line: string) => line.trim())
+                    .filter(Boolean)
+                    .slice(0, 4)
+                    .join('\n')
+                : shouldRenderListeningTest3Flowchart
+                  ? [
+                      'Complete the flowchart below.',
+                      'Choose FIVE answers from the box and write the correct letter, A-H, next to Questions 26-30.',
+                      'A size',
+                      'B escape',
+                      'C age',
+                      'D water',
+                      'E cereal',
+                      'F calculations',
+                      'G changes',
+                      'H colour',
+                      'I (dummy)', // Keep lines aligned or not
+                    ]
+                      .slice(0, 10)
+                      .join('\n') // adjust/keep it clean
+                  : shouldRenderListeningTest4ResponsibilitiesTable
                     ? primaryBlock.instructions
                         .split(/\r?\n/)
                         .map((line: string) => line.trim())
                         .filter(Boolean)
-                        .slice(0, 3)
+                        .slice(0, 4)
                         .join('\n')
-                    : shouldRenderGeneral18Test4DairyTable
+                    : shouldRenderGeneral18Test1CustomerComplaintsTable
                       ? primaryBlock.instructions
                           .split(/\r?\n/)
                           .map((line: string) => line.trim())
                           .filter(Boolean)
                           .slice(0, 3)
                           .join('\n')
-                      : listeningInstructionText;
+                      : shouldRenderGeneral18Test4DairyTable
+                        ? primaryBlock.instructions
+                            .split(/\r?\n/)
+                            .map((line: string) => line.trim())
+                            .filter(Boolean)
+                            .slice(0, 3)
+                            .join('\n')
+                        : listeningInstructionText;
   const renderListening18Test2JobQuestion = (qNum: number, prompt: string) => (
     <QuestionRow
       key={`listening-18-test-2-job-${qNum}`}
@@ -1057,22 +1099,27 @@ export function QuestionGroup({
             <div className="bg-foreground absolute top-0 bottom-0 left-0 w-1.5" />
 
             {renderInstructionText(
-              shouldInlinePairedListeningPrompt
-                ? [
-                    pairedInstructionText,
-                    compactPromptLines(
-                      stripQuestionNumberPrefix(
-                        primaryBlock.items[0]?.prompt ?? '',
-                        primaryBlock.items[0]?.qNum ?? 0,
+              shouldRenderGeneral17Test1PlacesTable
+                ? general17Test1PlacesInstructionText
+                : shouldInlinePairedListeningPrompt
+                  ? [
+                      pairedInstructionText,
+                      compactPromptLines(
+                        stripQuestionNumberPrefix(
+                          primaryBlock.items[0]?.prompt ?? '',
+                          primaryBlock.items[0]?.qNum ?? 0,
+                        ),
                       ),
-                    ),
-                  ]
-                    .filter(Boolean)
-                    .join('\n')
-                : shouldInlinePairedReadingChoicePrompt
-                  ? pairedReadingInstructionText
-                  : listeningTest3InstructionText,
+                    ]
+                      .filter(Boolean)
+                      .join('\n')
+                  : shouldInlinePairedReadingChoicePrompt
+                    ? pairedReadingInstructionText
+                    : listeningTest3InstructionText,
             )}
+
+            {shouldRenderGeneral17Test1PlacesTable &&
+              renderGeneral17Test1PlacesTable()}
           </div>
         ) : null}
       </div>
@@ -1572,7 +1619,8 @@ export function QuestionGroup({
             <div className="border-border/60 grid grid-cols-[140px_1fr] border-b text-sm font-semibold">
               <div className="border-border/60 border-r px-4 py-4">Aim</div>
               <div className="px-4 py-4 leading-relaxed">
-                – to investigate the feeding habits of bats in farmland near the Ranomafana National Park
+                – to investigate the feeding habits of bats in farmland near the
+                Ranomafana National Park
               </div>
             </div>
 
@@ -1580,7 +1628,7 @@ export function QuestionGroup({
               <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
                 Method
               </div>
-              <div className="px-4 py-5 space-y-3">
+              <div className="space-y-3 px-4 py-5">
                 <div className="text-sm leading-relaxed">
                   – ultrasonic recording to identify favourite feeding spots
                 </div>
@@ -1597,7 +1645,7 @@ export function QuestionGroup({
               <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
                 Findings
               </div>
-              <div className="px-4 py-5 space-y-4">
+              <div className="space-y-4 px-4 py-5">
                 <div className="text-sm leading-relaxed font-medium">
                   – the bats were most active in rice fields located on hills
                 </div>
@@ -1616,7 +1664,7 @@ export function QuestionGroup({
                 <div className="text-sm leading-relaxed font-semibold">
                   – local attitudes to bats are mixed:
                 </div>
-                <div className="pl-6 space-y-3">
+                <div className="space-y-3 pl-6">
                   <div>
                     {renderAcademic17Test4TableQuestion(
                       10,
@@ -2375,6 +2423,7 @@ export function QuestionGroup({
                           choices={scopedChoices}
                           showPromptTextWhenBlank={
                             shouldShowPromptTextWhenBlank ||
+                            shouldRenderInlineBlankPromptForGeneral17Test1 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                             shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||
@@ -2413,6 +2462,7 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForListening17Test2Questions1To7
                           }
                           inlineBlankPrompt={
+                            shouldRenderInlineBlankPromptForGeneral17Test1 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                             shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||

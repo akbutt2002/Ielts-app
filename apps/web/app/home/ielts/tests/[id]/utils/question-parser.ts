@@ -2087,9 +2087,26 @@ export function isStructuredNoteOverflowInstructionLine(line: string) {
 }
 
 export function findStructuredInstructionEndIndex(rawLines: string[]) {
-  return rawLines.findIndex((line) =>
+  const index = rawLines.findIndex((line) =>
     /(?:for each answer|on your answer sheet)\.?$/i.test(line),
   );
+  if (index !== -1) {
+    return index;
+  }
+  const chooseIndex = rawLines.findIndex((line) =>
+    /^Choose\b/i.test(line.trim()),
+  );
+  if (chooseIndex !== -1) {
+    const chooseLine = rawLines[chooseIndex];
+    const nextLine = rawLines[chooseIndex + 1] ?? '';
+    if (nextLine && /ONLY\.?$/i.test(nextLine.trim())) {
+      return chooseIndex + 1;
+    }
+    if (chooseLine && /ONLY\.?$/i.test(chooseLine.trim())) {
+      return chooseIndex;
+    }
+  }
+  return -1;
 }
 
 export function tokenizeStructuredLines(

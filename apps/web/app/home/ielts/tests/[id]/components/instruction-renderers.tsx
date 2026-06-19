@@ -190,11 +190,7 @@ function renderAcademic17Test2PhraseTable() {
       { letter: 'E', text: 'luck' },
       { letter: 'F', text: 'inspiration' },
     ],
-    [
-      { letter: 'G', text: 'experiments' },
-      null,
-      null,
-    ],
+    [{ letter: 'G', text: 'experiments' }, null, null],
   ];
 
   return (
@@ -715,6 +711,58 @@ export function renderStructuredSummaryBlock(
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+export function renderGeneral17Test1PlacesTable() {
+  const rows = [
+    [
+      { letter: 'A', text: 'Information Desk' },
+      { letter: 'E', text: 'Green Channel' },
+    ],
+    [
+      { letter: 'B', text: 'Hotel Reservation Counter' },
+      { letter: 'F', text: 'Level Two' },
+    ],
+    [
+      { letter: 'C', text: 'Lost and Found Counter' },
+      { letter: 'G', text: 'Reception Desk' },
+    ],
+    [
+      { letter: 'D', text: 'Red Channel' },
+      { letter: 'H', text: 'Baggage Claim Belt' },
+    ],
+  ];
+
+  return (
+    <div className="border-border/70 mt-7 overflow-hidden rounded-2xl border bg-white/40 shadow-sm dark:bg-white/[0.03]">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`gen17t1-places-row-${rowIdx}`}
+          className={cn(
+            'grid grid-cols-2',
+            rowIdx < rows.length - 1 && 'border-border/70 border-b',
+          )}
+        >
+          {row.map((cell, cellIdx) => (
+            <div
+              key={`gen17t1-places-cell-${rowIdx}-${cellIdx}`}
+              className={cn(
+                'text-foreground flex min-h-16 items-center justify-start px-8 py-4 text-left text-[15px] leading-7',
+                cellIdx < row.length - 1 && 'border-border/70 border-r',
+              )}
+            >
+              {cell ? (
+                <span>
+                  <strong className="font-bold">{cell.letter}</strong>{' '}
+                  <span className="ml-2">{cell.text}</span>
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
