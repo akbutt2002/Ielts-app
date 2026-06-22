@@ -43,7 +43,30 @@ export function QuestionGroup({
   setUserAnswers,
   renderAnswerStatusIcon,
 }: any) {
-  const [primaryBlock, ...continuationBlocks] = group;
+  const sanitizedGroup = useMemo(() => {
+    return group.map((block: any) => {
+      if (!block || !block.items) {
+        return block;
+      }
+      return {
+        ...block,
+        items: block.items.map((item: any) => {
+          if (!item || !item.prompt) {
+            return item;
+          }
+          return {
+            ...item,
+            prompt: item.prompt.replace(
+              /Paragraph\s*\r?\n\s*([A-Za-z\d]+)/gi,
+              'Paragraph $1',
+            ),
+          };
+        }),
+      };
+    });
+  }, [group]);
+
+  const [primaryBlock, ...continuationBlocks] = sanitizedGroup;
   const sectionTitlePrompt = primaryBlock?.contentHeading?.trim() ?? '';
 
   if (!primaryBlock) {
@@ -84,6 +107,28 @@ export function QuestionGroup({
     /Cambridge 18 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
     groupFirstQuestion === 38 &&
     groupLastQuestion === 40;
+
+  const shouldRenderGeneral16Test1InjuriesTable =
+    !isListening &&
+    /Cambridge 16 IELTS General Reading Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 15 &&
+    groupLastQuestion === 20;
+
+  const shouldRenderListening16Test1StevensonTable =
+    isListening &&
+    /Cambridge 16 Listening Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 15 &&
+    groupLastQuestion === 20;
+
+  const shouldRenderListening16Test1PicturesTable =
+    isListening &&
+    /Cambridge 16 Listening Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 25 &&
+    groupLastQuestion === 30;
+
+  const listening16Test1StevensonInstructionText =
+    'Label the map below.\nWrite the correct letter, A-J, next to Questions 15-20.';
+
   const shouldShowQuestionBlockTitle = (block: any) => {
     const normalizedHeader = normalizeAnswerText(block.header ?? '');
 
@@ -119,7 +164,11 @@ export function QuestionGroup({
     renderDeps,
   );
 
-  if (renderedNoteBlock) {
+  if (
+    renderedNoteBlock &&
+    !shouldRenderGeneral16Test1InjuriesTable &&
+    !shouldRenderListening16Test1StevensonTable
+  ) {
     return renderedNoteBlock;
   }
 
@@ -129,7 +178,11 @@ export function QuestionGroup({
     renderDeps,
   );
 
-  if (renderedSummaryBlock) {
+  if (
+    renderedSummaryBlock &&
+    !shouldRenderGeneral16Test1InjuriesTable &&
+    !shouldRenderListening16Test1StevensonTable
+  ) {
     return renderedSummaryBlock;
   }
 
@@ -611,6 +664,12 @@ export function QuestionGroup({
       (groupFirstQuestion === 22 && groupLastQuestion === 27)) &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
+  const shouldRenderInlineBlankPromptForGeneral16 =
+    !isListening &&
+    /Cambridge 16 IELTS General Reading Test/i.test(testTitle ?? '') &&
+    ((groupFirstQuestion === 21 && groupLastQuestion === 27)) &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+
   const shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 =
     !isListening &&
     /Cambridge 17 IELTS Academic Reading Test 3/i.test(testTitle ?? '') &&
@@ -813,6 +872,26 @@ export function QuestionGroup({
     }
     return filteredLines.join('\n');
   }, [shouldRenderGeneral17Test4PlumbersTable, primaryBlock.instructions]);
+
+  const general16Test1InjuriesInstructionText = useMemo(() => {
+    if (!shouldRenderGeneral16Test1InjuriesTable) {
+      return '';
+    }
+    const lines = primaryBlock.instructions.split(/\r?\n/);
+    const filteredLines = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (
+        /^(?:Risks and how to avoid them|Risk Factor|Examples of Farm Activities|Risk Reduction Measures to Consider|Heavy Loads|– Lifting sacks of)/i.test(
+          trimmed,
+        )
+      ) {
+        break;
+      }
+      filteredLines.push(line);
+    }
+    return filteredLines.join('\n');
+  }, [shouldRenderGeneral16Test1InjuriesTable, primaryBlock.instructions]);
 
   const listeningTest3InstructionText =
     shouldShowPromptTextWhenBlankForListeningTest4Questions15To18
@@ -1121,6 +1200,71 @@ export function QuestionGroup({
       renderAnswerStatusIcon={renderAnswerStatusIcon}
     />
   );
+
+  const renderGeneral16Test1InjuriesQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`general-16-test-1-injuries-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening16Test1StevensonQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-16-test-1-stevenson-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      narrowInput={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening16Test1PicturesQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-16-test-1-pictures-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      narrowInput={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
   return (
     <section
       key={`${primaryBlock.header}-${groupIdx}`}
@@ -1150,25 +1294,29 @@ export function QuestionGroup({
             <div className="bg-foreground absolute top-0 bottom-0 left-0 w-1.5" />
 
             {renderInstructionText(
-              shouldRenderGeneral17Test4PlumbersTable
-                ? general17Test4PlumbersInstructionText
-                : shouldRenderGeneral17Test1PlacesTable
-                  ? general17Test1PlacesInstructionText
-                  : shouldInlinePairedListeningPrompt
-                    ? [
-                        pairedInstructionText,
-                        compactPromptLines(
-                          stripQuestionNumberPrefix(
-                            primaryBlock.items[0]?.prompt ?? '',
-                            primaryBlock.items[0]?.qNum ?? 0,
+              shouldRenderListening16Test1StevensonTable
+                ? listening16Test1StevensonInstructionText
+                : shouldRenderGeneral16Test1InjuriesTable
+                  ? general16Test1InjuriesInstructionText
+                  : shouldRenderGeneral17Test4PlumbersTable
+                  ? general17Test4PlumbersInstructionText
+                  : shouldRenderGeneral17Test1PlacesTable
+                    ? general17Test1PlacesInstructionText
+                    : shouldInlinePairedListeningPrompt
+                      ? [
+                          pairedInstructionText,
+                          compactPromptLines(
+                            stripQuestionNumberPrefix(
+                              primaryBlock.items[0]?.prompt ?? '',
+                              primaryBlock.items[0]?.qNum ?? 0,
+                            ),
                           ),
-                        ),
-                      ]
-                        .filter(Boolean)
-                        .join('\n')
-                    : shouldInlinePairedReadingChoicePrompt
-                      ? pairedReadingInstructionText
-                      : listeningTest3InstructionText,
+                        ]
+                          .filter(Boolean)
+                          .join('\n')
+                      : shouldInlinePairedReadingChoicePrompt
+                        ? pairedReadingInstructionText
+                        : listeningTest3InstructionText,
             )}
 
             {shouldRenderGeneral17Test1PlacesTable &&
@@ -1267,6 +1415,239 @@ export function QuestionGroup({
                 renderAnswerStatusIcon={renderAnswerStatusIcon}
               />
             ))}
+          </div>
+        ) : shouldRenderListening16Test1StevensonTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            {/* Title */}
+            <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black uppercase tracking-wider text-muted-foreground">
+              Plan of Stevenson’s site
+            </div>
+
+            {/* Grid container */}
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
+                <span className="text-sm font-semibold text-foreground">
+                  15. coffee room
+                </span>
+                <div>
+                  {renderListening16Test1StevensonQuestion(15, '')}
+                </div>
+              </div>
+              <div className="border-border/60 border-b p-4 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">
+                  16. warehouse
+                </span>
+                <div>
+                  {renderListening16Test1StevensonQuestion(16, '')}
+                </div>
+              </div>
+
+              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
+                <span className="text-sm font-semibold text-foreground">
+                  17. staff canteen
+                </span>
+                <div>
+                  {renderListening16Test1StevensonQuestion(17, '')}
+                </div>
+              </div>
+              <div className="border-border/60 border-b p-4 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">
+                  18. meeting room
+                </span>
+                <div>
+                  {renderListening16Test1StevensonQuestion(18, '')}
+                </div>
+              </div>
+
+              <div className="border-border/60 p-4 flex items-center justify-between md:border-r md:border-b-0 border-b">
+                <span className="text-sm font-semibold text-foreground">
+                  19. human resources
+                </span>
+                <div>
+                  {renderListening16Test1StevensonQuestion(19, '')}
+                </div>
+              </div>
+              <div className="p-4 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">
+                  20. boardroom
+                </span>
+                <div>
+                  {renderListening16Test1StevensonQuestion(20, '')}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening16Test1PicturesTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            {/* Title */}
+            <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black uppercase tracking-wider text-muted-foreground">
+              Pictures
+            </div>
+
+            {/* Grid container */}
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
+                <span className="text-sm font-semibold text-foreground">
+                  25. Falcon (Landseer)
+                </span>
+                <div>
+                  {renderListening16Test1PicturesQuestion(25, '')}
+                </div>
+              </div>
+              <div className="border-border/60 border-b p-4 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">
+                  26. Fish hawk (Audubon)
+                </span>
+                <div>
+                  {renderListening16Test1PicturesQuestion(26, '')}
+                </div>
+              </div>
+
+              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
+                <span className="text-sm font-semibold text-foreground">
+                  27. Kingfisher (van Gogh)
+                </span>
+                <div>
+                  {renderListening16Test1PicturesQuestion(27, '')}
+                </div>
+              </div>
+              <div className="border-border/60 border-b p-4 flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">
+                  28. Portrait of William Wells
+                </span>
+                <div>
+                  {renderListening16Test1PicturesQuestion(28, '')}
+                </div>
+              </div>
+
+              <div className="border-border/60 p-4 flex items-center justify-between md:border-r md:border-b-0 border-b">
+                <span className="text-sm font-semibold text-foreground">
+                  29. Vairumati (Gauguin)
+                </span>
+                <div>
+                  {renderListening16Test1PicturesQuestion(29, '')}
+                </div>
+              </div>
+              <div className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                <span className="text-sm font-semibold text-foreground">
+                  30. Portrait of Giovanni de Medici
+                </span>
+                <div className="self-end md:self-auto">
+                  {renderListening16Test1PicturesQuestion(30, '')}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderGeneral16Test1InjuriesTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            {/* Table title */}
+            <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black">
+              Risks and how to avoid them
+            </div>
+
+            {/* Table headers */}
+            <div className="border-border/60 grid grid-cols-[1fr_1.5fr_1.5fr] border-b text-sm font-semibold">
+              <div className="border-border/60 border-r px-4 py-4">
+                Risk Factor
+              </div>
+              <div className="border-border/60 border-r px-4 py-4">
+                Examples of Farm Activities
+              </div>
+              <div className="px-4 py-4">
+                Risk Reduction Measures to Consider
+              </div>
+            </div>
+
+            {/* Row 1: Heavy Loads */}
+            <div className="border-border/60 grid grid-cols-[1fr_1.5fr_1.5fr] border-b">
+              {/* Risk Factor */}
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Heavy Loads
+              </div>
+              {/* Examples of Farm Activities */}
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral16Test1InjuriesQuestion(
+                      15,
+                      'Lifting sacks of 15. ____',
+                    )}
+                  </li>
+                  <li>Carrying food for animals</li>
+                </ul>
+              </div>
+              {/* Risk Reduction Measures to Consider */}
+              <div className="px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>Divide into containers that weigh less</li>
+                  <li>Use a vehicle such as a tractor</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Row 2: Awkward posture */}
+            <div className="border-border/60 grid grid-cols-[1fr_1.5fr_1.5fr] border-b">
+              {/* Risk Factor */}
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                Awkward posture
+              </div>
+              {/* Examples of Farm Activities */}
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral16Test1InjuriesQuestion(
+                      16,
+                      'Lifting a restless 16. ____',
+                    )}
+                  </li>
+                  <li>
+                    {renderGeneral16Test1InjuriesQuestion(
+                      17,
+                      'Moving something around a big 17. ____',
+                    )}
+                  </li>
+                </ul>
+              </div>
+              {/* Risk Reduction Measures to Consider */}
+              <div className="px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral16Test1InjuriesQuestion(
+                      18,
+                      'Buy particular 18. ____ to help with support',
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Row 3: A lot of bending while working */}
+            <div className="grid grid-cols-[1fr_1.5fr_1.5fr]">
+              {/* Risk Factor */}
+              <div className="border-border/60 border-r px-4 py-5 text-sm font-black">
+                {renderGeneral16Test1InjuriesQuestion(
+                  19,
+                  'A lot of 19. ____ while working',
+                )}
+              </div>
+              {/* Examples of Farm Activities */}
+              <div className="border-border/60 border-r px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>
+                    {renderGeneral16Test1InjuriesQuestion(
+                      20,
+                      'Fixing a fallen 20. ____',
+                    )}
+                  </li>
+                </ul>
+              </div>
+              {/* Risk Reduction Measures to Consider */}
+              <div className="px-4 py-5">
+                <ul className="list-disc space-y-3 pl-5 text-sm leading-relaxed">
+                  <li>Use a workbench instead</li>
+                </ul>
+              </div>
+            </div>
           </div>
         ) : shouldRenderGeneral17Test4PlumbersTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
@@ -2587,6 +2968,7 @@ export function QuestionGroup({
                           choices={scopedChoices}
                           showPromptTextWhenBlank={
                             shouldShowPromptTextWhenBlank ||
+                            shouldRenderInlineBlankPromptForGeneral16 ||
                             shouldRenderInlineBlankPromptForGeneral17 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
@@ -2626,6 +3008,7 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForListening17Test2Questions1To7
                           }
                           inlineBlankPrompt={
+                            shouldRenderInlineBlankPromptForGeneral16 ||
                             shouldRenderInlineBlankPromptForGeneral17 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||

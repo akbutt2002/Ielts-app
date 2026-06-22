@@ -740,6 +740,24 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
     partBlocks.length > 0
       ? partBlocks
       : ((test?.questions ?? []) as QuestionBlock[]);
+  if (/Cambridge 16 Listening Test 1/i.test(test?.title ?? '')) {
+    console.log('NORMALIZE: Found Cambridge 16 Listening Test 1!', test.title);
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      console.log('NORMALIZE: block question_numbers:', block.question_numbers);
+      if (
+        block.question_numbers?.includes(21) &&
+        block.question_numbers?.includes(30)
+      ) {
+        console.log('NORMALIZE: Overriding block 21-30 to 21-22!');
+        return {
+          ...block,
+          header: 'Questions 21 and 22',
+          question_numbers: [21, 22],
+        };
+      }
+      return block;
+    });
+  }
   if (/Cambridge 18 Listening Test 2/i.test(test?.title ?? '')) {
     sourceBlocks = sourceBlocks.flatMap((block: QuestionBlock) => {
       const text = String(block.text ?? '');
