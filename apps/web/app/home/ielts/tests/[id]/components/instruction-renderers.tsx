@@ -225,6 +225,57 @@ function renderAcademic17Test2PhraseTable() {
   );
 }
 
+function renderAcademic16Test2PhraseTable() {
+  const rows = [
+    [
+      { letter: 'A', text: 'solution' },
+      { letter: 'B', text: 'partnership' },
+      { letter: 'C', text: 'destruction' },
+    ],
+    [
+      { letter: 'D', text: 'exaggeration' },
+      { letter: 'E', text: 'cleanliness' },
+      { letter: 'F', text: 'regulations' },
+    ],
+    [
+      { letter: 'G', text: 'illness' },
+      { letter: 'H', text: 'nutrition' },
+      null,
+    ],
+  ];
+
+  return (
+    <div className="border-border/70 mt-7 overflow-hidden rounded-2xl border bg-white/40 shadow-sm dark:bg-white/[0.03]">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`acad16t2-phrase-row-${rowIdx}`}
+          className={cn(
+            'grid grid-cols-3',
+            rowIdx < rows.length - 1 && 'border-border/70 border-b',
+          )}
+        >
+          {row.map((cell, cellIdx) => (
+            <div
+              key={`acad16t2-phrase-cell-${rowIdx}-${cellIdx}`}
+              className={cn(
+                'text-foreground flex min-h-20 items-center justify-center px-4 py-5 text-center text-[15px] leading-7',
+                cellIdx < row.length - 1 && 'border-border/70 border-r',
+              )}
+            >
+              {cell ? (
+                <span>
+                  <strong className="font-bold">{cell.letter}</strong>{' '}
+                  {cell.text}
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function renderAcademic17Test3PhraseTable() {
   const rows = [
     [
@@ -618,6 +669,10 @@ export function renderStructuredSummaryBlock(
     /Cambridge 17 IELTS Academic Reading Test 3/i.test(deps.testTitle ?? '') &&
     block.questionNumbers.includes(36);
 
+  const shouldShowAcademic16Test2PhraseTable =
+    /Cambridge 16.*Reading Test 2/i.test(deps.testTitle ?? '') &&
+    block.questionNumbers.includes(17);
+
   const summaryText = shouldShowMaryamMirzakhaniPhraseTable
     ? parsedSummaryBlock.summaryText
         .replace(
@@ -625,21 +680,28 @@ export function renderStructuredSummaryBlock(
           '',
         )
         .trim()
-    : shouldShowAcademic17Test2PhraseTable
+    : shouldShowAcademic16Test2PhraseTable
       ? parsedSummaryBlock.summaryText
           .replace(
-            /\s*A\s+invention\s+B\s+goals\s+C\s+compromise\s+D\s+mistakes\s+E\s+luck\s+F\s+inspiration\s+G\s+experiments\s*$/i,
+            /\s*A\.\s+solution,\s+B\.\s+partnership,\s+C\.\s+destruction,\s+D\.\s+exaggeration,\s+E\.\s+cleanliness,\s+F\.\s+regulations,\s+G\.\s+illness,\s+H\.\s+nutrition\s*$/i,
             '',
           )
           .trim()
-      : shouldShowAcademic17Test3PhraseTable
+      : shouldShowAcademic17Test2PhraseTable
         ? parsedSummaryBlock.summaryText
             .replace(
-              /\s*A\s+development\s+plans\s+B\s+deep\s+excavations\s+C\s+great\s+distance\s+D\s+excessive\s+expense\s+E\s+impossible\s+tasks\s+F\s+associated\s+risks\s+G\s+water\s+level\s+H\s+specific\s+areas\s+I\s+total\s+expenditure\s+J\s+construction\s+guidelines\s*$/i,
+              /\s*A\s+invention\s+B\s+goals\s+C\s+compromise\s+D\s+mistakes\s+E\s+luck\s+F\s+inspiration\s+G\s+experiments\s*$/i,
               '',
             )
             .trim()
-        : parsedSummaryBlock.summaryText;
+        : shouldShowAcademic17Test3PhraseTable
+          ? parsedSummaryBlock.summaryText
+              .replace(
+                /\s*A\s+development\s+plans\s+B\s+deep\s+excavations\s+C\s+great\s+distance\s+D\s+excessive\s+expense\s+E\s+impossible\s+tasks\s+F\s+associated\s+risks\s+G\s+water\s+level\s+H\s+specific\s+areas\s+I\s+total\s+expenditure\s+J\s+construction\s+guidelines\s*$/i,
+                '',
+              )
+              .trim()
+          : parsedSummaryBlock.summaryText;
 
   const charlesIIInstructionText = shouldShowCharlesIIPhraseTable
     ? parsedSummaryBlock.instructionText
@@ -685,6 +747,9 @@ export function renderStructuredSummaryBlock(
 
           {shouldShowMaryamMirzakhaniPhraseTable &&
             renderMaryamMirzakhaniPhraseTable()}
+
+          {shouldShowAcademic16Test2PhraseTable &&
+            renderAcademic16Test2PhraseTable()}
 
           {shouldShowAcademic17Test2PhraseTable &&
             renderAcademic17Test2PhraseTable()}

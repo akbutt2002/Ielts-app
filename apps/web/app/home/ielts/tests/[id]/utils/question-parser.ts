@@ -740,6 +740,51 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
     partBlocks.length > 0
       ? partBlocks
       : ((test?.questions ?? []) as QuestionBlock[]);
+  if (/Cambridge 16 IELTS Academic Reading Test 1/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (
+        block.header === 'Questions 8-13' &&
+        block.question_numbers?.includes(8)
+      ) {
+        return {
+          ...block,
+          header: 'Questions 8-13',
+          question_numbers: [8, 9, 10, 11, 12, 13],
+          text: [
+            'Complete the table below.',
+            'Choose ONE WORD ONLY from the passage for each answer.',
+            'Write your answers in boxes 8-13 on your answer sheet.',
+            'Reasons why polar bears should be protected',
+            '– People think of bears as unintelligent and 8. ____',
+            'However, this may not be correct. For example:',
+            '– In Tennoji Zoo, a bear has been seen using a branch as a 9. ____',
+            'This allowed him to knock down some 10. ____',
+            '– A wild polar bear worked out a method of reaching a platform where a 11. ____ was located.',
+            '– Polar bears have displayed behaviour such as conscious manipulation of objects and activity similar to a 12. ____',
+            'Bears may also display emotions. For example:',
+            '– They may make movements suggesting 13. ____ if disappointed when hunting.',
+            '– They may form relationships with other species.',
+          ].join('\n'),
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 16 IELTS Academic Reading Test 4/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (
+        block.header === 'READING PASSAGE 1 : Questions 1-13' &&
+        block.question_numbers?.includes(1)
+      ) {
+        return {
+          ...block,
+          header: 'Questions 1-6',
+          question_numbers: [1, 2, 3, 4, 5, 6],
+        };
+      }
+      return block;
+    });
+  }
   if (/Cambridge 16 Listening Test 1/i.test(test?.title ?? '')) {
     console.log('NORMALIZE: Found Cambridge 16 Listening Test 1!', test.title);
     sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
@@ -753,6 +798,245 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
           ...block,
           header: 'Questions 21 and 22',
           question_numbers: [21, 22],
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 16 Listening Test 2/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(1)) {
+        const cleanedText = [
+          'Complete the notes below.',
+          'Write ONE WORD AND/OR A NUMBER for each answer.',
+          'Name of company: Picturerep',
+          'Requirements',
+          '– Maximum size of photos is 30 cm, minimum size 4 cm.',
+          '– Photos must not be in a',
+          '1.',
+          '____',
+          'or an album.',
+          'Cost',
+          '– The cost for 360 photos is',
+          '2.',
+          '____',
+          '$ (including one disk).',
+          '– Before the complete order is sent,',
+          '3.',
+          '____',
+          'is required.',
+          'Services included in the price',
+          '– Photos can be placed in a folder, e.g. with the name',
+          '4.',
+          '____',
+          '– The',
+          '5.',
+          '____',
+          'and contrast can be improved if necessary.',
+          '– Photos which are very fragile will be scanned by',
+          '6.',
+          '____',
+          'Special restore service (costs extra)',
+          '– It may be possible to remove an object from a photo, or change the',
+          '7.',
+          '____',
+          '– A photo which is not correctly in',
+          '8.',
+          '____',
+          'cannot be fixed.',
+          'Other information',
+          '– Orders are completed within',
+          '9.',
+          '____',
+          '– Send the photos in a box (not',
+          '10.',
+          '____',
+          ').',
+        ].join('\n');
+
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 16 Listening Test 3/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      // Part 1 override (Questions 1-10)
+      if (
+        block.question_numbers?.includes(1) &&
+        block.question_numbers?.includes(10)
+      ) {
+        const cleanedText = [
+          'Complete the notes below.',
+          'Write ONE WORD AND/OR A NUMBER for each answer.',
+          'JUNIOR CYCLE CAMP',
+          'The course focuses on skills and safety',
+          '– Charlie would be placed in Level 5.',
+          '– First of all, children at this level are taken to practise in a',
+          '1.',
+          '____',
+          'Instructors',
+          '– Instructors wear',
+          '2.',
+          '____',
+          'shirts.',
+          '– A',
+          '3.',
+          '____',
+          'is required and training is given.',
+          'Classes',
+          '– The size of the classes is limited.',
+          '– There are quiet times during the morning for a',
+          '4.',
+          '____',
+          'or a game.',
+          '– Classes are held even if there is',
+          '5.',
+          '____',
+          'What to bring',
+          '– a change of clothing',
+          '– a',
+          '6.',
+          '____',
+          '– shoes (not sandals)',
+          '– Charlie’s',
+          '7.',
+          '____',
+          'Day 1',
+          '– Charlie should arrive at 9.20 am on the first day.',
+          '– Before the class, his',
+          '8.',
+          '____',
+          'will be checked.',
+          '– He should then go to the',
+          '9.',
+          '____',
+          'to meet his class instructor.',
+          'Cost',
+          '– The course costs',
+          '10.',
+          '____',
+          '$ per week.',
+        ].join('\n');
+
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      // Questions 11-12 override
+      if (
+        block.question_numbers?.includes(11) &&
+        block.question_numbers?.includes(20)
+      ) {
+        return {
+          ...block,
+          header: 'Questions 11 and 12',
+          question_numbers: [11, 12],
+          text: [
+            'Questions 11 and 12',
+            'Choose TWO letters, A-E.',
+            'According to Megan, what are the TWO main advantages of working in the agriculture and horticulture sectors?',
+          ].join('\n'),
+        };
+      }
+      // Questions 13-14 override
+      if (
+        block.question_numbers?.includes(13) &&
+        block.question_numbers?.includes(14) &&
+        block.question_numbers?.length === 2
+      ) {
+        return {
+          ...block,
+          text: [
+            'Choose TWO letters, A-E.',
+            'Which TWO of the following are likely to be disadvantages for people working outdoors?',
+          ].join('\n'),
+        };
+      }
+      // Questions 21-22 override
+      if (
+        block.question_numbers?.includes(21) &&
+        block.question_numbers?.includes(30)
+      ) {
+        return {
+          ...block,
+          header: 'Questions 21 and 22',
+          question_numbers: [21, 22],
+          text: [
+            'Questions 21 and 22',
+            'Choose TWO letters, A-E.',
+            'Which TWO points does Adam make about his experiment on artificial sweeteners?',
+          ].join('\n'),
+        };
+      }
+      // Questions 23-24 override
+      if (
+        block.question_numbers?.includes(23) &&
+        block.question_numbers?.includes(24) &&
+        block.question_numbers?.length === 2
+      ) {
+        return {
+          ...block,
+          text: [
+            'Choose TWO letters, A-E.',
+            'Which TWO problems did Rosie have when measuring the fat content of nuts?',
+          ].join('\n'),
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 16 Listening Test 4/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      // Questions 21-22 override
+      if (
+        block.question_numbers?.includes(21) &&
+        block.question_numbers?.includes(30)
+      ) {
+        return {
+          ...block,
+          header: 'Questions 21 and 22',
+          question_numbers: [21, 22],
+          text: [
+            'Questions 21 and 22',
+            'Choose TWO letters, A-E.',
+            'Which TWO benefits of city bike-sharing schemes do the students agree are the most important?',
+          ].join('\n'),
+        };
+      }
+      // Questions 25-30 override
+      if (
+        block.question_numbers?.includes(25) &&
+        block.question_numbers?.includes(30) &&
+        block.question_numbers?.length === 6
+      ) {
+        return {
+          ...block,
+          header: 'Questions 25-30',
+          question_numbers: [25, 26, 27, 28, 29, 30],
+          text: [
+            'What is the speakers’ opinion of the bike-sharing schemes in each of the following cities?',
+            'Choose SIX answers from the box and write the correct letter, A-G, next to Questions 25-30.',
+            'Opinions',
+            'A. They agree it has been disappointing.',
+            'B. They think it should be cheaper.',
+            'C. They are surprised it has been so successful.',
+            'D. They agree that more investment is required.',
+            'E. They think the system has been well designed.',
+            'F. They disagree about the reasons for its success.',
+            'G. They think it has expanded too quickly.',
+            'Cities',
+            '25. Amsterdam',
+            '26. Dublin',
+            '27. London',
+            '28. Buenos Aires',
+            '29. New York',
+            '30. Sydney',
+          ].join('\n'),
         };
       }
       return block;

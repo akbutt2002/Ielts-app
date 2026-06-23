@@ -30,6 +30,27 @@ function RoadConstructionDiagram() {
     </div>
   );
 }
+
+function QanatDiagram() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="border-border/60 bg-background/70 overflow-hidden rounded-2xl border p-4 shadow-sm">
+        <img
+          src="/images/ielts/diagram-test-16-qanat-roman.jpg"
+          alt="Cross-section of a Roman Qanat Shaft"
+          className="h-auto w-full rounded-xl object-contain"
+        />
+      </div>
+      <div className="border-border/60 bg-background/70 overflow-hidden rounded-2xl border p-4 shadow-sm">
+        <img
+          src="/images/ielts/diagram-test-16-qanat-persian.jpg"
+          alt="The Persian Qanat Method"
+          className="h-auto w-full rounded-xl object-contain"
+        />
+      </div>
+    </div>
+  );
+}
 export function QuestionGroup({
   group,
   groupIdx,
@@ -108,6 +129,12 @@ export function QuestionGroup({
     groupFirstQuestion === 38 &&
     groupLastQuestion === 40;
 
+  const shouldRenderAcademic16Test4QanatDiagram =
+    !isListening &&
+    /Cambridge 16.*Reading Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 6;
+
   const shouldRenderGeneral16Test1InjuriesTable =
     !isListening &&
     /Cambridge 16 IELTS General Reading Test 1/i.test(testTitle ?? '') &&
@@ -120,6 +147,18 @@ export function QuestionGroup({
     groupFirstQuestion === 15 &&
     groupLastQuestion === 20;
 
+  const shouldRenderListening16Test4RecreationTable =
+    isListening &&
+    /Cambridge 16 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 15 &&
+    groupLastQuestion === 20;
+
+  const shouldRenderListening16Test4CitiesTable =
+    isListening &&
+    /Cambridge 16 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 25 &&
+    groupLastQuestion === 30;
+
   const shouldRenderListening16Test1PicturesTable =
     isListening &&
     /Cambridge 16 Listening Test 1/i.test(testTitle ?? '') &&
@@ -128,6 +167,9 @@ export function QuestionGroup({
 
   const listening16Test1StevensonInstructionText =
     'Label the map below.\nWrite the correct letter, A-J, next to Questions 15-20.';
+
+  const listening16Test4RecreationInstructionText =
+    'Label the map below.\nWrite the correct letter, A-I, next to Questions 15-20.';
 
   const shouldShowQuestionBlockTitle = (block: any) => {
     const normalizedHeader = normalizeAnswerText(block.header ?? '');
@@ -167,7 +209,8 @@ export function QuestionGroup({
   if (
     renderedNoteBlock &&
     !shouldRenderGeneral16Test1InjuriesTable &&
-    !shouldRenderListening16Test1StevensonTable
+    !shouldRenderListening16Test1StevensonTable &&
+    !shouldRenderListening16Test4RecreationTable
   ) {
     return renderedNoteBlock;
   }
@@ -181,7 +224,8 @@ export function QuestionGroup({
   if (
     renderedSummaryBlock &&
     !shouldRenderGeneral16Test1InjuriesTable &&
-    !shouldRenderListening16Test1StevensonTable
+    !shouldRenderListening16Test1StevensonTable &&
+    !shouldRenderListening16Test4RecreationTable
   ) {
     return renderedSummaryBlock;
   }
@@ -610,6 +654,13 @@ export function QuestionGroup({
     primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
       30 &&
     (primaryBlock.choices?.length ?? 0) === 0;
+  const shouldRenderInlineBlankPromptForListening16Test3Questions15To20 =
+    isListening &&
+    /Cambridge 16 Listening Test 3/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 15 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      20 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
   const shouldRenderInlineBlankPromptForListening18Test2Questions15To20 =
     isListening &&
     /Cambridge 18 Listening Test 2/i.test(testTitle ?? '') &&
@@ -667,7 +718,8 @@ export function QuestionGroup({
   const shouldRenderInlineBlankPromptForGeneral16 =
     !isListening &&
     /Cambridge 16 IELTS General Reading Test/i.test(testTitle ?? '') &&
-    ((groupFirstQuestion === 21 && groupLastQuestion === 27)) &&
+    groupFirstQuestion === 21 &&
+    groupLastQuestion === 27 &&
     (primaryBlock.choices?.length ?? 0) === 0;
 
   const shouldRenderInlineBlankPromptForAcademic17Test3Questions23To26 =
@@ -695,6 +747,27 @@ export function QuestionGroup({
     groupFirstQuestion === 35 &&
     groupLastQuestion === 40 &&
     (primaryBlock.choices?.length ?? 0) === 0;
+
+  const shouldRenderInlineBlankPromptForAcademic16Test1Questions8To13 =
+    !isListening &&
+    /Cambridge 16.*Reading Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 8 &&
+    groupLastQuestion === 13;
+
+  const shouldRenderInlineBlankPromptForAcademic16Test4Questions1To6 =
+    !isListening &&
+    /Cambridge 16.*Reading Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 6;
+
+  const academic16Test4Questions1To6Prompts = new Map<number, string>([
+    [1, '1. ____ to direct the tunnelling'],
+    [2, 'water runs into a 2. ____ used by local people'],
+    [3, 'vertical shafts to remove earth and for 3. ____'],
+    [4, '4. ____ made of wood or stone'],
+    [5, '5. ____ attached to the plumb line'],
+    [6, 'handholds and footholds used for 6. ____'],
+  ]);
 
   const shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 =
     isListening &&
@@ -1265,6 +1338,50 @@ export function QuestionGroup({
       renderAnswerStatusIcon={renderAnswerStatusIcon}
     />
   );
+
+  const renderListening16Test4CitiesQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-16-test-4-cities-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      narrowInput={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening16Test4RecreationQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-16-test-4-recreation-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      narrowInput={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
   return (
     <section
       key={`${primaryBlock.header}-${groupIdx}`}
@@ -1296,27 +1413,29 @@ export function QuestionGroup({
             {renderInstructionText(
               shouldRenderListening16Test1StevensonTable
                 ? listening16Test1StevensonInstructionText
-                : shouldRenderGeneral16Test1InjuriesTable
-                  ? general16Test1InjuriesInstructionText
-                  : shouldRenderGeneral17Test4PlumbersTable
-                  ? general17Test4PlumbersInstructionText
-                  : shouldRenderGeneral17Test1PlacesTable
-                    ? general17Test1PlacesInstructionText
-                    : shouldInlinePairedListeningPrompt
-                      ? [
-                          pairedInstructionText,
-                          compactPromptLines(
-                            stripQuestionNumberPrefix(
-                              primaryBlock.items[0]?.prompt ?? '',
-                              primaryBlock.items[0]?.qNum ?? 0,
-                            ),
-                          ),
-                        ]
-                          .filter(Boolean)
-                          .join('\n')
-                      : shouldInlinePairedReadingChoicePrompt
-                        ? pairedReadingInstructionText
-                        : listeningTest3InstructionText,
+                : shouldRenderListening16Test4RecreationTable
+                  ? listening16Test4RecreationInstructionText
+                  : shouldRenderGeneral16Test1InjuriesTable
+                    ? general16Test1InjuriesInstructionText
+                    : shouldRenderGeneral17Test4PlumbersTable
+                      ? general17Test4PlumbersInstructionText
+                      : shouldRenderGeneral17Test1PlacesTable
+                        ? general17Test1PlacesInstructionText
+                        : shouldInlinePairedListeningPrompt
+                          ? [
+                              pairedInstructionText,
+                              compactPromptLines(
+                                stripQuestionNumberPrefix(
+                                  primaryBlock.items[0]?.prompt ?? '',
+                                  primaryBlock.items[0]?.qNum ?? 0,
+                                ),
+                              ),
+                            ]
+                              .filter(Boolean)
+                              .join('\n')
+                          : shouldInlinePairedReadingChoicePrompt
+                            ? pairedReadingInstructionText
+                            : listeningTest3InstructionText,
             )}
 
             {shouldRenderGeneral17Test1PlacesTable &&
@@ -1356,6 +1475,10 @@ export function QuestionGroup({
 
         {shouldRenderGeneral18Test3RoadDiagram ? (
           <RoadConstructionDiagram />
+        ) : null}
+
+        {shouldRenderAcademic16Test4QanatDiagram ? (
+          <QanatDiagram />
         ) : null}
 
         {shouldRenderListeningLeadInRow ? (
@@ -1419,117 +1542,193 @@ export function QuestionGroup({
         ) : shouldRenderListening16Test1StevensonTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
             {/* Title */}
-            <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black uppercase tracking-wider text-muted-foreground">
+            <div className="border-border/60 text-muted-foreground border-b px-4 py-5 text-center text-sm font-black tracking-wider uppercase">
               Plan of Stevenson’s site
             </div>
 
             {/* Grid container */}
             <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
                   15. coffee room
                 </span>
-                <div>
-                  {renderListening16Test1StevensonQuestion(15, '')}
-                </div>
+                <div>{renderListening16Test1StevensonQuestion(15, '')}</div>
               </div>
-              <div className="border-border/60 border-b p-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
                   16. warehouse
                 </span>
-                <div>
-                  {renderListening16Test1StevensonQuestion(16, '')}
-                </div>
+                <div>{renderListening16Test1StevensonQuestion(16, '')}</div>
               </div>
 
-              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
                   17. staff canteen
                 </span>
-                <div>
-                  {renderListening16Test1StevensonQuestion(17, '')}
-                </div>
+                <div>{renderListening16Test1StevensonQuestion(17, '')}</div>
               </div>
-              <div className="border-border/60 border-b p-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
                   18. meeting room
                 </span>
-                <div>
-                  {renderListening16Test1StevensonQuestion(18, '')}
-                </div>
+                <div>{renderListening16Test1StevensonQuestion(18, '')}</div>
               </div>
 
-              <div className="border-border/60 p-4 flex items-center justify-between md:border-r md:border-b-0 border-b">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r md:border-b-0">
+                <span className="text-foreground text-sm font-semibold">
                   19. human resources
                 </span>
-                <div>
-                  {renderListening16Test1StevensonQuestion(19, '')}
-                </div>
+                <div>{renderListening16Test1StevensonQuestion(19, '')}</div>
               </div>
-              <div className="p-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="flex items-center justify-between p-4">
+                <span className="text-foreground text-sm font-semibold">
                   20. boardroom
                 </span>
-                <div>
-                  {renderListening16Test1StevensonQuestion(20, '')}
-                </div>
+                <div>{renderListening16Test1StevensonQuestion(20, '')}</div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening16Test4RecreationTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            {/* Title */}
+            <div className="border-border/60 text-muted-foreground border-b px-4 py-5 text-center text-sm font-black tracking-wider uppercase">
+              Recreation ground after proposed changes
+            </div>
+
+            {/* Grid container */}
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
+                  15. New car park
+                </span>
+                <div>{renderListening16Test4RecreationQuestion(15, '')}</div>
+              </div>
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
+                  18. Skateboard ramp
+                </span>
+                <div>{renderListening16Test4RecreationQuestion(18, '')}</div>
+              </div>
+
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
+                  16. New cricket pitch
+                </span>
+                <div>{renderListening16Test4RecreationQuestion(16, '')}</div>
+              </div>
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
+                  19. Pavilion
+                </span>
+                <div>{renderListening16Test4RecreationQuestion(19, '')}</div>
+              </div>
+
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r md:border-b-0">
+                <span className="text-foreground text-sm font-semibold">
+                  17. Children’s playground
+                </span>
+                <div>{renderListening16Test4RecreationQuestion(17, '')}</div>
+              </div>
+              <div className="flex items-center justify-between p-4">
+                <span className="text-foreground text-sm font-semibold">
+                  20. Notice board
+                </span>
+                <div>{renderListening16Test4RecreationQuestion(20, '')}</div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening16Test4CitiesTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
+            {/* Title */}
+            <div className="border-border/60 text-muted-foreground border-b px-4 py-5 text-center text-sm font-black tracking-wider uppercase">
+              Cities
+            </div>
+
+            {/* Grid container */}
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
+                  25. Amsterdam
+                </span>
+                <div>{renderListening16Test4CitiesQuestion(25, '')}</div>
+              </div>
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
+                  28. Buenos Aires
+                </span>
+                <div>{renderListening16Test4CitiesQuestion(28, '')}</div>
+              </div>
+
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
+                  26. Dublin
+                </span>
+                <div>{renderListening16Test4CitiesQuestion(26, '')}</div>
+              </div>
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
+                  29. New York
+                </span>
+                <div>{renderListening16Test4CitiesQuestion(29, '')}</div>
+              </div>
+
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r md:border-b-0">
+                <span className="text-foreground text-sm font-semibold">
+                  27. London
+                </span>
+                <div>{renderListening16Test4CitiesQuestion(27, '')}</div>
+              </div>
+              <div className="flex items-center justify-between p-4">
+                <span className="text-foreground text-sm font-semibold">
+                  30. Sydney
+                </span>
+                <div>{renderListening16Test4CitiesQuestion(30, '')}</div>
               </div>
             </div>
           </div>
         ) : shouldRenderListening16Test1PicturesTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
             {/* Title */}
-            <div className="border-border/60 border-b px-4 py-5 text-center text-sm font-black uppercase tracking-wider text-muted-foreground">
+            <div className="border-border/60 text-muted-foreground border-b px-4 py-5 text-center text-sm font-black tracking-wider uppercase">
               Pictures
             </div>
 
             {/* Grid container */}
             <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
                   25. Falcon (Landseer)
                 </span>
-                <div>
-                  {renderListening16Test1PicturesQuestion(25, '')}
-                </div>
+                <div>{renderListening16Test1PicturesQuestion(25, '')}</div>
               </div>
-              <div className="border-border/60 border-b p-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
                   26. Fish hawk (Audubon)
                 </span>
-                <div>
-                  {renderListening16Test1PicturesQuestion(26, '')}
-                </div>
+                <div>{renderListening16Test1PicturesQuestion(26, '')}</div>
               </div>
 
-              <div className="border-border/60 border-b p-4 flex items-center justify-between md:border-r">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r">
+                <span className="text-foreground text-sm font-semibold">
                   27. Kingfisher (van Gogh)
                 </span>
-                <div>
-                  {renderListening16Test1PicturesQuestion(27, '')}
-                </div>
+                <div>{renderListening16Test1PicturesQuestion(27, '')}</div>
               </div>
-              <div className="border-border/60 border-b p-4 flex items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4">
+                <span className="text-foreground text-sm font-semibold">
                   28. Portrait of William Wells
                 </span>
-                <div>
-                  {renderListening16Test1PicturesQuestion(28, '')}
-                </div>
+                <div>{renderListening16Test1PicturesQuestion(28, '')}</div>
               </div>
 
-              <div className="border-border/60 p-4 flex items-center justify-between md:border-r md:border-b-0 border-b">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="border-border/60 flex items-center justify-between border-b p-4 md:border-r md:border-b-0">
+                <span className="text-foreground text-sm font-semibold">
                   29. Vairumati (Gauguin)
                 </span>
-                <div>
-                  {renderListening16Test1PicturesQuestion(29, '')}
-                </div>
+                <div>{renderListening16Test1PicturesQuestion(29, '')}</div>
               </div>
-              <div className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-2">
-                <span className="text-sm font-semibold text-foreground">
+              <div className="flex flex-col justify-between gap-2 p-4 md:flex-row md:items-center">
+                <span className="text-foreground text-sm font-semibold">
                   30. Portrait of Giovanni de Medici
                 </span>
                 <div className="self-end md:self-auto">
@@ -2755,6 +2954,8 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                         shouldShowPromptTextWhenBlankForAcademicTest3Questions23To26 ||
                         shouldShowPromptTextWhenBlankForAcademicTest3Questions31To34 ||
+                        shouldRenderInlineBlankPromptForAcademic16Test1Questions8To13 ||
+                        shouldRenderInlineBlankPromptForAcademic16Test4Questions1To6 ||
                         shouldRenderInlineBlankPromptForGeneral18Test4Questions35To40 ||
                         (shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                           item.qNum >= 1 &&
@@ -2771,6 +2972,8 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForListening17Test2Questions1To7
                       }
                       inlineBlankPrompt={
+                        shouldRenderInlineBlankPromptForAcademic16Test1Questions8To13 ||
+                        shouldRenderInlineBlankPromptForAcademic16Test4Questions1To6 ||
                         shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
                         shouldRenderInlineBlankPromptForAcademic18Test1Questions22To26 ||
                         shouldRenderInlineBlankPromptForAcademic17Test2Questions24To26 ||
@@ -2785,6 +2988,7 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                         shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
                         shouldRenderInlineBlankPromptForListeningQuestions25To30 ||
+                        shouldRenderInlineBlankPromptForListening16Test3Questions15To20 ||
                         shouldRenderInlineBlankPromptForListening18Test2Questions15To20 ||
                         shouldRenderInlineBlankPromptForGeneral18Test4Questions35To40 ||
                         shouldRenderInlineBlankPromptForListening18Test3Questions1To4 ||
@@ -2953,7 +3157,14 @@ export function QuestionGroup({
                                         ? listeningTest4Question26To30Prompts.get(
                                             item.qNum,
                                           )!
-                                        : displayPrompt;
+                                        : shouldRenderInlineBlankPromptForAcademic16Test4Questions1To6 &&
+                                            academic16Test4Questions1To6Prompts.has(
+                                              item.qNum,
+                                            )
+                                          ? academic16Test4Questions1To6Prompts.get(
+                                              item.qNum,
+                                            )!
+                                          : displayPrompt;
                       const scopedChoices =
                         shouldUseGeneral18Test2Questions32To35Prompts &&
                         general18Test2Questions32To35Choices.has(item.qNum)
@@ -2989,9 +3200,10 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlankForAcademicTest3Questions14To17 ||
                             shouldShowPromptTextWhenBlankForAcademicTest4Questions14To17 ||
                             shouldShowPromptTextWhenBlankForAcademicTest4Questions18To23 ||
-                            shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                             shouldShowPromptTextWhenBlankForAcademicTest3Questions23To26 ||
                             shouldShowPromptTextWhenBlankForAcademicTest3Questions31To34 ||
+                            shouldRenderInlineBlankPromptForAcademic16Test1Questions8To13 ||
+                            shouldRenderInlineBlankPromptForAcademic16Test4Questions1To6 ||
                             shouldRenderInlineBlankPromptForGeneral18Test4Questions35To40 ||
                             (shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                               item.qNum >= 1 &&
@@ -3008,6 +3220,8 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForListening17Test2Questions1To7
                           }
                           inlineBlankPrompt={
+                            shouldRenderInlineBlankPromptForAcademic16Test1Questions8To13 ||
+                            shouldRenderInlineBlankPromptForAcademic16Test4Questions1To6 ||
                             shouldRenderInlineBlankPromptForGeneral16 ||
                             shouldRenderInlineBlankPromptForGeneral17 ||
                             shouldRenderInlineBlankPromptForAcademic18Test1Questions1To3 ||
@@ -3024,6 +3238,7 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                             shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
                             shouldRenderInlineBlankPromptForListeningQuestions25To30 ||
+                            shouldRenderInlineBlankPromptForListening16Test3Questions15To20 ||
                             shouldRenderInlineBlankPromptForListening18Test2Questions15To20 ||
                             shouldRenderInlineBlankPromptForGeneral18Test4Questions35To40 ||
                             shouldRenderInlineBlankPromptForListening18Test3Questions1To4 ||
