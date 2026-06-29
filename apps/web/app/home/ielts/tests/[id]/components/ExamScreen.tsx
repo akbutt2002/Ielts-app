@@ -20,18 +20,18 @@ import {
 import { PageBody, PageHeader } from '@kit/ui/page';
 import { cn } from '@kit/ui/utils';
 
-import { ScoreModal } from './ScoreModal';
-import { PassagePanel } from './PassagePanel';
-import { QuestionGroup } from './QuestionGroup';
+import { calculateScore, getBandScore } from '../hooks/useTestScoring';
 import {
   answerMatches,
   getChoiceComparisonValue,
   getPairedChoiceComparisonValues,
   parsePairedChoiceSelection,
 } from '../utils/answer-matcher';
-import { renderInstructionText } from './instruction-renderers';
-import { calculateScore, getBandScore } from '../hooks/useTestScoring';
 import { normalizeInstructionFragment } from '../utils/instruction-formatter';
+import { PassagePanel } from './PassagePanel';
+import { QuestionGroup } from './QuestionGroup';
+import { ScoreModal } from './ScoreModal';
+import { renderInstructionText } from './instruction-renderers';
 
 const scoreTargetBandsListening = [
   { band: 4.0, minimumCorrectAnswers: 10 },
@@ -276,11 +276,17 @@ export function ExamScreen({
                           <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
                             Questions 16-20
                           </div>
-                        ) : /Cambridge (?:18 Listening Test 2|16 Listening Test 1|16 Listening Test 4)/i.test(
-                          test?.title ?? '',
-                        ) ? (
+                        ) : /Cambridge (?:18 Listening Test 2|16 Listening Test 1|16 Listening Test 4|15 Listening Test 2)/i.test(
+                            test?.title ?? '',
+                          ) ? (
                           <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
                             Questions 15-20
+                          </div>
+                        ) : /Cambridge 15 Listening Test 4/i.test(
+                            test?.title ?? '',
+                          ) ? (
+                          <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">
+                            Questions 11-16
                           </div>
                         ) : null}
 
@@ -314,22 +320,24 @@ export function ExamScreen({
                 <div className="flex h-full min-h-0 flex-col">
                   <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
                     <div className="space-y-8">
-                      {displayQuestionGroups.map((group: any, groupIdx: number) => (
-                        <QuestionGroup
-                          key={`group-${groupIdx}`}
-                          group={group}
-                          groupIdx={groupIdx}
-                          testTitle={test?.title}
-                          isListening={isListening}
-                          listeningLeadInQuestion={listeningLeadInQuestion}
-                          answerLookup={answerLookup}
-                          userAnswers={userAnswers}
-                          isSubmitted={isSubmitted}
-                          isTestLocked={isTestLocked}
-                          setUserAnswers={setUserAnswers}
-                          renderAnswerStatusIcon={renderAnswerStatusIcon}
-                        />
-                      ))}
+                      {displayQuestionGroups.map(
+                        (group: any, groupIdx: number) => (
+                          <QuestionGroup
+                            key={`group-${groupIdx}`}
+                            group={group}
+                            groupIdx={groupIdx}
+                            testTitle={test?.title}
+                            isListening={isListening}
+                            listeningLeadInQuestion={listeningLeadInQuestion}
+                            answerLookup={answerLookup}
+                            userAnswers={userAnswers}
+                            isSubmitted={isSubmitted}
+                            isTestLocked={isTestLocked}
+                            setUserAnswers={setUserAnswers}
+                            renderAnswerStatusIcon={renderAnswerStatusIcon}
+                          />
+                        ),
+                      )}
                     </div>
 
                     <div className="border-border/60 bg-background/80 mt-8 rounded-3xl border p-6 shadow-sm">
@@ -424,22 +432,24 @@ export function ExamScreen({
                 <div className="flex h-full min-h-0 flex-col">
                   <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
                     <div className="space-y-8">
-                      {displayQuestionGroups.map((group: any, groupIdx: number) => (
-                        <QuestionGroup
-                          key={`group-${groupIdx}`}
-                          group={group}
-                          groupIdx={groupIdx}
-                          testTitle={test?.title}
-                          isListening={isListening}
-                          listeningLeadInQuestion={listeningLeadInQuestion}
-                          answerLookup={answerLookup}
-                          userAnswers={userAnswers}
-                          isSubmitted={isSubmitted}
-                          isTestLocked={isTestLocked}
-                          setUserAnswers={setUserAnswers}
-                          renderAnswerStatusIcon={renderAnswerStatusIcon}
-                        />
-                      ))}
+                      {displayQuestionGroups.map(
+                        (group: any, groupIdx: number) => (
+                          <QuestionGroup
+                            key={`group-${groupIdx}`}
+                            group={group}
+                            groupIdx={groupIdx}
+                            testTitle={test?.title}
+                            isListening={isListening}
+                            listeningLeadInQuestion={listeningLeadInQuestion}
+                            answerLookup={answerLookup}
+                            userAnswers={userAnswers}
+                            isSubmitted={isSubmitted}
+                            isTestLocked={isTestLocked}
+                            setUserAnswers={setUserAnswers}
+                            renderAnswerStatusIcon={renderAnswerStatusIcon}
+                          />
+                        ),
+                      )}
                     </div>
 
                     <div className="border-border/60 bg-background/80 mt-8 rounded-3xl border p-6 shadow-sm">
@@ -600,14 +610,16 @@ export function ExamScreen({
 
                             {passage.text ? (
                               <div className="text-foreground/90 space-y-2 text-sm leading-7">
-                                {passage.text.split(/\n+/).map((line: string, lineIdx: number) => (
-                                  <p
-                                    key={`${lineIdx}-${line}`}
-                                    className="whitespace-pre-wrap"
-                                  >
-                                    {line}
-                                  </p>
-                                ))}
+                                {passage.text
+                                  .split(/\n+/)
+                                  .map((line: string, lineIdx: number) => (
+                                    <p
+                                      key={`${lineIdx}-${line}`}
+                                      className="whitespace-pre-wrap"
+                                    >
+                                      {line}
+                                    </p>
+                                  ))}
                               </div>
                             ) : null}
                           </article>

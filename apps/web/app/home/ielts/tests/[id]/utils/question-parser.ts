@@ -155,7 +155,11 @@ export function isPureRangeLine(line: string) {
 export function detectQuestionMarker(line: string, questionNumbers: number[]) {
   const trimmed = line.trim();
 
-  if (!trimmed || isPureRangeLine(trimmed)) {
+  if (
+    !trimmed ||
+    isPureRangeLine(trimmed) ||
+    /^Questions?\s+\d+(?:(?:\s*(?:to|-|\u2013|\u2014)\s*|\s+and\s+)\d+)?\.?$/i.test(trimmed)
+  ) {
     return null;
   }
 
@@ -780,6 +784,290 @@ export function normalizeSchemaQuestionBlocks(test: any, preferParts = false) {
           ...block,
           header: 'Questions 1-6',
           question_numbers: [1, 2, 3, 4, 5, 6],
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 15 IELTS Academic Reading Test 1/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (
+        block.header === 'Questions 23 and 24' &&
+        block.question_numbers?.includes(23)
+      ) {
+        const cleanedText = [
+          'Choose TWO letters, A-E.',
+          'Write the correct letters in boxes 23 and 24 on your answer sheet.',
+          'Which TWO benefits of automated vehicles does the writer mention?',
+          '23.',
+          '24.',
+        ].join('\n');
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      if (
+        block.header === 'Questions 25 and 26' &&
+        block.question_numbers?.includes(25)
+      ) {
+        const cleanedText = [
+          'Choose TWO letters, A-E.',
+          'Write the correct letters in boxes 25 and 26 on your answer sheet.',
+          'Which TWO challenges to automated vehicle development does the writer mention?',
+          '25.',
+          '26.',
+        ].join('\n');
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 15 Listening Test 1/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (block.question_numbers?.includes(1)) {
+        const cleanedText = [
+          'Complete the notes below.',
+          'Write ONE WORD AND/OR A NUMBER for each answer.',
+          'Bankside Recruitment Agency',
+          '– Address of agency: 497 Eastside, Docklands',
+          '– Name of agent: Becky',
+          '1.',
+          '____',
+          '– Phone number: 07866 510333',
+          '– Best to call her in the',
+          '2.',
+          '____',
+          'Typical jobs',
+          '– Clerical and admin roles, mainly in the finance industry',
+          '– Must have good',
+          '3.',
+          '____',
+          'skills',
+          '– Jobs are usually for at least one',
+          '4.',
+          '____',
+          '.',
+          '– Pay is usually £',
+          '5.',
+          '____',
+          'per hour',
+          'Registration process',
+          '– Wear a',
+          '6.',
+          '____',
+          'to the interview',
+          '– Must bring your',
+          '7.',
+          '____',
+          'to the interview',
+          '– They will ask questions about each applicant’s',
+          '8.',
+          '____',
+          'Advantages of using an agency',
+          '– The',
+          '9.',
+          '____',
+          'you receive at interview will benefit you',
+          '– Will get access to vacancies which are not advertised',
+          '– Less',
+          '10.',
+          '____',
+          'is involved in applying for jobs',
+        ].join('\n');
+
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      if (block.question_numbers?.includes(31)) {
+        const cleanedText = [
+          'Complete the notes below.',
+          'Write',
+          'ONE WORD ONLY',
+          'for each answer.',
+          'The Eucalyptus Tree in Australia',
+          'Importance',
+          'it provides',
+          '31.',
+          '____',
+          'and food for a wide range of species',
+          'it’s leaves provide',
+          '32.',
+          '____',
+          'which is used to make a disinfectant',
+          'Reasons for present decline in number',
+          'A) Diseases',
+          '(i) ‘Mundulla Yellows’',
+          'Cause',
+          '– lime used for making',
+          '33.',
+          '____',
+          'was absorbed',
+          '– trees were unable to take in necessary iron through their roots',
+          '(ii) ‘Bell-miner Associated Die-back’',
+          'Cause',
+          '–',
+          '34.',
+          '____',
+          'feed on eucalyptus leaves',
+          '– they secrete a substance containing sugar',
+          '– bell-miner birds are attracted by this and keep away other species',
+          'B) Bushfires',
+          'William Jackson’s theory:',
+          'high-frequency bushfires have impact on vegetation, resulting in the growth of',
+          '35.',
+          '____',
+          'mid-frequency bushfires result in the growth of eucalyptus forests, because they:',
+          '– make more',
+          '36.',
+          '____',
+          'available to the trees',
+          '– maintain the quality of the',
+          '37.',
+          '____',
+          "low-frequency bushfires result in the growth of '",
+          '38.',
+          '____',
+          "rainforest', which is: a",
+          '–',
+          '39.',
+          '____',
+          'ecosystem',
+          '– an ideal environment for the',
+          '40.',
+          '____',
+          'of the bell-miner',
+        ].join('\n');
+
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      if (
+        block.header === 'Questions 27 and 28' &&
+        block.question_numbers?.includes(27)
+      ) {
+        return {
+          ...block,
+          header: 'Question 27',
+          question_numbers: [27],
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 15 Listening Test 2/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (
+        block.question_numbers?.includes(1) &&
+        block.question_numbers?.includes(10)
+      ) {
+        return {
+          ...block,
+          header: 'Questions 1–4',
+          question_numbers: [1, 2, 3, 4],
+        };
+      }
+      if (
+        block.question_numbers?.includes(11) &&
+        block.question_numbers?.includes(20)
+      ) {
+        return {
+          ...block,
+          header: 'Question 11',
+          question_numbers: [11],
+        };
+      }
+      if (
+        block.question_numbers?.includes(21) &&
+        block.question_numbers?.includes(30)
+      ) {
+        return {
+          ...block,
+          header: 'Questions 21 and 22',
+          question_numbers: [21, 22],
+        };
+      }
+      return block;
+    });
+  }
+  if (/Cambridge 15 Listening Test 4/i.test(test?.title ?? '')) {
+    sourceBlocks = sourceBlocks.map((block: QuestionBlock) => {
+      if (
+        block.question_numbers?.includes(1) &&
+        block.question_numbers?.includes(10)
+      ) {
+        const cleanedText = [
+          'Complete the form below.',
+          'Write ONE WORD AND/OR A NUMBER for each answer.',
+        ].join('\n');
+        return {
+          ...block,
+          text: cleanedText,
+        };
+      }
+      if (
+        block.question_numbers?.includes(11) &&
+        block.question_numbers?.includes(20)
+      ) {
+        const cleanedText = [
+          'Label the map below:',
+          'Write the correct letter, A-H, next to Questions 11-16',
+          '11. café',
+          '12. toilets',
+          '13. formal gardens',
+          '14. outdoor gym',
+          '15. skateboard ramp',
+          '16. wild flowers',
+        ].join('\n');
+        return {
+          ...block,
+          header: 'Questions 11–16',
+          question_numbers: [11, 12, 13, 14, 15, 16],
+          text: cleanedText,
+        };
+      }
+      if (
+        block.question_numbers?.includes(21) &&
+        block.question_numbers?.includes(30)
+      ) {
+        return {
+          ...block,
+          header: 'Question 21',
+          question_numbers: [21],
+        };
+      }
+      if (
+        block.question_numbers?.includes(25) &&
+        block.question_numbers?.includes(30) &&
+        block.header.includes('Questions 25-30')
+      ) {
+        const cleanedText = [
+          'Who is going to do research into each topic?',
+          'Write the correct letter, A, B or C, next to Questions 25-30.',
+          'People',
+          'A Annie',
+          'B Jack',
+          'C both Annie and Jack',
+          'Topics',
+          '25. the goods that are refrigerated',
+          '26. the effects on health',
+          '27. the impact on food producers',
+          '28. the impact on cities',
+          '29. refrigerated transport',
+          '30. domestic fridges',
+        ].join('\n');
+        return {
+          ...block,
+          header: 'Questions 25-30',
+          question_numbers: [25, 26, 27, 28, 29, 30],
+          text: cleanedText,
         };
       }
       return block;
@@ -1968,7 +2256,7 @@ export function joinInstructionFragments(current: string, next: string) {
 }
 
 export function isLowercaseRomanHeading(line: string) {
-  return /^[ivxlcdm]+$/.test(line.trim());
+  return /^[ivxlcdm]+\.?$/.test(line.trim());
 }
 
 export function getInstructionLineStyle(line: string) {
@@ -2008,7 +2296,7 @@ export function formatInstructionLines(text: string) {
     const isPeopleListHeading = /^List of People$/i.test(line);
     const isPeopleListLetterOnly = /^[A-D](?:[.)])?$/.test(line);
     const isPeopleListEntry =
-      /^[A-D](?:[.)])?\s+\S/.test(line) ||
+      /^[A-D](?:[.)]\s+\S|\s+[A-Z]\S*)/.test(line) ||
       (inPeopleList && isPeopleListLetterOnly);
 
     if (
@@ -2050,12 +2338,16 @@ export function formatInstructionLines(text: string) {
     while (index + 1 < lines.length) {
       const upcomingLine = lines[index + 1] ?? '';
 
+      if (/^\s*[-–•*]\s+/.test(upcomingLine)) {
+        break;
+      }
+
       if (
         questionRangePattern.test(upcomingLine) ||
         /^List of Headings$/i.test(upcomingLine) ||
         /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
-        /^[A-J](?:[.)])?(?:\s|$)/i.test(upcomingLine) ||
+        /^[A-J](?:[.)](?:\s|$)|(?:\s+[A-Z]|\s*$))/.test(upcomingLine) ||
         /^(?:TRUE|FALSE|NOT GIVEN|YES|NO)\b/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
       ) {
@@ -2382,17 +2674,17 @@ export function isStructuredNoteOverflowInstructionLine(line: string) {
     /^Write your answers\b/i.test(normalizedLine) ||
     /^Write the correct letters?\b/i.test(normalizedLine) ||
     /^boxes?$/i.test(normalizedLine) ||
-    /^boxes?\s+\d+(?:\s*(?:to|-|\u2013|\u2014)\s*\d+)?(?:\s+on your answer sheet\.?)?$/i.test(
+    /^boxes?\s+\d+(?:\s*(?:to|-|\u2013|\u2014)\s*\d+)?(?:\s+on your (?:reading\s+)?answer sheet\.?)?$/i.test(
       normalizedLine,
     ) ||
-    /^on your answer sheet\.?$/i.test(normalizedLine)
+    /^on your (?:reading\s+)?answer sheet\.?$/i.test(normalizedLine)
   );
 }
 
 export function findStructuredInstructionEndIndex(rawLines: string[]) {
   for (let i = rawLines.length - 1; i >= 0; i--) {
     const line = rawLines[i] ?? '';
-    if (/(?:for each answer|on your answer sheet)\.?$/i.test(line)) {
+    if (/(?:for each answer|on your (?:reading\s+)?answer sheet)\.?$/i.test(line)) {
       return i;
     }
   }
@@ -2420,9 +2712,20 @@ export function tokenizeStructuredLines(
   const usedQuestionNumbers = new Set<number>();
   const fragments: string[] = [];
 
-  for (const line of contentLines) {
+  for (let line of contentLines) {
     if (!line) {
       continue;
+    }
+
+    const inlineBlankRegex = /(?:^|\b)(\d+)\)?[.)]?\s*(?:___+|\.{3,})/g;
+    let match;
+    while ((match = inlineBlankRegex.exec(line)) !== null) {
+      const qNum = Number(match[1]);
+      if (questionNumberSet.has(qNum) && !usedQuestionNumbers.has(qNum)) {
+        usedQuestionNumbers.add(qNum);
+        line = line.replace(match[0], renderQuestionToken(qNum));
+        inlineBlankRegex.lastIndex = 0;
+      }
     }
 
     if (/^_+$/.test(line)) {

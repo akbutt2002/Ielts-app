@@ -71,21 +71,55 @@ export function getPairedChoiceComparisonValues(answer: string) {
 }
 
 export function answerMatches(userAnswer: string, correctAnswer: string) {
-  const normalizedUserAnswer = normalizeAnswerText(userAnswer ?? '');
+  let normalizedUserAnswer = normalizeAnswerText(userAnswer ?? '');
 
   if (!normalizedUserAnswer) {
     return false;
   }
 
-  const variants = splitAnswerVariants(correctAnswer);
+  // Clean correct answer of common IELTS instruction prefixes/suffixes
+  let cleanedCorrect = correctAnswer
+    .replace(/\bin\s+either\s+order\b/gi, '')
+    .replace(/\bboth\s+required\s+for\s+one\s+mark\b/gi, '')
+    .replace(/\(\s*\)/g, '')
+    .trim();
 
-  if (variants.length === 0) {
-    return normalizeAnswerText(correctAnswer) === normalizedUserAnswer;
+  // If the clean answer is empty, fallback to original
+  if (!cleanedCorrect) {
+    cleanedCorrect = correctAnswer;
   }
 
-  return variants.some(
+  const variants = splitAnswerVariants(cleanedCorrect);
+
+  if (variants.length === 0) {
+    return normalizeAnswerText(cleanedCorrect) === normalizedUserAnswer;
+  }
+
+  // Check simple variant matching
+  if (variants.some(
     (variant) => normalizeAnswerText(variant) === normalizedUserAnswer,
-  );
+  )) {
+    return true;
+  }
+
+  // For answers that are marked with "in either order" or specify multiple components,
+  // we check if they match set-wise (order-independent).
+  const isEitherOrder = /either\s+order/i.test(correctAnswer) || /both\s+required/i.test(correctAnswer);
+  if (isEitherOrder) {
+    const userWords = normalizedUserAnswer.split(/[\s,]+/i).filter((w) => w !== 'and' && w !== 'or' && w !== 'both');
+    for (const variant of variants) {
+      const variantNorm = normalizeAnswerText(variant);
+      const variantWords = variantNorm.split(/[\s,]+/i).filter((w) => w !== 'and' && w !== 'or' && w !== 'both');
+      if (variantWords.length > 0 && variantWords.length === userWords.length) {
+        const match = variantWords.every((w) => userWords.includes(w));
+        if (match) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
 }
 
 export function parsePairedChoiceSelection(value: string) {

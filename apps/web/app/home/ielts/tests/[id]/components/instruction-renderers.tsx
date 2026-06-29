@@ -225,6 +225,108 @@ function renderAcademic17Test2PhraseTable() {
   );
 }
 
+function renderAcademic15Test2PhraseTable() {
+  const rows = [
+    [
+      { letter: 'A', text: 'laughter' },
+      { letter: 'B', text: 'relaxing' },
+      { letter: 'C', text: 'boring' },
+    ],
+    [
+      { letter: 'D', text: 'anxiety' },
+      { letter: 'E', text: 'stimulating' },
+      { letter: 'F', text: 'emotion' },
+    ],
+    [
+      { letter: 'G', text: 'enjoyment' },
+      { letter: 'H', text: 'amusing' },
+      null,
+    ],
+  ];
+
+  return (
+    <div className="border-border/70 mt-7 overflow-hidden rounded-2xl border bg-white/40 shadow-sm dark:bg-white/[0.03]">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`acad15t2-phrase-row-${rowIdx}`}
+          className={cn(
+            'grid grid-cols-3',
+            rowIdx < rows.length - 1 && 'border-border/70 border-b',
+          )}
+        >
+          {row.map((cell, cellIdx) => (
+            <div
+              key={`acad15t2-phrase-cell-${rowIdx}-${cellIdx}`}
+              className={cn(
+                'text-foreground flex min-h-20 items-center justify-center px-4 py-5 text-center text-[15px] leading-7',
+                cellIdx < row.length - 1 && 'border-border/70 border-r',
+              )}
+            >
+              {cell ? (
+                <span>
+                  <strong className="font-bold">{cell.letter}</strong>{' '}
+                  {cell.text}
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function renderAcademic15Test3PhraseTable() {
+  const rows = [
+    [
+      { letter: 'A', text: 'ending' },
+      { letter: 'B', text: 'events' },
+      { letter: 'C', text: 'warning' },
+    ],
+    [
+      { letter: 'D', text: 'links' },
+      { letter: 'E', text: 'records' },
+      { letter: 'F', text: 'variations' },
+    ],
+    [
+      { letter: 'G', text: 'horror' },
+      { letter: 'H', text: 'people' },
+      { letter: 'I', text: 'plot' },
+    ],
+  ];
+
+  return (
+    <div className="border-border/70 mt-7 overflow-hidden rounded-2xl border bg-white/40 shadow-sm dark:bg-white/[0.03]">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`acad15t3-phrase-row-${rowIdx}`}
+          className={cn(
+            'grid grid-cols-3',
+            rowIdx < rows.length - 1 && 'border-border/70 border-b',
+          )}
+        >
+          {row.map((cell, cellIdx) => (
+            <div
+              key={`acad15t3-phrase-cell-${rowIdx}-${cellIdx}`}
+              className={cn(
+                'text-foreground flex min-h-20 items-center justify-center px-4 py-5 text-center text-[15px] leading-7',
+                cellIdx < row.length - 1 && 'border-border/70 border-r',
+              )}
+            >
+              {cell ? (
+                <span>
+                  <strong className="font-bold">{cell.letter}</strong>{' '}
+                  {cell.text}
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function renderAcademic16Test2PhraseTable() {
   const rows = [
     [
@@ -397,11 +499,11 @@ export function renderInstructionText(text: string) {
     <div className="space-y-1.5">
       {lines.map((line, index) => {
         const style = getInstructionLineStyle(line);
-        const isPeopleListLine = /^[A-Z](?:[.)])?\s+\S/.test(line);
+        const isPeopleListLine = /^[A-Z](?:[.)]\s+\S|\s+[A-Z]\S*)/.test(line);
         const isOpinionsHeading = /^Opinions$/i.test(line);
         const isOpinionListLine =
           inOpinionsBlock &&
-          /^\s*[A-Z](?:[.)])?\s+\S/.test(line) &&
+          /^\s*[A-Z](?:[.)]\s+\S|\s+[A-Z]\S*)/.test(line) &&
           !isPeopleListLine;
 
         if (isOpinionsHeading) {
@@ -652,6 +754,12 @@ export function renderStructuredSummaryBlock(
     return null;
   }
 
+  console.log('summary debug:', {
+    title: parsedSummaryBlock.title,
+    testTitle: deps.testTitle,
+    questionNumbers: block.questionNumbers,
+  });
+
   const shouldShowMaryamMirzakhaniPhraseTable =
     /^Maryam Mirzakhani$/i.test(parsedSummaryBlock.title.trim()) &&
     block.questionNumbers.includes(27);
@@ -673,6 +781,14 @@ export function renderStructuredSummaryBlock(
     /Cambridge 16.*Reading Test 2/i.test(deps.testTitle ?? '') &&
     block.questionNumbers.includes(17);
 
+  const shouldShowAcademic15Test2PhraseTable =
+    /Cambridge 15 IELTS Academic Reading Test 2/i.test(deps.testTitle ?? '') &&
+    block.questionNumbers.includes(32);
+
+  const shouldShowAcademic15Test3PhraseTable =
+    /Cambridge 15 IELTS Academic Reading Test 3/i.test(deps.testTitle ?? '') &&
+    block.questionNumbers.includes(32);
+
   const summaryText = shouldShowMaryamMirzakhaniPhraseTable
     ? parsedSummaryBlock.summaryText
         .replace(
@@ -680,28 +796,42 @@ export function renderStructuredSummaryBlock(
           '',
         )
         .trim()
-    : shouldShowAcademic16Test2PhraseTable
+    : shouldShowAcademic15Test2PhraseTable
       ? parsedSummaryBlock.summaryText
           .replace(
-            /\s*A\.\s+solution,\s+B\.\s+partnership,\s+C\.\s+destruction,\s+D\.\s+exaggeration,\s+E\.\s+cleanliness,\s+F\.\s+regulations,\s+G\.\s+illness,\s+H\.\s+nutrition\s*$/i,
+            /\s*A\s+laughter\s+B\s+relaxing\s+C\s+boring\s+D\s+anxiety\s+E\s+stimulating\s+F\s+emotion\s+G\s+enjoyment\s+H\s+amusing\s*$/i,
             '',
           )
           .trim()
-      : shouldShowAcademic17Test2PhraseTable
+      : shouldShowAcademic15Test3PhraseTable
         ? parsedSummaryBlock.summaryText
             .replace(
-              /\s*A\s+invention\s+B\s+goals\s+C\s+compromise\s+D\s+mistakes\s+E\s+luck\s+F\s+inspiration\s+G\s+experiments\s*$/i,
+              /\s*A\s+ending,?\s+B\s+events,?\s+C\s+warning,?\s+D\s+links,?\s+E\s+records,?\s+F\s+variations,?\s+G\s+horror,?\s+H\s+people,?\s+I\s+plot\s*$/i,
               '',
             )
             .trim()
-        : shouldShowAcademic17Test3PhraseTable
+        : shouldShowAcademic16Test2PhraseTable
           ? parsedSummaryBlock.summaryText
               .replace(
-                /\s*A\s+development\s+plans\s+B\s+deep\s+excavations\s+C\s+great\s+distance\s+D\s+excessive\s+expense\s+E\s+impossible\s+tasks\s+F\s+associated\s+risks\s+G\s+water\s+level\s+H\s+specific\s+areas\s+I\s+total\s+expenditure\s+J\s+construction\s+guidelines\s*$/i,
+                /\s*A\.\s+solution,\s+B\.\s+partnership,\s+C\.\s+destruction,\s+D\.\s+exaggeration,\s+E\.\s+cleanliness,\s+F\.\s+regulations,\s+G\.\s+illness,\s+H\.\s+nutrition\s*$/i,
                 '',
               )
               .trim()
-          : parsedSummaryBlock.summaryText;
+          : shouldShowAcademic17Test2PhraseTable
+            ? parsedSummaryBlock.summaryText
+                .replace(
+                  /\s*A\s+invention\s+B\s+goals\s+C\s+compromise\s+D\s+mistakes\s+E\s+luck\s+F\s+inspiration\s+G\s+experiments\s*$/i,
+                  '',
+                )
+                .trim()
+            : shouldShowAcademic17Test3PhraseTable
+              ? parsedSummaryBlock.summaryText
+                  .replace(
+                    /\s*A\s+development\s+plans\s+B\s+deep\s+excavations\s+C\s+great\s+distance\s+D\s+excessive\s+expense\s+E\s+impossible\s+tasks\s+F\s+associated\s+risks\s+G\s+water\s+level\s+H\s+specific\s+areas\s+I\s+total\s+expenditure\s+J\s+construction\s+guidelines\s*$/i,
+                    '',
+                  )
+                  .trim()
+              : parsedSummaryBlock.summaryText;
 
   const charlesIIInstructionText = shouldShowCharlesIIPhraseTable
     ? parsedSummaryBlock.instructionText
@@ -756,6 +886,12 @@ export function renderStructuredSummaryBlock(
 
           {shouldShowAcademic17Test3PhraseTable &&
             renderAcademic17Test3PhraseTable()}
+
+          {shouldShowAcademic15Test2PhraseTable &&
+            renderAcademic15Test2PhraseTable()}
+
+          {shouldShowAcademic15Test3PhraseTable &&
+            renderAcademic15Test3PhraseTable()}
 
           {deps.isSubmitted && (
             <div className="flex flex-wrap gap-2 pt-2">

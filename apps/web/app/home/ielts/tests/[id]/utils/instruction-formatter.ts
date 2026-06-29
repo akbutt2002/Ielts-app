@@ -44,7 +44,7 @@ export function joinInstructionFragments(current: string, next: string) {
 }
 
 export function isLowercaseRomanHeading(line: string) {
-  return /^[ivxlcdm]+$/.test(line.trim());
+  return /^[ivxlcdm]+\.?$/.test(line.trim());
 }
 
 export function getInstructionLineStyle(line: string) {
@@ -84,7 +84,7 @@ export function formatInstructionLines(text: string) {
     const isPeopleListHeading = /^List of People$/i.test(line);
     const isPeopleListLetterOnly = /^[A-Z](?:[.)])?$/.test(line);
     const isPeopleListEntry =
-      /^[A-Z](?:[.)])?\s+\S/.test(line) ||
+      /^[A-Z](?:[.)]\s+\S|\s+[A-Z]\S*)/.test(line) ||
       (inPeopleList && isPeopleListLetterOnly);
 
     if (
@@ -132,12 +132,16 @@ export function formatInstructionLines(text: string) {
     while (index + 1 < lines.length) {
       const upcomingLine = lines[index + 1] ?? '';
 
+      if (/^\s*[-–•*]\s+/.test(upcomingLine)) {
+        break;
+      }
+
       if (
         questionRangePattern.test(upcomingLine) ||
         /^List of Headings$/i.test(upcomingLine) ||
         /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
-        /^[A-Z](?:[.)])?(?:\s|$)/i.test(upcomingLine) ||
+        /^[A-Z](?:[.)](?:\s|$)|(?:\s+[A-Z]|\s*$))/.test(upcomingLine) ||
         /^(?:TRUE|FALSE|NOT GIVEN|YES|NO)\b/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
       ) {
