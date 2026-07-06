@@ -129,6 +129,30 @@ export function QuestionGroup({
     groupFirstQuestion === 15 &&
     groupLastQuestion === 20;
 
+  const shouldRenderListening14Test1CrimeReportForm =
+    isListening &&
+    /Cambridge 14 Listening Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 10;
+
+  const shouldRenderListening14Test2PatientDetailsForm =
+    isListening &&
+    /Cambridge 14 Listening Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 10;
+
+  const shouldRenderListening14Test3HotelForm =
+    isListening &&
+    /Cambridge 14 Listening Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 10;
+
+  const shouldRenderListening14Test4BookingForm =
+    isListening &&
+    /Cambridge 14 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 7;
+
   const shouldRenderInlineBlankPromptForGeneral16 =
     !isListening &&
     /Cambridge 16 IELTS General Reading Test/i.test(testTitle ?? '') &&
@@ -253,6 +277,10 @@ export function QuestionGroup({
     !shouldRenderAcademic15Test4HuarangoTable &&
     !shouldRenderGeneral15Test2DangerTable &&
     !shouldRenderListening15Test1TimetableTable &&
+    !shouldRenderListening14Test1CrimeReportForm &&
+    !shouldRenderListening14Test2PatientDetailsForm &&
+    !shouldRenderListening14Test3HotelForm &&
+    !shouldRenderListening14Test4BookingForm &&
     !shouldRenderInlineBlankPromptForGeneral16
   ) {
     return renderedNoteBlock;
@@ -274,6 +302,10 @@ export function QuestionGroup({
     !shouldRenderAcademic15Test4HuarangoTable &&
     !shouldRenderGeneral15Test2DangerTable &&
     !shouldRenderListening15Test1TimetableTable &&
+    !shouldRenderListening14Test1CrimeReportForm &&
+    !shouldRenderListening14Test2PatientDetailsForm &&
+    !shouldRenderListening14Test3HotelForm &&
+    !shouldRenderListening14Test4BookingForm &&
     !shouldRenderInlineBlankPromptForGeneral16
   ) {
     return renderedSummaryBlock;
@@ -374,6 +406,12 @@ export function QuestionGroup({
         [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
       (/Cambridge 17 IELTS Academic Reading Test 3/i.test(testTitle ?? '') &&
         [21].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
+      (/Cambridge 14 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
+        [19, 21].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
+      (/Cambridge 14 IELTS Academic Reading Test 3/i.test(testTitle ?? '') &&
+        [21].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
+      (/Cambridge 14 IELTS Academic Reading Test 4/i.test(testTitle ?? '') &&
+        [23, 25].includes(primaryBlock.questionNumbers[0] ?? 0)) ||
       (/Cambridge 18 IELTS Academic Reading Test 4/i.test(testTitle ?? '') &&
         [10, 12].includes(primaryBlock.questionNumbers[0] ?? 0)));
   const shouldUseGeneral18Test2Questions28To31Prompts =
@@ -470,6 +508,14 @@ export function QuestionGroup({
     shouldRenderAcademic15Test4HuarangoTable ||
     shouldRenderGeneral15Test2DangerTable ||
     shouldRenderListening15Test1TimetableTable ||
+    shouldRenderListening14Test1CrimeReportForm ||
+    shouldRenderListening14Test2PatientDetailsForm ||
+    shouldRenderListening14Test3HotelForm ||
+    shouldRenderListening14Test4BookingForm ||
+    (isListening &&
+      /Cambridge 14 Listening Test 2/i.test(testTitle ?? '') &&
+      groupFirstQuestion === 16 &&
+      groupLastQuestion === 20) ||
     shouldRenderInlineBlankPromptForGeneral16
       ? ''
       : /^Which title is the most suitable for the text\?$/i.test(
@@ -648,6 +694,11 @@ export function QuestionGroup({
     /Cambridge 15 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
     groupFirstQuestion === 15 &&
     groupLastQuestion === 20;
+  const shouldShowPromptTextWhenBlankForAcademic14Test2Questions35To37 =
+    !isListening &&
+    /Cambridge 14 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 35 &&
+    groupLastQuestion === 37;
   const shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 =
     !isListening &&
     /Cambridge 19 IELTS General Reading Test 3/i.test(testTitle ?? '') &&
@@ -976,6 +1027,54 @@ export function QuestionGroup({
     [30, 'coursebooks ____'],
   ]);
 
+  const shouldShowPromptTextWhenBlankForListening14Test1Questions15To20 =
+    isListening &&
+    /Cambridge 14 Listening Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 15 &&
+    groupLastQuestion === 20;
+
+  const shouldShowPromptTextWhenBlankForListening14Test1Questions26To30 =
+    isListening &&
+    /Cambridge 14 Listening Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 26 &&
+    groupLastQuestion === 30;
+
+  const shouldShowPromptTextWhenBlankForListening14Test2Questions16To20 =
+    isListening &&
+    /Cambridge 14 Listening Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 16 &&
+    groupLastQuestion === 20;
+
+  const shouldShowPromptTextWhenBlankForListening14Test2Questions25To30 =
+    isListening &&
+    /Cambridge 14 Listening Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 25 &&
+    groupLastQuestion === 30;
+
+  const shouldShowPromptTextWhenBlankForListening14Test3Questions15To20 =
+    isListening &&
+    /Cambridge 14 Listening Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 15 &&
+    groupLastQuestion === 20;
+
+  const shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 =
+    isListening &&
+    /Cambridge 14 Listening Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 27 &&
+    groupLastQuestion === 30;
+
+  const shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 =
+    isListening &&
+    /Cambridge 14 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 11 &&
+    groupLastQuestion === 20;
+
+  const shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 =
+    isListening &&
+    /Cambridge 14 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 26 &&
+    groupLastQuestion === 30;
+
   const shouldRenderListeningTest2GuitarLessonTable =
     isListeningTest2GuitarLessonTable &&
     (primaryBlock.choices?.length ?? 0) === 0;
@@ -1147,6 +1246,26 @@ export function QuestionGroup({
               'Complete the table below.',
               'Write ONE WORD AND/OR A NUMBER for each answer.',
             ].join('\n')
+        : shouldRenderListening14Test1CrimeReportForm
+          ? [
+              'Complete the form below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
+        : shouldRenderListening14Test2PatientDetailsForm
+          ? [
+              'Complete the notes below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
+        : shouldRenderListening14Test3HotelForm
+          ? [
+              'Complete the notes below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
+        : shouldRenderListening14Test4BookingForm
+          ? [
+              'Complete the notes below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
           : shouldRenderAcademic18Test1Table
             ? [
                 'Complete the table below.',
@@ -1275,6 +1394,94 @@ export function QuestionGroup({
       showPrompt={true}
       inlineBlankPrompt={true}
       hideQuestionNumber={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening14Test1CrimeQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-14-test-1-crime-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening14Test2PatientQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-14-test-2-patient-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening14Test3HotelQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-14-test-3-hotel-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening14Test4BookingQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-14-test-4-booking-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
       answerLookup={answerLookup}
       userAnswers={userAnswers}
       isSubmitted={isSubmitted}
@@ -2913,6 +3120,508 @@ export function QuestionGroup({
               </div>
             </div>
           </div>
+        ) : shouldRenderListening14Test4BookingForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Title */}
+            <div className="text-center space-y-1">
+              <h4 className="text-foreground text-[18px] font-black tracking-wider uppercase">
+                Enquiry about booking hotel room for event
+              </h4>
+            </div>
+
+            {/* General Info */}
+            <div className="grid grid-cols-1 gap-4 border-b border-border/40 pb-4 text-[14px]">
+              <div className="flex gap-2">
+                <span className="font-bold text-foreground">Example:</span>
+                <span className="text-foreground font-medium">
+                  Andrew is the <span className="underline font-bold">Events</span> Manager
+                </span>
+              </div>
+            </div>
+
+            {/* Section 1: Rooms */}
+            <div className="space-y-4">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Rooms
+              </h5>
+              
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4">
+                {/* Adelphi Room */}
+                <div className="space-y-2">
+                  <h6 className="font-extrabold text-foreground text-[14px]">Adelphi Room</h6>
+                  
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground font-medium">– number of people who can sit down to eat:</span>
+                    {renderListening14Test4BookingQuestion(1, '1. ____')}
+                  </div>
+
+                  <div className="text-foreground font-medium pl-4 py-0.5">
+                    has a gallery suitable for musicians
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap font-medium">
+                    <span className="text-foreground">– can go out and see the</span>
+                    {renderListening14Test4BookingQuestion(2, '2. ____')}
+                    <span className="text-foreground">in pots on the terrace</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap font-medium">
+                    <span className="text-foreground">– terrace has a view of a group of</span>
+                    {renderListening14Test4BookingQuestion(3, '3. ____')}
+                  </div>
+                </div>
+
+                {/* Carlton Room */}
+                <div className="space-y-2 pt-2">
+                  <h6 className="font-extrabold text-foreground text-[14px]">Carlton Room</h6>
+
+                  <div className="text-foreground font-medium pl-4">
+                    – number of people who can sit down to eat: 110
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap font-medium">
+                    <span className="text-foreground">– has a</span>
+                    {renderListening14Test4BookingQuestion(4, '4. ____')}
+                    <span className="text-foreground">view of the lake</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Options */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Options
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4 font-medium">
+                <div className="space-y-2">
+                  <h6 className="font-extrabold text-foreground text-[14px]">Master of Ceremonies:</h6>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground">– can give a</span>
+                    {renderListening14Test4BookingQuestion(5, '5. ____')}
+                    <span className="text-foreground">while people are eating</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground">– will provide</span>
+                    {renderListening14Test4BookingQuestion(6, '6. ____')}
+                    <span className="text-foreground">if there are any problems</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Accommodation */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Accommodation
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4 font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-foreground">– in the hotel rooms or</span>
+                  {renderListening14Test4BookingQuestion(7, '7. ____')}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening14Test3HotelForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Title */}
+            <div className="text-center space-y-1">
+              <h4 className="text-foreground text-[18px] font-black tracking-wider uppercase">
+                Flanders Conference Hotel
+              </h4>
+            </div>
+
+            {/* General Info */}
+            <div className="grid grid-cols-1 gap-4 border-b border-border/40 pb-4 text-[14px]">
+              <div className="flex gap-2">
+                <span className="font-extrabold text-foreground">Customer Services Manager:</span>
+                <span className="text-foreground font-medium">
+                  <span className="underline font-bold">Angela</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Section 1: Date available */}
+            <div className="space-y-4">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Date available
+              </h5>
+              
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground font-medium">– weekend beginning February 4<sup>th</sup></span>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Conference facilities */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Conference facilities
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4">
+                <div className="flex items-center gap-1.5 flex-wrap font-medium">
+                  <span className="text-foreground">– the</span>
+                  {renderListening14Test3HotelQuestion(1, '1. ____')}
+                  <span className="text-foreground">room for talks (projector and</span>
+                  {renderListening14Test3HotelQuestion(2, '2. ____')}
+                  <span className="text-foreground">available)</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap font-medium">
+                  <span className="text-foreground">– area for coffee and an</span>
+                  {renderListening14Test3HotelQuestion(3, '3. ____')}
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap font-medium">
+                  <span className="text-foreground">– free</span>
+                  {renderListening14Test3HotelQuestion(4, '4. ____')}
+                  <span className="text-foreground">throughout</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-foreground font-medium">– a standard buffet lunch costs</span>
+                  <span className="font-extrabold text-foreground">5. $</span>
+                  {renderListening14Test3HotelQuestion(5, '____')}
+                  <span className="text-foreground font-medium">per head</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Accommodation */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Accommodation
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-foreground font-medium">– Rooms will cost</span>
+                  <span className="font-extrabold text-foreground">6. $</span>
+                  {renderListening14Test3HotelQuestion(6, '____')}
+                  <span className="text-foreground font-medium">including breakfast.</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 4: Other facilities */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Other facilities
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4 font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-foreground">– The hotel also has a spa and rooftop</span>
+                  {renderListening14Test3HotelQuestion(7, '7. ____')}
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-foreground">– There’s a free shuttle service to the</span>
+                  {renderListening14Test3HotelQuestion(8, '8. ____')}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 5: Location */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Location
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px] pl-4 font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-foreground">– Wilby Street (quite near the</span>
+                  {renderListening14Test3HotelQuestion(9, '9. ____')}
+                  <span className="text-foreground">)</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-foreground">– near to restaurants and many</span>
+                  {renderListening14Test3HotelQuestion(10, '10. ____')}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening14Test2PatientDetailsForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Title */}
+            <div className="text-center space-y-1">
+              <h4 className="text-foreground text-[18px] font-black tracking-wider uppercase">
+                TOTAL HEALTH CLINIC
+              </h4>
+              <p className="text-muted-foreground text-[12px] font-bold tracking-widest uppercase">
+                PATIENT DETAILS
+              </p>
+            </div>
+
+            {/* Section 1: Personal information */}
+            <div className="space-y-4">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Personal information
+              </h5>
+              
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px]">
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-bold text-foreground">Example:</span>
+                  <div className="flex gap-2">
+                    <span className="font-bold text-foreground">Name:</span>
+                    <span className="text-foreground font-medium">Julie Anne <span className="underline font-bold">Garcia</span></span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Contact phone:</span>
+                  <div className="flex items-center">
+                    {renderListening14Test2PatientQuestion(1, '1. ____')}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Date of birth:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {renderListening14Test2PatientQuestion(2, '2. ____')}
+                    <span className="text-foreground font-medium">, 1992</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Occupation:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground font-medium">works as a</span>
+                    {renderListening14Test2PatientQuestion(3, '3. ____')}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Insurance company:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {renderListening14Test2PatientQuestion(4, '4. ____')}
+                    <span className="text-foreground font-medium">Life Insurance</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Details of the problem */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Details of the problem
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px]">
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Type of problem:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground font-medium">pain in her left</span>
+                    {renderListening14Test2PatientQuestion(5, '5. ____')}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">When it began:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {renderListening14Test2PatientQuestion(6, '6. ____')}
+                    <span className="text-foreground font-medium">ago</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-start">
+                  <span className="font-extrabold text-foreground">Action already taken:</span>
+                  <span className="text-foreground font-medium">has taken painkillers and applied ice</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Other information */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Other information
+              </h5>
+
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px]">
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Sports played:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground font-medium">belongs to a</span>
+                    {renderListening14Test2PatientQuestion(7, '7. ____')}
+                    <span className="text-foreground font-medium">club</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground"></span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground font-medium">goes</span>
+                    {renderListening14Test2PatientQuestion(8, '8. ____')}
+                    <span className="text-foreground font-medium">regularly</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Medical history:</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground font-medium">injured her</span>
+                    {renderListening14Test2PatientQuestion(9, '9. ____')}
+                    <span className="text-foreground font-medium">last year</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground"></span>
+                  <span className="text-foreground font-medium">no allergies</span>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground"></span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-foreground font-medium">no regular medication apart from</span>
+                    {renderListening14Test2PatientQuestion(10, '10. ____')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening14Test1CrimeReportForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Title */}
+            <div className="text-center space-y-1">
+              <h4 className="text-foreground text-[18px] font-black tracking-wider uppercase">
+                CRIME REPORT FORM
+              </h4>
+            </div>
+
+            {/* General Info */}
+            <div className="grid grid-cols-1 gap-4 border-b border-border/40 pb-4 text-[14px]">
+              <div className="flex gap-2">
+                <span className="font-extrabold text-foreground">Type of crime:</span>
+                <span className="text-muted-foreground font-semibold">theft</span>
+              </div>
+            </div>
+
+            {/* Section 1: Personal information */}
+            <div className="space-y-4">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Personal information
+              </h5>
+              
+              <div className="grid grid-cols-1 gap-y-3.5 text-[14px]">
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-bold text-foreground">Example:</span>
+                  <div className="flex gap-2">
+                    <span className="font-bold text-foreground">Name:</span>
+                    <span className="text-foreground font-medium">Louise <span className="underline font-bold">Taylor</span></span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Nationality:</span>
+                  <div className="flex items-center">
+                    {renderListening14Test1CrimeQuestion(1, '1. ____')}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Date of birth:</span>
+                  <span className="text-foreground font-medium">14 December 1977</span>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Occupation:</span>
+                  <span className="text-foreground font-medium">interior designer</span>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Reason for visit:</span>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    <span className="text-foreground font-medium">business (to buy antique</span>
+                    {renderListening14Test1CrimeQuestion(2, '2. ____')}
+                    <span className="text-foreground font-medium">)</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Length of stay:</span>
+                  <span className="text-foreground font-medium">two months</span>
+                </div>
+
+                <div className="grid grid-cols-[140px_1fr] gap-4 items-center">
+                  <span className="font-extrabold text-foreground">Current address:</span>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    {renderListening14Test1CrimeQuestion(3, '3. ____')}
+                    <span className="text-foreground font-medium">Apartments (No 15)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Details of theft */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Details of theft
+              </h5>
+
+              <div className="space-y-3.5 text-[14px]">
+                <div className="flex items-center gap-1 flex-wrap">
+                  <span className="font-extrabold text-foreground">Items stolen:</span>
+                  <span className="text-foreground font-medium">– a wallet containing approximately</span>
+                  {renderListening14Test1CrimeQuestion(4, '4. £ ____')}
+                </div>
+                <div className="flex items-center gap-1 flex-wrap pl-6">
+                  <span className="text-foreground font-medium">– a</span>
+                  {renderListening14Test1CrimeQuestion(5, '5. ____')}
+                </div>
+                <div className="flex items-center gap-1 flex-wrap pl-6">
+                  <span className="font-extrabold text-foreground">Date of theft:</span>
+                  {renderListening14Test1CrimeQuestion(6, '6. ____')}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Possible time and place of theft */}
+            <div className="space-y-4 pt-2">
+              <h5 className="text-foreground text-[15px] font-extrabold border-b border-border/30 pb-1 uppercase tracking-wider">
+                Possible time and place of theft
+              </h5>
+
+              <div className="space-y-3.5 text-[14px]">
+                <div className="flex items-center gap-1 flex-wrap">
+                  <span className="font-extrabold text-foreground">Location:</span>
+                  <span className="text-foreground font-medium">outside the</span>
+                  {renderListening14Test1CrimeQuestion(7, '7. ____')}
+                  <span className="text-foreground font-medium">at about 4 pm</span>
+                </div>
+                <div className="flex items-center gap-1 flex-wrap">
+                  <span className="font-extrabold text-foreground">Details of suspect:</span>
+                  <span className="text-foreground font-medium">– some boys asked for the</span>
+                  {renderListening14Test1CrimeQuestion(8, '8. ____')}
+                  <span className="text-foreground font-medium">then ran off</span>
+                </div>
+                <div className="pl-6 text-muted-foreground font-medium">
+                  – one had a T-shirt with a picture of a tiger
+                </div>
+                <div className="flex items-center gap-1 flex-wrap pl-6">
+                  <span className="text-foreground font-medium">– he was about 12, slim build with</span>
+                  {renderListening14Test1CrimeQuestion(9, '9. ____')}
+                  <span className="text-foreground font-medium">hair</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 4: Crime reference number */}
+            <div className="pt-4 border-t border-border/40">
+              <div className="flex items-center gap-1.5 flex-wrap text-[14px]">
+                <span className="font-extrabold text-foreground">The crime reference number allocated:</span>
+                {renderListening14Test1CrimeQuestion(10, '10. ____')}
+              </div>
+            </div>
+          </div>
         ) : shouldRenderListening15Test1TimetableTable ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm">
             {/* Table Title */}
@@ -3783,6 +4492,15 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                         shouldShowPromptTextWhenBlankForGeneral15Test1Questions23To27 ||
                         shouldShowPromptTextWhenBlankForGeneral15Test3Questions15To20 ||
+                        shouldShowPromptTextWhenBlankForAcademic14Test2Questions35To37 ||
+                        shouldShowPromptTextWhenBlankForListening14Test1Questions15To20 ||
+                        shouldShowPromptTextWhenBlankForListening14Test1Questions26To30 ||
+                        shouldShowPromptTextWhenBlankForListening14Test2Questions16To20 ||
+                        shouldShowPromptTextWhenBlankForListening14Test2Questions25To30 ||
+                        shouldShowPromptTextWhenBlankForListening14Test3Questions15To20 ||
+                        shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
+                        shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
+                        shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
@@ -3839,6 +4557,15 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlankForAcademicTest4Questions11To13 ||
                         shouldShowPromptTextWhenBlankForGeneral15Test1Questions23To27 ||
                         shouldShowPromptTextWhenBlankForGeneral15Test3Questions15To20 ||
+                        shouldShowPromptTextWhenBlankForAcademic14Test2Questions35To37 ||
+                        shouldShowPromptTextWhenBlankForListening14Test1Questions15To20 ||
+                        shouldShowPromptTextWhenBlankForListening14Test1Questions26To30 ||
+                        shouldShowPromptTextWhenBlankForListening14Test2Questions16To20 ||
+                        shouldShowPromptTextWhenBlankForListening14Test2Questions25To30 ||
+                        shouldShowPromptTextWhenBlankForListening14Test3Questions15To20 ||
+                        shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
+                        shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
+                        shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
                         shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                         shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                         shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
@@ -4052,6 +4779,15 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForGeneral18Test3Questions15To20 ||
                             shouldShowPromptTextWhenBlankForGeneral15Test1Questions23To27 ||
                             shouldShowPromptTextWhenBlankForGeneral15Test3Questions15To20 ||
+                            shouldShowPromptTextWhenBlankForAcademic14Test2Questions35To37 ||
+                            shouldShowPromptTextWhenBlankForListening14Test1Questions15To20 ||
+                            shouldShowPromptTextWhenBlankForListening14Test1Questions26To30 ||
+                            shouldShowPromptTextWhenBlankForListening14Test2Questions16To20 ||
+                            shouldShowPromptTextWhenBlankForListening14Test2Questions25To30 ||
+                            shouldShowPromptTextWhenBlankForListening14Test3Questions15To20 ||
+                            shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
+                            shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
+                            shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
@@ -4109,6 +4845,15 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlankForAcademicTest4Questions11To13 ||
                             shouldShowPromptTextWhenBlankForGeneral15Test1Questions23To27 ||
                             shouldShowPromptTextWhenBlankForGeneral15Test3Questions15To20 ||
+                            shouldShowPromptTextWhenBlankForAcademic14Test2Questions35To37 ||
+                            shouldShowPromptTextWhenBlankForListening14Test1Questions15To20 ||
+                            shouldShowPromptTextWhenBlankForListening14Test1Questions26To30 ||
+                            shouldShowPromptTextWhenBlankForListening14Test2Questions16To20 ||
+                            shouldShowPromptTextWhenBlankForListening14Test2Questions25To30 ||
+                            shouldShowPromptTextWhenBlankForListening14Test3Questions15To20 ||
+                            shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
+                            shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
+                            shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
                             shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                             shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                             shouldRenderInlineBlankPromptForListeningQuestions16To20 ||

@@ -270,7 +270,7 @@ export function ExamScreen({
 
                     {listeningImages.length > 0 ? (
                       <section className="space-y-3">
-                        {/Cambridge 19 Listening Test 1/i.test(
+                        {/Cambridge (?:19 Listening Test 1|14 Listening Test 2)/i.test(
                           test?.title ?? '',
                         ) ? (
                           <div className="text-muted-foreground text-[11px] font-black tracking-[0.22em] uppercase">

@@ -2552,7 +2552,7 @@ export function normalizeTestImages(test: any) {
 export function isStructuredNoteBlock(block: ParsedQuestionBlock) {
   return (
     block.choices.length === 0 &&
-    /Complete the (?:notes|flow[- ]?chart) below\.?/i.test(block.rawText)
+    /Complete the (?:notes|flow[- ]?chart|form) below\.?/i.test(block.rawText)
   );
 }
 
