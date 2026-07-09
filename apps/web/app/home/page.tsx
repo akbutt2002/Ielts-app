@@ -7,7 +7,7 @@ import { IeltsTestListing } from '@kit/ui/ielts/listing';
 
 export default function HomePage() {
   const listing = buildIeltsListingData(ieltsTests, ieltsListening, {
-    minBookNumber: 14,
+    minBookNumber: 13,
     maxBookNumber: 19,
   });
 

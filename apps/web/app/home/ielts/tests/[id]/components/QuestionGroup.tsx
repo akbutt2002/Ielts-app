@@ -153,6 +153,24 @@ export function QuestionGroup({
     groupFirstQuestion === 1 &&
     groupLastQuestion === 7;
 
+  const shouldRenderAcademic13Test1TourismTable =
+    !isListening &&
+    /Cambridge 13 IELTS Academic Reading Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 7;
+
+  const shouldRenderAcademic13Test2CinnamonTable =
+    !isListening &&
+    /Cambridge 13 IELTS Academic Reading Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 9;
+
+  const shouldRenderAcademic13Test3CoconutTable =
+    !isListening &&
+    /Cambridge 13 IELTS Academic Reading Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 8;
+
   const shouldRenderInlineBlankPromptForGeneral16 =
     !isListening &&
     /Cambridge 16 IELTS General Reading Test/i.test(testTitle ?? '') &&
@@ -201,6 +219,44 @@ export function QuestionGroup({
     /Cambridge 16 Listening Test 1/i.test(testTitle ?? '') &&
     groupFirstQuestion === 15 &&
     groupLastQuestion === 20;
+
+  const shouldRenderListening13Test1CookeryTable =
+    isListening &&
+    /Cambridge 13 Listening Test 1/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 10;
+
+  const shouldRenderListening13Test2SouthCityClubForm =
+    isListening &&
+    /Cambridge 13 Listening Test 2/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 10;
+
+  const shouldRenderListening13Test3BanfordCityForm =
+    isListening &&
+    /Cambridge 13 Listening Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 10;
+
+  const shouldRenderListening13Test3SleepyLizardForm =
+    isListening &&
+    /Cambridge 13 Listening Test 3/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 31 &&
+    groupLastQuestion === 40;
+
+  const shouldRenderListening13Test4AlexTrainingForm =
+    isListening &&
+    /Cambridge 13 Listening Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 1 &&
+    groupLastQuestion === 10;
+
+  const shouldRenderListening13Test1Questions26To30Flowchart =
+    isListening &&
+    /Cambridge 13 Listening Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 26 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      30 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
 
   const shouldRenderListening16Test4RecreationTable =
     isListening &&
@@ -277,10 +333,19 @@ export function QuestionGroup({
     !shouldRenderAcademic15Test4HuarangoTable &&
     !shouldRenderGeneral15Test2DangerTable &&
     !shouldRenderListening15Test1TimetableTable &&
+    !shouldRenderListening13Test1CookeryTable &&
+    !shouldRenderListening13Test2SouthCityClubForm &&
+    !shouldRenderListening13Test3BanfordCityForm &&
+    !shouldRenderListening13Test3SleepyLizardForm &&
+    !shouldRenderListening13Test4AlexTrainingForm &&
+    !shouldRenderListening13Test1Questions26To30Flowchart &&
     !shouldRenderListening14Test1CrimeReportForm &&
     !shouldRenderListening14Test2PatientDetailsForm &&
     !shouldRenderListening14Test3HotelForm &&
     !shouldRenderListening14Test4BookingForm &&
+    !shouldRenderAcademic13Test1TourismTable &&
+    !shouldRenderAcademic13Test2CinnamonTable &&
+    !shouldRenderAcademic13Test3CoconutTable &&
     !shouldRenderInlineBlankPromptForGeneral16
   ) {
     return renderedNoteBlock;
@@ -302,10 +367,19 @@ export function QuestionGroup({
     !shouldRenderAcademic15Test4HuarangoTable &&
     !shouldRenderGeneral15Test2DangerTable &&
     !shouldRenderListening15Test1TimetableTable &&
+    !shouldRenderListening13Test1CookeryTable &&
+    !shouldRenderListening13Test2SouthCityClubForm &&
+    !shouldRenderListening13Test3BanfordCityForm &&
+    !shouldRenderListening13Test3SleepyLizardForm &&
+    !shouldRenderListening13Test4AlexTrainingForm &&
+    !shouldRenderListening13Test1Questions26To30Flowchart &&
     !shouldRenderListening14Test1CrimeReportForm &&
     !shouldRenderListening14Test2PatientDetailsForm &&
     !shouldRenderListening14Test3HotelForm &&
     !shouldRenderListening14Test4BookingForm &&
+    !shouldRenderAcademic13Test1TourismTable &&
+    !shouldRenderAcademic13Test2CinnamonTable &&
+    !shouldRenderAcademic13Test3CoconutTable &&
     !shouldRenderInlineBlankPromptForGeneral16
   ) {
     return renderedSummaryBlock;
@@ -508,10 +582,19 @@ export function QuestionGroup({
     shouldRenderAcademic15Test4HuarangoTable ||
     shouldRenderGeneral15Test2DangerTable ||
     shouldRenderListening15Test1TimetableTable ||
+    shouldRenderListening13Test1CookeryTable ||
+    shouldRenderListening13Test2SouthCityClubForm ||
+    shouldRenderListening13Test3BanfordCityForm ||
+    shouldRenderListening13Test3SleepyLizardForm ||
+    shouldRenderListening13Test4AlexTrainingForm ||
+    shouldRenderListening13Test1Questions26To30Flowchart ||
     shouldRenderListening14Test1CrimeReportForm ||
     shouldRenderListening14Test2PatientDetailsForm ||
     shouldRenderListening14Test3HotelForm ||
     shouldRenderListening14Test4BookingForm ||
+    shouldRenderAcademic13Test1TourismTable ||
+    shouldRenderAcademic13Test2CinnamonTable ||
+    shouldRenderAcademic13Test3CoconutTable ||
     (isListening &&
       /Cambridge 14 Listening Test 2/i.test(testTitle ?? '') &&
       groupFirstQuestion === 16 &&
@@ -790,6 +873,14 @@ export function QuestionGroup({
     primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
       30 &&
     (primaryBlock.choices?.length ?? 0) === 0;
+
+  const shouldRenderInlineBlankPromptForListening13Test1Questions14To20 =
+    isListening &&
+    /Cambridge 13 Listening Test 1/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 14 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      20 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
   const shouldRenderInlineBlankPromptForListening16Test3Questions15To20 =
     isListening &&
     /Cambridge 16 Listening Test 3/i.test(testTitle ?? '') &&
@@ -928,6 +1019,12 @@ export function QuestionGroup({
     /Cambridge 16.*Reading Test 4/i.test(testTitle ?? '') &&
     groupFirstQuestion === 1 &&
     groupLastQuestion === 6;
+
+  const shouldRenderInlineBlankPromptForAcademic13Test4Questions9To13 =
+    !isListening &&
+    /Cambridge 13 IELTS Academic Reading Test 4/i.test(testTitle ?? '') &&
+    groupFirstQuestion === 9 &&
+    groupLastQuestion === 13;
 
   const academic16Test4Questions1To6Prompts = new Map<number, string>([
     [1, '1. ____ to direct the tunnelling'],
@@ -1246,6 +1343,36 @@ export function QuestionGroup({
               'Complete the table below.',
               'Write ONE WORD AND/OR A NUMBER for each answer.',
             ].join('\n')
+        : shouldRenderListening13Test1CookeryTable
+          ? [
+              'Complete the table below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
+        : shouldRenderListening13Test1Questions26To30Flowchart
+          ? [
+              'Complete the flow-chart below.',
+              'Choose FIVE answers from the box and write the correct letter, A-H, next to Questions 26-30.',
+            ].join('\n')
+        : shouldRenderListening13Test2SouthCityClubForm
+          ? [
+              'Complete the notes below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
+        : shouldRenderListening13Test3BanfordCityForm
+          ? [
+              'Complete the notes below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
+        : shouldRenderListening13Test3SleepyLizardForm
+          ? [
+              'Complete the notes below.',
+              'Write ONE WORD ONLY for each answer.',
+            ].join('\n')
+        : shouldRenderListening13Test4AlexTrainingForm
+          ? [
+              'Complete the notes below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
         : shouldRenderListening14Test1CrimeReportForm
           ? [
               'Complete the form below.',
@@ -1265,6 +1392,24 @@ export function QuestionGroup({
           ? [
               'Complete the notes below.',
               'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
+        : shouldRenderAcademic13Test1TourismTable
+          ? [
+              'Complete the table below.',
+              'Choose ONE WORD ONLY from the passage for each answer.',
+              'Write your answers in boxes 1-7 on your answer sheet.',
+            ].join('\n')
+        : shouldRenderAcademic13Test2CinnamonTable
+          ? [
+              'Complete the table below.',
+              'Choose ONE WORD ONLY from the passage for each answer.',
+              'Write your answers in boxes 1-9 on your answer sheet.',
+            ].join('\n')
+        : shouldRenderAcademic13Test3CoconutTable
+          ? [
+              'Complete the table below.',
+              'Choose ONE WORD ONLY from the passage for each answer.',
+              'Write your answers in boxes 1-8 on your answer sheet.',
             ].join('\n')
           : shouldRenderAcademic18Test1Table
             ? [
@@ -1381,6 +1526,137 @@ export function QuestionGroup({
       renderAnswerStatusIcon={renderAnswerStatusIcon}
     />
   );
+  const renderListening13Test1FlowchartQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-13-test-1-flowchart-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening13Test1CookeryQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-13-test-1-cookery-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening13Test2SouthCityQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-13-test-2-southcity-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening13Test3BanfordQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-13-test-3-banford-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening13Test3LizardQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-13-test-3-lizard-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening13Test4AlexQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-13-test-4-alex-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
 
   const renderListening15Test1TimetableQuestion = (
     qNum: number,
@@ -1475,6 +1751,72 @@ export function QuestionGroup({
   ) => (
     <QuestionRow
       key={`listening-14-test-4-booking-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderAcademic13Test1TourismQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`academic-13-test-1-tourism-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderAcademic13Test2CinnamonQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`academic-13-test-2-cinnamon-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderAcademic13Test3CoconutQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`academic-13-test-3-coconut-${qNum}`}
       qNum={qNum}
       prompt={prompt}
       choices={[]}
@@ -3227,6 +3569,273 @@ export function QuestionGroup({
               </div>
             </div>
           </div>
+        ) : shouldRenderAcademic13Test3CoconutTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm max-w-3xl mx-auto w-full">
+            {/* Table Header */}
+            <div className="grid grid-cols-[120px_180px_1fr] bg-muted/40 border-b border-border/60 text-xs font-black uppercase tracking-wider text-muted-foreground">
+              <div className="px-4 py-3 border-r border-border/60">Part</div>
+              <div className="px-4 py-3 border-r border-border/60">Description</div>
+              <div className="px-4 py-3">Uses</div>
+            </div>
+
+            {/* Row 1: trunk */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                trunk
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                up to 30 metres
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                {renderAcademic13Test3CoconutQuestion(1, 'timber for houses and the making of 1. ____')}
+              </div>
+            </div>
+
+            {/* Row 2: leaves */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                leaves
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                up to 6 metres long
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                to make brushes
+              </div>
+            </div>
+
+            {/* Row 3: flowers */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                flowers
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                at the top of the trunk
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                {renderAcademic13Test3CoconutQuestion(2, 'stems provide sap, used as a drink or a source of 2. ____')}
+              </div>
+            </div>
+
+            {/* Row 4: fruits -> outer layer */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground bg-muted/5">
+                fruits
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                outer layer
+              </div>
+              <div className="px-4 py-4 text-muted-foreground italic text-xs">
+                (waterproof)
+              </div>
+            </div>
+
+            {/* Row 5: fruits -> middle layer */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground bg-muted/5">
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                middle layer (coir fibres)
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                {renderAcademic13Test3CoconutQuestion(3, 'used for 3. ____')}
+              </div>
+            </div>
+
+            {/* Row 6: fruits -> inner layer */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground bg-muted/5">
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                inner layer (shell)
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                {renderAcademic13Test3CoconutQuestion(4, 'a source of 4. ____')}
+              </div>
+            </div>
+
+            {/* Row 7: fruits -> when halved */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground bg-muted/5">
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                (when halved)
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                {renderAcademic13Test3CoconutQuestion(5, 'for 5. ____')}
+              </div>
+            </div>
+
+            {/* Row 8: fruits -> coconut water */}
+            <div className="grid grid-cols-[120px_180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground bg-muted/5">
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                coconut water
+              </div>
+              <div className="px-4 py-4 space-y-2 text-foreground font-medium">
+                <div>a drink</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test3CoconutQuestion(6, 'a source of 6. ____ for other plants')}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 9: fruits -> coconut flesh */}
+            <div className="grid grid-cols-[120px_180px_1fr] text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground bg-muted/5">
+              </div>
+              <div className="px-4 py-4 border-r border-border/60 text-foreground font-medium">
+                coconut flesh
+              </div>
+              <div className="px-4 py-4 space-y-3 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test3CoconutQuestion(7, 'oil and milk for cooking and 7. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test3CoconutQuestion(8, 'glycerine (an ingredient in 8. ____ )')}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderAcademic13Test2CinnamonTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm max-w-3xl mx-auto w-full">
+            {/* Table Header */}
+            <div className="grid grid-cols-[180px_1fr] bg-muted/40 border-b border-border/60 text-xs font-black uppercase tracking-wider text-muted-foreground">
+              <div className="px-4 py-3 border-r border-border/60">Period / Context</div>
+              <div className="px-4 py-3">Notes</div>
+            </div>
+
+            {/* Row 1: Biblical times */}
+            <div className="grid grid-cols-[180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                Biblical times:
+              </div>
+              <div className="px-4 py-4 space-y-3 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(1, 'added to 1. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(2, 'used to show 2. ____ Between people')}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Ancient Rome */}
+            <div className="grid grid-cols-[180px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                Ancient Rome:
+              </div>
+              <div className="px-4 py-4 space-y-3 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(3, 'used for its sweet smell at 3. ____')}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Middle Ages */}
+            <div className="grid grid-cols-[180px_1fr] text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                Middle Ages:
+              </div>
+              <div className="px-4 py-4 space-y-3 text-foreground font-medium">
+                <div>added to food, especially meat</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(4, 'was an indication of a person’s 4. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(5, 'known as a treatment for 5. ____ and other health problems')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(6, 'grown in 6. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(7, 'merchants used 7. ____ to bring it to the Mediterranean')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(8, 'arrived in the Mediterranean at 8. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {renderAcademic13Test2CinnamonQuestion(9, 'traders took it to 9. ____ and sold it to destinations around Europe.')}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderAcademic13Test1TourismTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm max-w-3xl mx-auto">
+            {/* Table Header */}
+            <div className="grid grid-cols-[200px_1fr] bg-muted/40 border-b border-border/60 text-xs font-black uppercase tracking-wider text-muted-foreground">
+              <div className="px-4 py-3 border-r border-border/60">Section of website</div>
+              <div className="px-4 py-3">Comments</div>
+            </div>
+
+            {/* Row 1: Database of tourism services */}
+            <div className="grid grid-cols-[200px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                Database of tourism services
+              </div>
+              <div className="px-4 py-4 space-y-3 text-foreground font-medium">
+                <div>• easy for tourism-related businesses to get on the list</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• allowed businesses to</span>
+                  {renderAcademic13Test1TourismQuestion(1, '1. ____')}
+                  <span>information regularly</span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• provided a country-wide evaluation of businesses, including their impact on the</span>
+                  {renderAcademic13Test1TourismQuestion(2, '2. ____')}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2: Special features on local topics */}
+            <div className="grid grid-cols-[200px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                Special features on local topics
+              </div>
+              <div className="px-4 py-4 space-y-3 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• e.g. an interview with a former sports</span>
+                  {renderAcademic13Test1TourismQuestion(3, '3. ____')}
+                  <span>, and an interactive tour of various locations used in</span>
+                  {renderAcademic13Test1TourismQuestion(4, '4. ____')}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Information on driving routes */}
+            <div className="grid grid-cols-[200px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                Information on driving routes
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                <span>• varied depending on the</span>
+                {renderAcademic13Test1TourismQuestion(5, '5. ____')}
+              </div>
+            </div>
+
+            {/* Row 4: Travel Planner */}
+            <div className="grid grid-cols-[200px_1fr] border-b border-border/60 text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                Travel Planner
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                <span>• included a map showing selected places, details of public transport and local</span>
+                {renderAcademic13Test1TourismQuestion(6, '6. ____')}
+              </div>
+            </div>
+
+            {/* Row 5: ‘Your Words’ */}
+            <div className="grid grid-cols-[200px_1fr] text-[14px]">
+              <div className="px-4 py-4 border-r border-border/60 font-bold text-foreground">
+                ‘Your Words’
+              </div>
+              <div className="px-4 py-4 text-foreground font-medium flex items-center gap-1.5 flex-wrap">
+                <span>• travellers could send a link to their</span>
+                {renderAcademic13Test1TourismQuestion(7, '7. ____')}
+              </div>
+            </div>
+          </div>
         ) : shouldRenderListening14Test3HotelForm ? (
           <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
             {/* Form Title */}
@@ -3619,6 +4228,435 @@ export function QuestionGroup({
               <div className="flex items-center gap-1.5 flex-wrap text-[14px]">
                 <span className="font-extrabold text-foreground">The crime reference number allocated:</span>
                 {renderListening14Test1CrimeQuestion(10, '10. ____')}
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening13Test2SouthCityClubForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Header */}
+            <div className="border-b border-border/40 pb-4">
+              <h4 className="text-foreground text-[18px] font-black tracking-wide">
+                South City Cycling Club
+              </h4>
+            </div>
+
+            {/* Example Section */}
+            <div className="border-b border-border/40 pb-4 space-y-2 text-[14px]">
+              <div className="text-muted-foreground italic text-xs">Example</div>
+              <div className="text-foreground font-medium">
+                Name of club secretary: Jim <span className="italic font-bold">Hunter</span>
+              </div>
+            </div>
+
+            {/* Membership Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Membership</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Full membership costs $260; this covers cycling and</span>
+                {renderListening13Test2SouthCityQuestion(1, '1. ____')}
+                <span>all over Australia</span>
+              </div>
+              <div className="font-medium text-foreground text-sm">• Recreational membership costs $108</div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Cost of membership includes the club fee and</span>
+                {renderListening13Test2SouthCityQuestion(2, '2. ____')}
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• The club kit is made by a company called</span>
+                {renderListening13Test2SouthCityQuestion(3, '3. ____')}
+              </div>
+            </div>
+
+            {/* Training Rides Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Training rides</h5>
+              <div className="font-medium text-foreground text-sm">• Chance to improve cycling skills and fitness</div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Level B: speed about</span>
+                {renderListening13Test2SouthCityQuestion(4, '4. ____')}
+                <span>kph</span>
+              </div>
+              <div className="space-y-2">
+                <div className="font-medium text-foreground text-sm">• Weekly sessions</div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-6 font-medium text-foreground text-sm">
+                  <span>– Tuesdays at 5.30 am, meet at the</span>
+                  {renderListening13Test2SouthCityQuestion(5, '5. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-6 font-medium text-foreground text-sm">
+                  <span>– Thursdays at 5.30 am, meet at the entrance to the</span>
+                  {renderListening13Test2SouthCityQuestion(6, '6. ____')}
+                </div>
+              </div>
+            </div>
+
+            {/* Further Information Section */}
+            <div className="space-y-3 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Further information</h5>
+              <div className="font-medium text-foreground text-sm">• Rides are about an hour and a half</div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Members often have</span>
+                {renderListening13Test2SouthCityQuestion(7, '7. ____')}
+                <span>together afterwards</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• There is not always a</span>
+                {renderListening13Test2SouthCityQuestion(8, '8. ____')}
+                <span>with the group on these rides</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Check and print the</span>
+                {renderListening13Test2SouthCityQuestion(9, '9. ____')}
+                <span>on the website beforehand</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Bikes must have</span>
+                {renderListening13Test2SouthCityQuestion(10, '10. ____')}
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening13Test3BanfordCityForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Header */}
+            <div className="border-b border-border/40 pb-4">
+              <h4 className="text-foreground text-[18px] font-black tracking-wide">
+                Moving to Banford City
+              </h4>
+            </div>
+
+            {/* Example Section */}
+            <div className="border-b border-border/40 pb-4 space-y-2 text-[14px]">
+              <div className="text-muted-foreground italic text-xs">Example</div>
+              <div className="text-foreground font-medium">
+                Linda recommends living in suburb of: <span className="italic font-bold">Dalton</span>
+              </div>
+            </div>
+
+            {/* Accommodation Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Accommodation</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Average rent: 1 £</span>
+                {renderListening13Test3BanfordQuestion(1, '1. ____')}
+                <span>a month</span>
+              </div>
+            </div>
+
+            {/* Transport Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Transport</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Linda travels to work by</span>
+                {renderListening13Test3BanfordQuestion(2, '2. ____')}
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Limited</span>
+                {renderListening13Test3BanfordQuestion(3, '3. ____')}
+                <span>in city centre</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Trains to London every</span>
+                {renderListening13Test3BanfordQuestion(4, '4. ____')}
+                <span>Minutes</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Poor train service at</span>
+                {renderListening13Test3BanfordQuestion(5, '5. ____')}
+              </div>
+            </div>
+
+            {/* Advantages Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Advantages of living in Banford</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• New</span>
+                {renderListening13Test3BanfordQuestion(6, '6. ____')}
+                <span>opened recently</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• 7</span>
+                {renderListening13Test3BanfordQuestion(7, '7. ____')}
+                <span>has excellent reputation</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Good</span>
+                {renderListening13Test3BanfordQuestion(8, '8. ____')}
+                <span>on Bridge Street</span>
+              </div>
+            </div>
+
+            {/* Meet Linda Section */}
+            <div className="space-y-3 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Meet Linda</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Meet Linda on</span>
+                {renderListening13Test3BanfordQuestion(9, '9. ____')}
+                <span>after 5.30 pm</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• In the</span>
+                {renderListening13Test3BanfordQuestion(10, '10. ____')}
+                <span>opposite the station</span>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening13Test3SleepyLizardForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Header */}
+            <div className="border-b border-border/40 pb-4">
+              <h4 className="text-foreground text-[18px] font-black tracking-wide">
+                The sleepy lizard (<span className="italic font-bold">tiliqua rugosa</span>)
+              </h4>
+            </div>
+
+            {/* Description Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Description</h5>
+              <div className="font-medium text-foreground text-sm">• They are common in Western and South Australia</div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• They are brown, but recognisable by their blue</span>
+                {renderListening13Test3LizardQuestion(31, '31. ____')}
+              </div>
+              <div className="font-medium text-foreground text-sm">• They are relatively large</div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Their diet consists mainly of</span>
+                {renderListening13Test3LizardQuestion(32, '32. ____')}
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Their main predators are large birds and</span>
+                {renderListening13Test3LizardQuestion(33, '33. ____')}
+              </div>
+            </div>
+
+            {/* Navigation study Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Navigation study</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• One study found that lizards can use the</span>
+                {renderListening13Test3LizardQuestion(34, '34. ____')}
+                <span>to help them navigate</span>
+              </div>
+            </div>
+
+            {/* Observations in the wild Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Observations in the wild</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Observations show that these lizards keep the same</span>
+                {renderListening13Test3LizardQuestion(35, '35. ____')}
+                <span>for several years</span>
+              </div>
+            </div>
+
+            {/* What people want Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">What people want</h5>
+              <div className="space-y-2">
+                <div className="font-medium text-foreground text-sm">• Possible reasons:</div>
+                <div className="font-medium text-foreground text-sm pl-6">– to improve the survival of their young</div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-6 font-medium text-foreground text-sm">
+                  <span>(but little</span>
+                  {renderListening13Test3LizardQuestion(36, '36. ____')}
+                  <span>has been noted between parents and children)</span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap pl-6 font-medium text-foreground text-sm">
+                  <span>– to provide</span>
+                  {renderListening13Test3LizardQuestion(37, '37. ____')}
+                  <span>for female lizards</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Tracking study Section */}
+            <div className="space-y-3 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Tracking study</h5>
+              <div className="flex items-center gap-1.5 flex-wrap pl-6 font-medium text-foreground text-sm">
+                <span>– A study was carried out using GPS systems attached to the</span>
+                {renderListening13Test3LizardQuestion(38, '38. ____')}
+                <span>of the lizards</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pl-6 font-medium text-foreground text-sm">
+                <span>– This provided information on the lizards’ location and even the number of</span>
+                {renderListening13Test3LizardQuestion(39, '39. ____')}
+                <span>taken</span>
+              </div>
+              <div className="font-medium text-foreground text-sm pl-6">– It appeared that the lizards were trying to avoid one another</div>
+              <div className="flex items-center gap-1.5 flex-wrap pl-6 font-medium text-foreground text-sm">
+                <span>– This may be in order to reduce chances of</span>
+                {renderListening13Test3LizardQuestion(40, '40. ____')}
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening13Test4AlexTrainingForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-6 max-w-2xl mx-auto">
+            {/* Form Header */}
+            <div className="border-b border-border/40 pb-4">
+              <h4 className="text-foreground text-[18px] font-black tracking-wide">
+                Alex’s Training
+              </h4>
+            </div>
+
+            {/* Example Section */}
+            <div className="border-b border-border/40 pb-4 space-y-2 text-[14px]">
+              <div className="text-muted-foreground italic text-xs">Example</div>
+              <div className="text-foreground font-medium">
+                Alex complete his training in <span className="italic font-bold">2014</span>
+              </div>
+            </div>
+
+            {/* About the applicant Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">About the applicant:</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• At first, Alex did his training in the</span>
+                {renderListening13Test4AlexQuestion(1, '1. ____')}
+                <span>department.</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Alex didn’t have a qualification from school in</span>
+                {renderListening13Test4AlexQuestion(2, '2. ____')}
+                <span>.</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Alex thinks he should have done the diploma in</span>
+                {renderListening13Test4AlexQuestion(3, '3. ____')}
+                <span>skills.</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Age of other trainees: the youngest was</span>
+                {renderListening13Test4AlexQuestion(4, '4. ____')}
+                <span>.</span>
+              </div>
+            </div>
+
+            {/* Benefits Section */}
+            <div className="space-y-3 pb-4 border-b border-border/40 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Benefits of doing training at JPNW:</h5>
+              <div className="font-medium text-foreground text-sm">• Lots of opportunities because of the size of the organisation.</div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Trainees receive the same amount of</span>
+                {renderListening13Test4AlexQuestion(5, '5. ____')}
+                <span>as permanent staff.</span>
+              </div>
+              <div className="font-medium text-foreground text-sm">• The training experience increases people’s confidence a lot.</div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Trainees go to</span>
+                {renderListening13Test4AlexQuestion(6, '6. ____')}
+                <span>one day per month.</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• The company is in a convenient</span>
+                {renderListening13Test4AlexQuestion(7, '7. ____')}
+                <span>.</span>
+              </div>
+            </div>
+
+            {/* Advice Section */}
+            <div className="space-y-3 text-[14px]">
+              <h5 className="font-extrabold text-foreground text-[15px]">Advice for interview:</h5>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Don’t wear</span>
+                {renderListening13Test4AlexQuestion(8, '8. ____')}
+                <span>.</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Don’t be</span>
+                {renderListening13Test4AlexQuestion(9, '9. ____')}
+                <span>.</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>• Make sure you</span>
+                {renderListening13Test4AlexQuestion(10, '10. ____')}
+                <span>.</span>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening13Test1CookeryTable ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm max-w-3xl mx-auto">
+            {/* Table Header */}
+            <div className="grid grid-cols-[1.4fr_1.4fr_2.5fr] bg-muted/40 border-b border-border/60 text-xs font-black uppercase tracking-wider text-muted-foreground">
+              <div className="px-4 py-3 border-r border-border/60">Cookery Class</div>
+              <div className="px-4 py-3 border-r border-border/60">Focus</div>
+              <div className="px-4 py-3">Other Information</div>
+            </div>
+
+            {/* Row 1 */}
+            <div className="border-border/60 grid grid-cols-[1.4fr_1.4fr_2.5fr] border-b text-sm">
+              <div className="border-border/60 flex flex-col justify-center border-r px-4 py-4 text-foreground">
+                <div className="text-xs text-muted-foreground italic mb-1">Example</div>
+                <div className="font-bold">The Food <span className="italic">Studio</span></div>
+              </div>
+              <div className="border-border/60 flex flex-col justify-center border-r px-4 py-4 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>how to</span>
+                  {renderListening13Test1CookeryQuestion(1, '1. ____')}
+                  <span>and cook with seasonal products</span>
+                </div>
+              </div>
+              <div className="flex flex-col justify-center px-4 py-4 gap-3 text-foreground font-medium">
+                <div>• small classes</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• also offers</span>
+                  {renderListening13Test1CookeryQuestion(2, '2. ____')}
+                  <span>classes</span>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• clients who return get a</span>
+                  {renderListening13Test1CookeryQuestion(3, '3. ____')}
+                  <span>discount</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 2 */}
+            <div className="border-border/60 grid grid-cols-[1.4fr_1.4fr_2.5fr] border-b text-sm">
+              <div className="border-border/60 flex items-center justify-start border-r px-4 py-4 font-bold text-foreground">
+                Bond’s Cookery School
+              </div>
+              <div className="border-border/60 flex items-center justify-start border-r px-4 py-4 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>food that is</span>
+                  {renderListening13Test1CookeryQuestion(4, '4. ____')}
+                </div>
+              </div>
+              <div className="flex flex-col justify-center px-4 py-4 gap-3 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• includes recipes to strengthen your</span>
+                  {renderListening13Test1CookeryQuestion(5, '5. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• they have a free</span>
+                  {renderListening13Test1CookeryQuestion(6, '6. ____')}
+                  <span>Every Thursday</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3 */}
+            <div className="grid grid-cols-[1.4fr_1.4fr_2.5fr] text-sm">
+              <div className="border-border/60 flex items-center justify-start border-r px-4 py-4 font-bold text-foreground">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>The</span>
+                  {renderListening13Test1CookeryQuestion(7, '7. ____')}
+                  <span>Centre</span>
+                </div>
+              </div>
+              <div className="border-border/60 flex items-center justify-start border-r px-4 py-4 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>mainly</span>
+                  {renderListening13Test1CookeryQuestion(8, '8. ____')}
+                  <span>food</span>
+                </div>
+              </div>
+              <div className="flex flex-col justify-center px-4 py-4 gap-3 text-foreground font-medium">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• located near the</span>
+                  {renderListening13Test1CookeryQuestion(9, '9. ____')}
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• a special course in skills with a</span>
+                  {renderListening13Test1CookeryQuestion(10, '10. ____')}
+                  <span>is sometimes available</span>
+                </div>
               </div>
             </div>
           </div>
@@ -4333,6 +5371,204 @@ export function QuestionGroup({
               </div>
             </div>
           </div>
+        ) : shouldRenderListening13Test1Questions26To30Flowchart ? (
+          <div className="space-y-6">
+            {/* Grid of Choices */}
+            <div className="border-border/60 bg-background/40 rounded-2xl border p-4 shadow-sm max-w-3xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-medium">
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">A</span>
+                  <span className="text-muted-foreground">container</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">B</span>
+                  <span className="text-muted-foreground">soil</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">C</span>
+                  <span className="text-muted-foreground">weight</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">D</span>
+                  <span className="text-muted-foreground">condition</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">E</span>
+                  <span className="text-muted-foreground">height</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">F</span>
+                  <span className="text-muted-foreground">colour</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">G</span>
+                  <span className="text-muted-foreground">types</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-extrabold text-foreground">H</span>
+                  <span className="text-muted-foreground">depths</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center font-bold text-base text-foreground mt-6 mb-4">
+              Stage in the experiment
+            </div>
+
+            <div className="space-y-4 max-w-2xl mx-auto">
+              {/* Step 1 */}
+              <div className="border-border/60 bg-background/60 rounded-2xl border px-5 py-4 shadow-sm text-sm">
+                <div className="flex items-center gap-1.5 flex-wrap justify-center font-medium text-foreground">
+                  <span>Select seeds of different</span>
+                  {renderListening13Test1FlowchartQuestion(26, '26. ____')}
+                  <span>and sizes.</span>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex justify-center">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="border-border/60 bg-background/60 rounded-2xl border px-5 py-4 shadow-sm text-sm">
+                <div className="flex items-center gap-1.5 flex-wrap justify-center font-medium text-foreground">
+                  <span>Measure and record the</span>
+                  {renderListening13Test1FlowchartQuestion(27, '27. ____')}
+                  <span>and size of each one.</span>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex justify-center">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="border-border/60 bg-background/60 rounded-2xl border px-5 py-4 shadow-sm text-sm">
+                <div className="flex items-center gap-1.5 flex-wrap justify-center font-medium text-foreground">
+                  <span>Decide on the</span>
+                  {renderListening13Test1FlowchartQuestion(28, '28. ____')}
+                  <span>to be used.</span>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex justify-center">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="border-border/60 bg-background/60 rounded-2xl border px-5 py-4 shadow-sm text-sm">
+                <div className="flex items-center gap-1.5 flex-wrap justify-center font-medium text-foreground">
+                  <span>Use a different</span>
+                  {renderListening13Test1FlowchartQuestion(29, '29. ____')}
+                  <span>for each seed and label it.</span>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex justify-center">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Step 5 */}
+              <div className="border-border/60 bg-background/60 rounded-2xl border px-5 py-4 shadow-sm text-sm">
+                <div className="flex items-center gap-1.5 flex-wrap justify-center font-medium text-foreground">
+                  <span>After about 3 weeks, record the plant’s</span>
+                  {renderListening13Test1FlowchartQuestion(30, '30. ____')}
+                  <span>.</span>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex justify-center">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Step 6 */}
+              <div className="border-border/60 bg-background/60 rounded-2xl border px-5 py-4 shadow-sm text-sm">
+                <div className="flex items-center justify-center font-medium text-foreground">
+                  <span>Investigate the findings.</span>
+                </div>
+              </div>
+            </div>
+          </div>
         ) : shouldRenderListeningTest3Flowchart ? (
           <div className="space-y-4">
             <div className="border-border/60 bg-background/60 rounded-2xl border px-4 py-5 text-center shadow-sm">
@@ -4501,6 +5737,7 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
                         shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
                         shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
+                        shouldRenderAcademic13Test1TourismTable ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
                         shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
@@ -4537,7 +5774,8 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForListening15Test2Questions25To30 ||
                         shouldRenderInlineBlankPromptForListening15Test3Questions27To30 ||
                         shouldRenderInlineBlankPromptForListening15Test4Questions11To16 ||
-                        shouldRenderInlineBlankPromptForListening15Test4Questions25To30
+                        shouldRenderInlineBlankPromptForListening15Test4Questions25To30 ||
+                        shouldRenderInlineBlankPromptForListening13Test1Questions14To20
                       }
                       inlineBlankPrompt={
                         shouldRenderInlineBlankPromptForAcademic16Test1Questions8To13 ||
@@ -4566,6 +5804,7 @@ export function QuestionGroup({
                         shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
                         shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
                         shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
+                        shouldRenderAcademic13Test1TourismTable ||
                         shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                         shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                         shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
@@ -4577,6 +5816,7 @@ export function QuestionGroup({
                         shouldRenderInlineBlankPromptForListening15Test3Questions27To30 ||
                         shouldRenderInlineBlankPromptForListening15Test4Questions11To16 ||
                         shouldRenderInlineBlankPromptForListening15Test4Questions25To30 ||
+                        shouldRenderInlineBlankPromptForListening13Test1Questions14To20 ||
                         shouldRenderInlineBlankPromptForGeneral18Test4Questions35To40 ||
                         shouldRenderInlineBlankPromptForListening18Test3Questions1To4 ||
                         shouldRenderInlineBlankPromptForListening17Test2Questions1To7 ||
@@ -4788,6 +6028,7 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
                             shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
                             shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
+                            shouldRenderAcademic13Test1TourismTable ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions1To8 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions9To14 ||
                             shouldShowPromptTextWhenBlankForGeneralTest3Questions33To36 ||
@@ -4823,7 +6064,8 @@ export function QuestionGroup({
                             shouldRenderInlineBlankPromptForListening15Test2Questions25To30 ||
                             shouldRenderInlineBlankPromptForListening15Test3Questions27To30 ||
                             shouldRenderInlineBlankPromptForListening15Test4Questions11To16 ||
-                            shouldRenderInlineBlankPromptForListening15Test4Questions25To30
+                            shouldRenderInlineBlankPromptForListening15Test4Questions25To30 ||
+                            shouldRenderInlineBlankPromptForAcademic13Test4Questions9To13
                           }
                           inlineBlankPrompt={
                             shouldRenderInlineBlankPromptForAcademic16Test1Questions8To13 ||
@@ -4854,6 +6096,7 @@ export function QuestionGroup({
                             shouldShowPromptTextWhenBlankForListening14Test3Questions27To30 ||
                             shouldShowPromptTextWhenBlankForListening14Test4Questions11To16 ||
                             shouldShowPromptTextWhenBlankForListening14Test4Questions26To30 ||
+                            shouldRenderAcademic13Test1TourismTable ||
                             shouldRenderInlineBlankPromptForAcademicTest2Questions19To22 ||
                             shouldRenderInlineBlankPromptForAcademicTest3Questions18To22 ||
                             shouldRenderInlineBlankPromptForListeningQuestions16To20 ||
@@ -4871,7 +6114,8 @@ export function QuestionGroup({
                             (shouldShowPromptTextWhenBlankForListeningTest2Questions1To6 &&
                               item.qNum >= 1 &&
                               item.qNum <= 6) ||
-                            shouldShowPromptTextWhenBlankForListeningTest4Questions26To30
+                            shouldShowPromptTextWhenBlankForListeningTest4Questions26To30 ||
+                            shouldRenderInlineBlankPromptForAcademic13Test4Questions9To13
                           }
                           answerLookup={answerLookup}
                           userAnswers={userAnswers}
