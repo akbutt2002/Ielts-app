@@ -655,36 +655,36 @@
         "part_no": 1,
         "part": "PART 1",
         "label": "PART 1",
-        "question_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15],
+        "question_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "blocks": [
           {
-            "header": "PART 1 Questions 1-10",
-            "question_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            "text": "Questions 1-6\nComplete the form below.\nWrite\nONE WORD AND/OR A NUMBER\nfor each answer.\nGuitar Group\nCoordinator: Gary 1\n____\nLevel: 2\n____\nPlace: the 3\n____\n4\n____",
+            "header": "PART 1 Questions 1-6",
+            "question_numbers": [1, 2, 3, 4, 5, 6],
+            "text": "Questions 1-6\nComplete the form below.\nWrite\nONE WORD AND/OR A NUMBER\nfor each answer.\nGuitar Group\nCoordinator: Gary 1\n____\nLevel: 2\n____\nPlace: the 3\n____\n4\n____\nStreet\nFirst floor, Room T347\nTime: Thursday morning at 5\n____\nRecommended website: 'The perfect 6\n____'",
             "choices": []
           },
           {
             "header": "Questions 7-10",
-            "question_numbers": [5, 7, 8, 9, 10, 15],
+            "question_numbers": [7, 8, 9, 10],
             "text": "Complete the table below.\nWrite\nONE WORD ONLY\nfor each answer.\nA typical 45-minute guitar lesson\nTime\nActivity\nNotes\n5 minutes\ntuning guitars\nusing an app or by 7\n____\n10 minutes\nstrumming chords using our thumbs\nkeeping time while the teacher is 8\n____\n15 minutes\nplaying songs\noften listening to a 9\n____\nof a song\n10 minutes\nplaying single notes and simple tunes\nplaying together, then 10\n____\n5 minutes\nnoting things to practise at home",
             "choices": []
           }
         ],
         "questions": [
           {
-            "header": "PART 1 Questions 1-10",
-            "question_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            "text": "Questions 1-6\nComplete the form below.\nWrite\nONE WORD AND/OR A NUMBER\nfor each answer.\nGuitar Group\nCoordinator: Gary 1\n____\nLevel: 2\n____\nPlace: the 3\n____\n4\n____",
+            "header": "PART 1 Questions 1-6",
+            "question_numbers": [1, 2, 3, 4, 5, 6],
+            "text": "Questions 1-6\nComplete the form below.\nWrite\nONE WORD AND/OR A NUMBER\nfor each answer.\nGuitar Group\nCoordinator: Gary 1\n____\nLevel: 2\n____\nPlace: the 3\n____\n4\n____\nStreet\nFirst floor, Room T347\nTime: Thursday morning at 5\n____\nRecommended website: 'The perfect 6\n____'",
             "choices": []
           },
           {
             "header": "Questions 7-10",
-            "question_numbers": [5, 7, 8, 9, 10, 15],
+            "question_numbers": [7, 8, 9, 10],
             "text": "Complete the table below.\nWrite\nONE WORD ONLY\nfor each answer.\nA typical 45-minute guitar lesson\nTime\nActivity\nNotes\n5 minutes\ntuning guitars\nusing an app or by 7\n____\n10 minutes\nstrumming chords using our thumbs\nkeeping time while the teacher is 8\n____\n15 minutes\nplaying songs\noften listening to a 9\n____\nof a song\n10 minutes\nplaying single notes and simple tunes\nplaying together, then 10\n____\n5 minutes\nnoting things to practise at home",
             "choices": []
           }
         ],
-        "text": "Questions 1-6\nComplete the form below.\nWrite\nONE WORD AND/OR A NUMBER\nfor each answer.\nGuitar Group\nCoordinator: Gary 1\n____\nLevel: 2\n____\nPlace: the 3\n____\n4\n____\n\nComplete the table below.\nWrite\nONE WORD ONLY\nfor each answer.\nA typical 45-minute guitar lesson\nTime\nActivity\nNotes\n5 minutes\ntuning guitars\nusing an app or by 7\n____\n10 minutes\nstrumming chords using our thumbs\nkeeping time while the teacher is 8\n____\n15 minutes\nplaying songs\noften listening to a 9\n____\nof a song\n10 minutes\nplaying single notes and simple tunes\nplaying together, then 10\n____\n5 minutes\nnoting things to practise at home",
+        "text": "Questions 1-6\nComplete the form below.\nWrite\nONE WORD AND/OR A NUMBER\nfor each answer.\nGuitar Group\nCoordinator: Gary 1\n____\nLevel: 2\n____\nPlace: the 3\n____\n4\n____\nStreet\nFirst floor, Room T347\nTime: Thursday morning at 5\n____\nRecommended website: 'The perfect 6\n____'\n\nComplete the table below.\nWrite\nONE WORD ONLY\nfor each answer.\nA typical 45-minute guitar lesson\nTime\nActivity\nNotes\n5 minutes\ntuning guitars\nusing an app or by 7\n____\n10 minutes\nstrumming chords using our thumbs\nkeeping time while the teacher is 8\n____\n15 minutes\nplaying songs\noften listening to a 9\n____\nof a song\n10 minutes\nplaying single notes and simple tunes\nplaying together, then 10\n____\n5 minutes\nnoting things to practise at home",
         "block_count": 2
       },
       {

@@ -250,6 +250,14 @@ export function QuestionGroup({
     groupFirstQuestion === 1 &&
     groupLastQuestion === 10;
 
+  const shouldRenderListening19Test2GuitarGroupForm =
+    isListening &&
+    /Cambridge 19 Listening Test 2/i.test(testTitle ?? '') &&
+    primaryBlock.questionNumbers[0] === 1 &&
+    primaryBlock.questionNumbers[primaryBlock.questionNumbers.length - 1] ===
+      6 &&
+    (primaryBlock.choices?.length ?? 0) === 0;
+
   const shouldRenderListening13Test1Questions26To30Flowchart =
     isListening &&
     /Cambridge 13 Listening Test 1/i.test(testTitle ?? '') &&
@@ -338,6 +346,7 @@ export function QuestionGroup({
     !shouldRenderListening13Test3BanfordCityForm &&
     !shouldRenderListening13Test3SleepyLizardForm &&
     !shouldRenderListening13Test4AlexTrainingForm &&
+    !shouldRenderListening19Test2GuitarGroupForm &&
     !shouldRenderListening13Test1Questions26To30Flowchart &&
     !shouldRenderListening14Test1CrimeReportForm &&
     !shouldRenderListening14Test2PatientDetailsForm &&
@@ -372,6 +381,7 @@ export function QuestionGroup({
     !shouldRenderListening13Test3BanfordCityForm &&
     !shouldRenderListening13Test3SleepyLizardForm &&
     !shouldRenderListening13Test4AlexTrainingForm &&
+    !shouldRenderListening19Test2GuitarGroupForm &&
     !shouldRenderListening13Test1Questions26To30Flowchart &&
     !shouldRenderListening14Test1CrimeReportForm &&
     !shouldRenderListening14Test2PatientDetailsForm &&
@@ -429,7 +439,10 @@ export function QuestionGroup({
         Math.max(1, Math.ceil((primaryBlock.questionNumbers[0] ?? 1) / 10)),
       )}`
     : '';
-  const contentHeading = primaryBlock.contentHeading?.trim() ?? '';
+  const contentHeading = (primaryBlock.contentHeading?.trim() ?? '').replace(
+    /^(?:[A-D],\s*)*[A-D]\s*(?:or|and)\s*[A-D]\s*/i,
+    '',
+  );
   const isListeningTest4MarathonQuestionBlock =
     isListening &&
     /Cambridge 19 Listening Test 4/i.test(testTitle ?? '') &&
@@ -587,6 +600,7 @@ export function QuestionGroup({
     shouldRenderListening13Test3BanfordCityForm ||
     shouldRenderListening13Test3SleepyLizardForm ||
     shouldRenderListening13Test4AlexTrainingForm ||
+    shouldRenderListening19Test2GuitarGroupForm ||
     shouldRenderListening13Test1Questions26To30Flowchart ||
     shouldRenderListening14Test1CrimeReportForm ||
     shouldRenderListening14Test2PatientDetailsForm ||
@@ -1373,6 +1387,11 @@ export function QuestionGroup({
               'Complete the notes below.',
               'Write ONE WORD AND/OR A NUMBER for each answer.',
             ].join('\n')
+        : shouldRenderListening19Test2GuitarGroupForm
+          ? [
+              'Complete the form below.',
+              'Write ONE WORD AND/OR A NUMBER for each answer.',
+            ].join('\n')
         : shouldRenderListening14Test1CrimeReportForm
           ? [
               'Complete the form below.',
@@ -1642,6 +1661,28 @@ export function QuestionGroup({
   ) => (
     <QuestionRow
       key={`listening-13-test-4-alex-${qNum}`}
+      qNum={qNum}
+      prompt={prompt}
+      choices={[]}
+      showPrompt={true}
+      inlineBlankPrompt={true}
+      hideQuestionNumber={true}
+      keepQuestionNumberPrefix={true}
+      answerLookup={answerLookup}
+      userAnswers={userAnswers}
+      isSubmitted={isSubmitted}
+      isTestLocked={isTestLocked}
+      setUserAnswers={setUserAnswers}
+      renderAnswerStatusIcon={renderAnswerStatusIcon}
+    />
+  );
+
+  const renderListening19Test2GuitarQuestion = (
+    qNum: number,
+    prompt: string,
+  ) => (
+    <QuestionRow
+      key={`listening-19-test-2-guitar-${qNum}`}
       qNum={qNum}
       prompt={prompt}
       choices={[]}
@@ -4567,6 +4608,47 @@ export function QuestionGroup({
                 <span>• Make sure you</span>
                 {renderListening13Test4AlexQuestion(10, '10. ____')}
                 <span>.</span>
+              </div>
+            </div>
+          </div>
+        ) : shouldRenderListening19Test2GuitarGroupForm ? (
+          <div className="border-border/60 bg-background/60 overflow-hidden rounded-2xl border shadow-sm p-6 space-y-4 max-w-2xl mx-auto">
+            {/* Form Header */}
+            <div className="border-b border-border/40 pb-4">
+              <h4 className="text-foreground text-[18px] font-black tracking-wide">
+                Guitar Group
+              </h4>
+            </div>
+
+            {/* Form Fields */}
+            <div className="space-y-4 text-[14px]">
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>Coordinator: Gary</span>
+                {renderListening19Test2GuitarQuestion(1, '1. ____')}
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>Level:</span>
+                {renderListening19Test2GuitarQuestion(2, '2. ____')}
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>Place: the</span>
+                {renderListening19Test2GuitarQuestion(3, '3. ____')}
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                {renderListening19Test2GuitarQuestion(4, '4. ____')}
+                <span>Street</span>
+              </div>
+              <div className="font-medium text-foreground text-sm pl-0">
+                First floor, Room T347
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>Time: Thursday morning at</span>
+                {renderListening19Test2GuitarQuestion(5, '5. ____')}
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap font-medium text-foreground text-sm">
+                <span>Recommended website: ‘The perfect</span>
+                {renderListening19Test2GuitarQuestion(6, '6. ____')}
+                <span>’</span>
               </div>
             </div>
           </div>

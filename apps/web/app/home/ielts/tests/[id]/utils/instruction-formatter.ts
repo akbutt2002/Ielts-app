@@ -141,7 +141,7 @@ export function formatInstructionLines(text: string) {
         /^List of Headings$/i.test(upcomingLine) ||
         /^Opinions$/i.test(upcomingLine) ||
         /^List of People$/i.test(upcomingLine) ||
-        /^[A-Z](?:[.)](?:\s|$)|(?:\s+[A-Z]|\s*$))/.test(upcomingLine) ||
+        /^[A-Z](?:[.)](?:\s|$)|(?:\s+\S|\s*$))/.test(upcomingLine) ||
         /^(?:TRUE|FALSE|NOT GIVEN|YES|NO)\b/i.test(upcomingLine) ||
         isLowercaseRomanHeading(upcomingLine)
       ) {

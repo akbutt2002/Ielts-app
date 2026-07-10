@@ -378,6 +378,62 @@ function renderAcademic16Test2PhraseTable() {
   );
 }
 
+function renderAcademic16Test2Questions31To35PhraseTable() {
+  const rows = [
+    [
+      { letter: 'A', text: 'opinions' },
+      { letter: 'B', text: 'confidence' },
+      { letter: 'C', text: 'view' },
+    ],
+    [
+      { letter: 'D', text: 'modesty' },
+      { letter: 'E', text: 'problems' },
+      { letter: 'F', text: 'objectivity' },
+    ],
+    [
+      { letter: 'G', text: 'fairness' },
+      { letter: 'H', text: 'experiences' },
+      { letter: 'I', text: 'range' },
+    ],
+    [
+      { letter: 'J', text: 'reasons' },
+      null,
+      null,
+    ],
+  ];
+
+  return (
+    <div className="border-border/70 mt-7 overflow-hidden rounded-2xl border bg-white/40 shadow-sm dark:bg-white/[0.03]">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={`acad16t2q31-phrase-row-${rowIdx}`}
+          className={cn(
+            'grid grid-cols-3',
+            rowIdx < rows.length - 1 && 'border-border/70 border-b',
+          )}
+        >
+          {row.map((cell, cellIdx) => (
+            <div
+              key={`acad16t2q31-phrase-cell-${rowIdx}-${cellIdx}`}
+              className={cn(
+                'text-foreground flex min-h-20 items-center justify-center px-4 py-5 text-center text-[15px] leading-7',
+                cellIdx < row.length - 1 && 'border-border/70 border-r',
+              )}
+            >
+              {cell ? (
+                <span>
+                  <strong className="font-bold">{cell.letter}</strong>{' '}
+                  {cell.text}
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function renderAcademic17Test3PhraseTable() {
   const rows = [
     [
@@ -781,6 +837,10 @@ export function renderStructuredSummaryBlock(
     /Cambridge 16.*Reading Test 2/i.test(deps.testTitle ?? '') &&
     block.questionNumbers.includes(17);
 
+  const shouldShowAcademic16Test2Questions31To35PhraseTable =
+    /Cambridge 16.*Reading Test 2/i.test(deps.testTitle ?? '') &&
+    block.questionNumbers.includes(31);
+
   const shouldShowAcademic15Test2PhraseTable =
     /Cambridge 15 IELTS Academic Reading Test 2/i.test(deps.testTitle ?? '') &&
     block.questionNumbers.includes(32);
@@ -814,6 +874,13 @@ export function renderStructuredSummaryBlock(
           ? parsedSummaryBlock.summaryText
               .replace(
                 /\s*A\.\s+solution,\s+B\.\s+partnership,\s+C\.\s+destruction,\s+D\.\s+exaggeration,\s+E\.\s+cleanliness,\s+F\.\s+regulations,\s+G\.\s+illness,\s+H\.\s+nutrition\s*$/i,
+                '',
+              )
+              .trim()
+        : shouldShowAcademic16Test2Questions31To35PhraseTable
+          ? parsedSummaryBlock.summaryText
+              .replace(
+                /\s*A\.\s+opinions,?\s+B\.\s+confidence,?\s+C\.\s+view,?\s+D\.\s+modesty,?\s+E\.\s+problems,?\s+F\.\s+objectivity,?\s+G\.\s+fairness,?\s+H\.\s+experiences,?\s+I\.\s+range,?\s+J\.\s+reasons\s*$/i,
                 '',
               )
               .trim()
@@ -880,6 +947,9 @@ export function renderStructuredSummaryBlock(
 
           {shouldShowAcademic16Test2PhraseTable &&
             renderAcademic16Test2PhraseTable()}
+
+          {shouldShowAcademic16Test2Questions31To35PhraseTable &&
+            renderAcademic16Test2Questions31To35PhraseTable()}
 
           {shouldShowAcademic17Test2PhraseTable &&
             renderAcademic17Test2PhraseTable()}
